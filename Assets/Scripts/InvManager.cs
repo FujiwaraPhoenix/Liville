@@ -41,9 +41,9 @@ public class InvManager : MonoBehaviour
         convoy.Add(newItem);
     }
 
-    public void addGunToArmory()
+    public void addGunToArmory(Item newGun)
     {
-
+        armory.Add(newGun);
     }
 
     

@@ -8,7 +8,8 @@ public class Unit : MonoBehaviour
     public int[] position;
     public int[] lastPosition;
     public bool isDead, hasMoved, currUnit;
-    public Item[] inventory = new Item[5];
+    public List<Item> inventory = new List<Item>();
+    //Limit inv to 5.
     public Item currEquip;
     public Path p;
     public Path[,] pathMap;
@@ -198,21 +199,19 @@ public class Unit : MonoBehaviour
     }
 
     
-    public void addItemToInv()
+    public void addItemToInv(int convoyIndex)
     {
+        Item tempItem = InvManager.im.convoy[convoyIndex];
         
+
     }
 
     public void swapGun(int armoryIndex)
     {
-
-    }
-
-    public void reorderInv(int indexA, int indexB)
-    {
-        Item tempItem = null;
-        tempItem = inventory[indexA];
-        inventory[indexA] = inventory[indexB];
-        inventory[indexB] = tempItem;
+        //Get the gun at location and save it.
+        Item tempGun = InvManager.im.armory[armoryIndex];
+        InvManager.im.armory.RemoveAt(armoryIndex);
+        InvManager.im.armory.Add(currEquip);
+        currEquip = tempGun;
     }
 }
