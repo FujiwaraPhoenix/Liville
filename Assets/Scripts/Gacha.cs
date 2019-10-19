@@ -7,6 +7,9 @@ public class Gacha : MonoBehaviour
     //In order: AR, SG, HG, RF, SWD
     public bool[] activePools = new bool[5];
     public bool[] rareChanceUpActive = new bool[5];
+    public Item template;
+    public float c, uc, r, sr;
+    public int testA, testB, testC, testD;
 
     // Start is called before the first frame update
     void Start()
@@ -17,7 +20,10 @@ public class Gacha : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            generateItem(testA, testB, testC, testD);
+        }
     }
 
     public void determinePools(int matA, int matB, int matC, int matD)
@@ -132,5 +138,156 @@ public class Gacha : MonoBehaviour
         {
             activePools[4] = false;
         }
+    }
+
+    public void generateItem(int matA, int matB, int matC, int matD)
+    {
+        determinePools(matA, matB, matC, matD);
+
+        Item newItem = null;
+
+        //What kind of gun are we making?
+        int gunType = -1;
+        bool validSet = false;
+        foreach (bool b in activePools)
+        {
+            if (b)
+            {
+                validSet = true;
+            }
+        }
+        if (validSet) {
+            gunType = Random.Range(0, 5);
+            while (!activePools[gunType])
+            {
+                int tempValue = Random.Range(0, 5);
+                if (activePools[tempValue])
+                {
+                    gunType = tempValue;
+                }
+            }
+            //Now the gunType is in hand; let's generate the ratios!
+            if (rareChanceUpActive[gunType])
+            {
+                c = 20;
+                uc = 50;
+                r = 75;
+                sr = 87.5f;
+            }
+            else
+            {
+                c = 40;
+                uc = 65;
+                r = 85;
+                sr = 95;
+            }
+            float gunRarityChk = Random.Range(0, 100);
+            int gunRarity = 0;
+            if (gunRarityChk <= c)
+            {
+                gunRarity = 1;
+            }
+            else if (gunRarityChk <= uc)
+            {
+                gunRarity = 2;
+            }
+            else if (gunRarityChk <= r)
+            {
+                gunRarity = 3;
+            }
+            else if (gunRarityChk <= sr)
+            {
+                gunRarity = 4;
+            }
+            else
+            {
+                //Unique time, baby!
+                gunRarity = 5;
+            }
+            generateGun(gunType, gunRarity);
+        }
+        else
+        {
+            //Somehow you failed to get the recipe working. Good job. Spit out failure.
+            Debug.Log("NO results. Oops.");
+        }
+        
+    }
+
+    public void generateGun(int gunType, int gunRarity)
+    {
+        /*Item newItem = null;
+        newItem = Instantiate(template, transform.position, Quaternion.identity);
+        //This is always a gun.
+        newItem.itemID = 0;*/
+
+        //Placeholder stuff; output string.
+        string output = "Result: ";
+        string outputRarity = "";
+        string outputType = "";
+        string mods = "";
+        switch (gunRarity)
+        {
+            case 1:
+                outputRarity = "Common ";
+                mods = generateMods(1);
+                break;
+            case 2:
+                outputRarity = "Uncommon ";
+                mods = generateMods(2);
+                break;
+            case 3:
+                outputRarity = "Rare ";
+                mods = generateMods(3);
+                break;
+            case 4:
+                outputRarity = "Super Rare ";
+                mods = generateMods(4);
+                break;
+            case 5:
+                outputRarity = "Unique ";
+                break;
+        }
+        switch (gunType)
+        {
+            case 0:
+                outputType = "Assault Rifle";
+                break;
+            case 1:
+                outputType = "Shotgun";
+                break;
+            case 2:
+                outputType = "Handgun";
+                break;
+            case 3:
+                outputType = "Sniper Rifle";
+                break;
+            case 4:
+                outputType = "Sword";
+                break;
+        }
+        //Assemble output:
+        if (gunRarity != 5)
+        {
+            output += outputRarity + outputType + "; Mods: " + mods;
+        }
+        else
+        {
+            output += outputRarity + outputType;
+        }
+        Debug.Log(output);
+    }
+
+    public string generateMods(int noOfMods)
+    {
+        string[] mods = TextFileParser.tfp.itemList;
+        string modOutput = "";
+        for (int i = 0; i < noOfMods; i++)
+        {
+            int randMod = Random.Range(0, mods.Length);
+            modOutput += mods[randMod] + ", ";
+        }
+        modOutput = modOutput.Substring(0, modOutput.Length - 2);
+        return modOutput;
     }
 }
