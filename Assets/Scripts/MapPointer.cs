@@ -264,6 +264,7 @@ public class MapPointer : MonoBehaviour
                     //Run attack stuff
                     if (targetUnit.currEquip.currentClip > 0)
                     {
+                        totalPossibleTargets = 0;
                         targetUnit.findTargets();
                         bool targetsAvailable = false;
                         for (int i = 0; i < targetUnit.possibleTargets.Count; i++)
@@ -280,6 +281,7 @@ public class MapPointer : MonoBehaviour
                             targetUnitTargetList = new Unit[totalPossibleTargets];
                             for (int i = 0; i < totalPossibleTargets; i++)
                             {
+                                Debug.Log(i);
                                 targetUnitTargetList[i] = targetUnit.possibleTargets[i];
                             }
                             choosingTarget = true;
