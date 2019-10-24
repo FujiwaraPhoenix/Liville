@@ -266,7 +266,7 @@ public class MapPointer : MonoBehaviour
                     {
                         targetUnit.findTargets();
                         bool targetsAvailable = false;
-                        for (int i = 0; i < targetUnit.possibleTargets.Length; i++)
+                        for (int i = 0; i < targetUnit.possibleTargets.Count; i++)
                         {
                             if (targetUnit.possibleTargets[i] != null)
                             {

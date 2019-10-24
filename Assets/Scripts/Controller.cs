@@ -44,9 +44,14 @@ public class Controller : MonoBehaviour
         {
             forceETurnEnd();
         }
+        //Run EP.
+        if (!playerTurn)
+        {
+            runEnemyTurn();
+        }
         checkWLState();
     }
-
+    
     public void checkTurn()
     {
         if (playerTurn)
@@ -155,6 +160,15 @@ public class Controller : MonoBehaviour
     {
         winMap();
         loseMap();
+    }
+
+    public void runEnemyTurn()
+    {
+        foreach (Unit u in enemyUnits)
+        {
+            u.huntPlayers();
+        }
+        checkTurn();
     }
 }
 

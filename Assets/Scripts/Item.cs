@@ -10,9 +10,10 @@ public class Item : MonoBehaviour
     //0: gun, 1: healing item
     public int itemID = 0;
 
-    //Is this a gun?
+    //Is this a weapon?
     public int dmg, clipSize, currentClip, accuracy, range;
     public int[] mods = new int[3];
+    public bool isMelee = false;
 
     //Is this a healing item?
     public int healAmt;

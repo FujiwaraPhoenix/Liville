@@ -36,12 +36,11 @@ public class Pathfinder : MonoBehaviour
 
     //This function, when given a starting location, determines paths to all possible locations within distance.
     //0 = up, 1 = right, 2 = down, 3 = left
-    //As of right now, this modifie
     public void drawPath(Unit selectedUnit, int[] startLocation, int steps, Path currentPath, int unitAllegiance)
     {
         if (steps == 0)
         {
-            //Worry about this later.
+            //Check attack range for outlier targets.
         }
         else
         {
