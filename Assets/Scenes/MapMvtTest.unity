@@ -2457,6 +2457,7 @@ MonoBehaviour:
   accuracy: 85
   range: 1
   mods: 000000000000000000000000000000000000000000000000
+  isMelee: 0
   healAmt: 0
   itemName: 
 --- !u!4 &1946752659

@@ -333,7 +333,7 @@ public class Unit : MonoBehaviour
                             Vector3 tempLoc = new Vector3(i, j, -1);
                             //Check distance; can the target be shot?
                             float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
-                            if (distToTarget == currEquip.range)
+                            if (distToTarget <= currEquip.range)
                             {
                                 chosenPath = pathMap[i, j];
                             }
@@ -343,7 +343,7 @@ public class Unit : MonoBehaviour
                             Vector3 tempLoc = new Vector3(i, j, -1);
                             //Check distance; can the target be shot?
                             float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
-                            if ((distToTarget == currEquip.range) && pathMap[i,j].hazardCount < chosenPath.hazardCount)
+                            if ((distToTarget <= currEquip.range) && pathMap[i,j].hazardCount < chosenPath.hazardCount)
                             {
                                 chosenPath = pathMap[i, j];
                             }
@@ -358,7 +358,7 @@ public class Unit : MonoBehaviour
         {
             //Have fun chasing your target.
             //We'll make our own path.
-
+            Debug.Log(target.unitName);
             /*clearPaths();
             Path newPath = Instantiate(p, transform.position, Quaternion.identity);
             Pathfinder.pf.drawPath(this, position, 20, newPath, unitAllegiance);*/
@@ -378,6 +378,8 @@ public class Unit : MonoBehaviour
         {
             if (route.path.Count > 0)
             {
+                Controller.c.unitMap[position[0], position[1]] = 0;
+                Debug.Log(route.toString());
                 //TODO: Process tiles individually for effects.
                 switch (route.path[0])
                 {
@@ -409,6 +411,7 @@ public class Unit : MonoBehaviour
             {
                 //Count == 0
                 //In other words, we've reached our destination. Time to shoot.
+                Controller.c.unitMap[position[0], position[1]] = 2;
                 float distToTarget = Vector2.Distance(transform.position, target.transform.position);
                 if (distToTarget <= currEquip.range)
                 {

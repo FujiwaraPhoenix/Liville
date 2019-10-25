@@ -210,7 +210,7 @@ public class Pathfinder : MonoBehaviour
                         //If I can move here:
                         if (steps - Controller.c.currMap.grid[startLocation[0], startLocation[1] - 1].mvtPenalty >= 0)
                         {
-                            currentPath.path.Add(0);
+                            currentPath.path.Add(2);
                             if (Controller.c.currMap.grid[startLocation[0], startLocation[1] - 1].isHazardous)
                             {
                                 currentPath.hazardCount++;
@@ -254,7 +254,7 @@ public class Pathfinder : MonoBehaviour
                         //If I can move here:
                         if (steps - Controller.c.currMap.grid[startLocation[0], startLocation[1] - 1].mvtPenalty >= 0)
                         {
-                            currentPath.path.Add(0);
+                            currentPath.path.Add(2);
                             if (Controller.c.currMap.grid[startLocation[0], startLocation[1] - 1].isHazardous)
                             {
                                 currentPath.hazardCount++;
@@ -286,7 +286,7 @@ public class Pathfinder : MonoBehaviour
                         //If I can move here:
                         if (steps - Controller.c.currMap.grid[startLocation[0] - 1, startLocation[1]].mvtPenalty >= 0)
                         {
-                            currentPath.path.Add(1);
+                            currentPath.path.Add(3);
                             if (Controller.c.currMap.grid[startLocation[0] - 1, startLocation[1]].isHazardous)
                             {
                                 currentPath.hazardCount++;
@@ -330,7 +330,7 @@ public class Pathfinder : MonoBehaviour
                         //If I can move here:
                         if (steps - Controller.c.currMap.grid[startLocation[0] - 1, startLocation[1]].mvtPenalty >= 0)
                         {
-                            currentPath.path.Add(0);
+                            currentPath.path.Add(3);
                             if (Controller.c.currMap.grid[startLocation[0] - 1, startLocation[1]].isHazardous)
                             {
                                 currentPath.hazardCount++;
