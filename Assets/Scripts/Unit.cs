@@ -175,12 +175,12 @@ public class Unit : MonoBehaviour
                 }
             }
         }
-        if (unitAllegiance == 2)
+        if (unitAllegiance == 2) 
         {
             //This is an enemy unit; search for players BEFORE moving.
             foreach (Unit u in Controller.c.playerUnits)
             {
-                if (u != null)
+                if (u != null && !u.isDead)
                 {
                     float distToTarget = Vector2.Distance(transform.position, u.transform.position);
                     if (distToTarget <= currEquip.range + mvt)
@@ -242,28 +242,28 @@ public class Unit : MonoBehaviour
                         }
                         else
                         {
-                            //Target possible kill targets.
                             int targetHP = target.hp;
                             int pTargetHP = u.hp;
                             int targetDef = target.def;
                             int pTargetDef = u.def;
-                            if (targetHP - (currEquip.dmg - targetDef) > pTargetHP - (currEquip.dmg - pTargetDef))
+                            //Target closest.
+                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                            float distToPotential = Vector2.Distance(transform.position, u.transform.position);
+                            if (distToTarget > distToPotential)
                             {
                                 target = u;
                             }
-                            else if (targetHP - (currEquip.dmg - targetDef) == pTargetHP - (currEquip.dmg - pTargetDef))
+                            //Target possible kill targets
+                            else if (distToPotential == distToTarget)
                             {
-                                //Target squishy.
-                                if (currEquip.dmg - targetDef < currEquip.dmg - pTargetDef)
+                                if (targetHP - (currEquip.dmg - targetDef) > pTargetHP - (currEquip.dmg - pTargetDef))
                                 {
                                     target = u;
                                 }
-                                else
+                                else if (targetHP - (currEquip.dmg - targetDef) == pTargetHP - (currEquip.dmg - pTargetDef))
                                 {
-                                    //Target closest.
-                                    float distToTarget = Vector2.Distance(transform.position, target.transform.position);
-                                    float distToPotential = Vector2.Distance(transform.position, u.transform.position);
-                                    if (distToTarget > distToPotential)
+                                    //Target squishy.
+                                    if (currEquip.dmg - targetDef < currEquip.dmg - pTargetDef)
                                     {
                                         target = u;
                                     }
@@ -379,7 +379,6 @@ public class Unit : MonoBehaviour
             if (route.path.Count > 0)
             {
                 Controller.c.unitMap[position[0], position[1]] = 0;
-                Debug.Log(route.toString());
                 //TODO: Process tiles individually for effects.
                 switch (route.path[0])
                 {

@@ -11,6 +11,7 @@ public class MapPointer : MonoBehaviour
     //Are we in a menu?
     public bool menuActive = false;
     public bool choosingTarget = false;
+    public bool selectingItem = false;
     public Unit targetUnit = null;
     public Unit[] targetUnitTargetList;
 
@@ -19,6 +20,8 @@ public class MapPointer : MonoBehaviour
     public int menuBound = 3;
     public int currentTargetIndex = 0;
     public int totalPossibleTargets = 0;
+    public int invSize = 3;
+    public int currentInvChoice = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -48,7 +51,7 @@ public class MapPointer : MonoBehaviour
     void moveCursor()
     {
         //If we're on the map and don't have a menu open (and can thus mess with the map while on the menu):
-        if (!menuActive && !choosingTarget)
+        if (!menuActive && !choosingTarget && !selectingItem)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
@@ -84,7 +87,7 @@ public class MapPointer : MonoBehaviour
             }
         }
         //If the menu IS active:
-        else if (!choosingTarget)
+        else if (!choosingTarget && !selectingItem)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
@@ -135,7 +138,33 @@ public class MapPointer : MonoBehaviour
             }
             currX = targetUnitTargetList[currentTargetIndex].position[0];
             currY = targetUnitTargetList[currentTargetIndex].position[1];
-            transform.position = new Vector3(currX, currY, -3);
+            transform.position = new Vector3(currX, currY + .5f, -3);
+        }
+        else if (selectingItem)
+        {
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                if (currentInvChoice == 0)
+                {
+                    currentInvChoice = invSize - 1;
+                }
+                else
+                {
+                    currentInvChoice--;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                if (currentInvChoice == invSize - 1)
+                {
+                    currentInvChoice = 0;
+                }
+                else
+                {
+                    currentInvChoice++;
+                }
+            }
+            //Update position of inventory select cursor.
         }
     }
 
@@ -157,7 +186,6 @@ public class MapPointer : MonoBehaviour
                 {
                     if (!tempCheck.hasMoved)
                     {
-                        Debug.Log("New Unit Selected!");
                         tempCheck.currUnit = true;
                         targetUnit = tempCheck;
                         targetUnit.startFinding();
@@ -190,7 +218,7 @@ public class MapPointer : MonoBehaviour
                     menuActive = true;
                 }
             }
-            else if (menuActive && !choosingTarget)
+            else if (menuActive && !choosingTarget && !selectingItem)
             {
                 selectAction();
             }
@@ -218,6 +246,34 @@ public class MapPointer : MonoBehaviour
                 menuActive = false;
                 currentMenuChoice = 0;
                 Controller.c.checkTurn();
+            }
+            else if (selectingItem)
+            {
+                //Pick an item.
+                bool itemUseStatus = targetUnit.inventory[currentInvChoice].useItem(targetUnit);
+                if (itemUseStatus)
+                {
+                    Item tempItem = targetUnit.inventory[currentInvChoice];
+                    targetUnit.inventory.RemoveAt(currentInvChoice);
+                    Destroy(tempItem);
+                    targetUnit.hasMoved = true;
+                    targetUnit.currUnit = false;
+                    //Reset pathmap.
+                    targetUnit.clearPaths();
+                    //Reset tiles
+                    for (int i = 0; i < Controller.c.currMap.grid.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < Controller.c.currMap.grid.GetLength(1); j++)
+                        {
+                            Controller.c.currMap.grid[i, j].gameObject.SetActive(true);
+                        }
+                    }
+                    targetUnit = null;
+                    menuActive = false;
+                    currentMenuChoice = 0;
+                    selectingItem = false;
+                    Controller.c.checkTurn();
+                }
             }
         }
         if (Input.GetKeyDown(KeyCode.X))
@@ -250,6 +306,11 @@ public class MapPointer : MonoBehaviour
                     targetUnit = null;
                 }
             }
+            if (selectingItem)
+            {
+                selectingItem = false;
+                currentInvChoice = 0;
+            }
         }
     }
 
@@ -271,7 +332,6 @@ public class MapPointer : MonoBehaviour
                         {
                             if (targetUnit.possibleTargets[i] != null)
                             {
-                                Debug.Log(targetUnit.possibleTargets[i].unitName);
                                 targetsAvailable = true;
                                 totalPossibleTargets++;
                             }
@@ -281,7 +341,6 @@ public class MapPointer : MonoBehaviour
                             targetUnitTargetList = new Unit[totalPossibleTargets];
                             for (int i = 0; i < totalPossibleTargets; i++)
                             {
-                                Debug.Log(i);
                                 targetUnitTargetList[i] = targetUnit.possibleTargets[i];
                             }
                             choosingTarget = true;
@@ -322,6 +381,23 @@ public class MapPointer : MonoBehaviour
                 case 2:
                     //Inv
                     //Run inv stuff
+                    invSize = targetUnit.inventory.Count;
+                    if (invSize > 0)
+                    {
+                        selectingItem = true;
+                        currentInvChoice = 0;
+                        //Populate list
+                        string tempStr = "";
+                        foreach (Item i in targetUnit.inventory)
+                        {
+                            tempStr += i.name + "\n";
+                        }
+                        InvManager.im.currInvShown.text = tempStr;
+                    }
+                    else
+                    {
+                        Debug.Log("Inventory empty!");
+                    }
                     break;
                 case 3:
                     //Wait

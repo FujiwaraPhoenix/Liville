@@ -20,4 +20,33 @@ public class Item : MonoBehaviour
 
     //What is this thing CALLED?
     public string itemName;
+
+    public bool useItem(Unit user)
+    {
+        //Uses the item. If used, true. Else, false.
+        if (itemID == 1)
+        {
+            if (user.hp < user.maxhp)
+            {
+                if (user.hp + healAmt < user.maxhp)
+                {
+                    Debug.Log("Healed " + healAmt + " HP!");
+                    user.hp += healAmt;
+                }
+                else
+                {
+                    Debug.Log("Healed " + (user.maxhp - user.hp) + " HP!");
+                    user.hp = user.maxhp;
+                }
+                return true;
+            }
+            else
+            {
+                //Well, you goofed. Return false.
+                Debug.Log("HP full! No point in using this.");
+                return false;
+            }
+        }
+        return false;
+    }
 }

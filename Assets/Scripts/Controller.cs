@@ -15,8 +15,12 @@ public class Controller : MonoBehaviour
     public int[,] tileMap, unitMap;
     public MapPointer mp;
     public bool playerTurn = true;
+    public bool saidWL = false;
     //For testing purposes; 0 is map gen test; 1 is pre-gen map.
-    public int gameMode = 0; 
+    public int gameMode = 0;
+    
+    //Gacha mat rewards
+    public int materialAGain, materialBGain, materialCGain, materialDGain;
 
     void Awake()
     {
@@ -134,9 +138,18 @@ public class Controller : MonoBehaviour
                 enemiesDead = false;
             }
         }
-        if (enemiesDead)
+        if (enemiesDead && !saidWL)
         {
             Debug.Log("Victory!");
+            InvManager.im.materialA += materialAGain;
+            InvManager.im.materialB += materialBGain;
+            InvManager.im.materialC += materialCGain;
+            InvManager.im.materialD += materialDGain;
+            materialAGain = 0;
+            materialBGain = 0;
+            materialCGain = 0;
+            materialDGain = 0;
+            saidWL = true;
         }
     }
     public void loseMap()
@@ -150,9 +163,10 @@ public class Controller : MonoBehaviour
                 playersDead = false;
             }
         }
-        if (playersDead)
+        if (playersDead && !saidWL)
         {
             Debug.Log("Defeat!");
+            saidWL = true;
         }
     }
 
