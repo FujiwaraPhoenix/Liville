@@ -5,19 +5,26 @@ using UnityEngine.UI;
 
 public class BattleMenuUI : MonoBehaviour
 {
+    public static BattleMenuUI bmui;
+
     public Image menuPointer;
     public GameObject menuItems;
-    public GameObject enemyDisplay;
+    public GameObject enemyDisplay, playerDisplay;
 
     public Sprite pipOn, pipOff;
+    public Sprite ammoPipOn, ammoPipOff;
 
     //Player Stats
+    public Unit currentPlayer, currentEnemy;
+    public bool foundPlayer = false;
     public Text pUnitName, pGunName;
     public Image pImg;
     public Text HPDisplay, statDisplay, gunStatDisplay, modDisplay;
     public int pHP, pMaxHP, pDef, pEva, pSpd, pLck;
     public int pClipSize, pCurrClip, pDmg, pAcc, pRng, pMod1, pMod2, pMod3;
+    public bool pIsMelee = false;
     public Image[] pHPPips = new Image[40];
+    public Image[] pAmmoPips = new Image[3];
 
     //Enemy Stats
     public bool foundEnemy = false;
@@ -26,7 +33,22 @@ public class BattleMenuUI : MonoBehaviour
     public Text eHPDisplay, estatDisplay, egunStatDisplay, emodDisplay;
     public int eHP, eMaxHP, eDef, eEva, eSpd, eLck;
     public int eClipSize, eCurrClip, eDmg, eAcc, eRng, eMod1, eMod2, eMod3;
+    public bool eIsMelee = false;
     public Image[] eHPPips = new Image[40];
+    public Image[] eAmmoPips = new Image[3];
+
+    void Awake()
+    {
+        if (bmui == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            bmui = this;
+        }
+        else if (bmui != this)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -71,10 +93,19 @@ public class BattleMenuUI : MonoBehaviour
 
     public void updatePlayerDisplay()
     {
+        if (!foundPlayer)
+        {
+            playerDisplay.SetActive(false);
+        }
+        else
+        {
+            playerDisplay.SetActive(true);
+        }
         //Do you have a player unit selected? If so, display their data.
         if (Controller.c.mp.targetUnit != null)
         {
             updatePlayerValues(Controller.c.mp.targetUnit);
+            foundPlayer = true;
         }
         //Check if you're hovering over a player unit:
         else {
@@ -83,7 +114,9 @@ public class BattleMenuUI : MonoBehaviour
                 if ((u.position[0] == Controller.c.mp.currX) && u.position[1] == Controller.c.mp.currY)
                 {
                     //If you are, update the data.
-                    updatePlayerValues(u);
+                    currentPlayer = u;
+                    updatePlayerValues(currentPlayer);
+                    foundPlayer = true;
                 }
             }
         }
@@ -93,7 +126,7 @@ public class BattleMenuUI : MonoBehaviour
 
         for (int i = 0; i < 40; i++)
         {
-            if (i <= pHP)
+            if (i < pHP)
             {
                 pHPPips[i].gameObject.SetActive(true);
                 pHPPips[i].sprite = pipOn;
@@ -106,6 +139,22 @@ public class BattleMenuUI : MonoBehaviour
             else
             {
                 pHPPips[i].gameObject.SetActive(false);
+            }
+        }
+        if (!pIsMelee)
+        {
+            for (int i = 0; i < pAmmoPips.Length; i++)
+            {
+                if (i < pCurrClip)
+                {
+                    pAmmoPips[i].gameObject.SetActive(true);
+                    pAmmoPips[i].sprite = ammoPipOn;
+                }
+                else
+                {
+                    pAmmoPips[i].gameObject.SetActive(true);
+                    pAmmoPips[i].sprite = ammoPipOff;
+                }
             }
         }
     }
@@ -128,7 +177,8 @@ public class BattleMenuUI : MonoBehaviour
             if ((u.position[0] == Controller.c.mp.currX) && u.position[1] == Controller.c.mp.currY)
             {
                 //If you are, update the data.
-                updateEnemyValues(u);
+                currentEnemy = u;
+                updateEnemyValues(currentEnemy);
                 foundEnemy = true;
             }
         }
@@ -137,7 +187,7 @@ public class BattleMenuUI : MonoBehaviour
         egunStatDisplay.text = "DMG: " + eDmg + "\nACC: " + eAcc + "\nRNG: " + eRng;
         for (int i = 0; i < 40; i++)
         {
-            if (i <= eHP)
+            if (i < eHP)
             {
                 eHPPips[i].gameObject.SetActive(true);
                 eHPPips[i].sprite = pipOn;
@@ -150,6 +200,22 @@ public class BattleMenuUI : MonoBehaviour
             else
             {
                 eHPPips[i].gameObject.SetActive(false);
+            }
+        }
+        if (!eIsMelee)
+        {
+            for (int i = 0; i < eAmmoPips.Length; i++)
+            {
+                if (i <= eCurrClip)
+                {
+                    eAmmoPips[i].gameObject.SetActive(true);
+                    eAmmoPips[i].sprite = ammoPipOn;
+                }
+                else
+                {
+                    eAmmoPips[i].gameObject.SetActive(true);
+                    eAmmoPips[i].sprite = ammoPipOff;
+                }
             }
         }
     }
@@ -175,6 +241,7 @@ public class BattleMenuUI : MonoBehaviour
         pCurrClip = playerUnit.currEquip.currentClip;
         pAcc = playerUnit.currEquip.accuracy;
         pRng = playerUnit.currEquip.range;
+        pIsMelee = playerUnit.currEquip.isMelee;
         //Add mods later.
     }
 
@@ -199,6 +266,7 @@ public class BattleMenuUI : MonoBehaviour
         eCurrClip = enemyUnit.currEquip.currentClip;
         eAcc = enemyUnit.currEquip.accuracy;
         eRng = enemyUnit.currEquip.range;
+        eIsMelee = enemyUnit.currEquip.isMelee;
         //Add mods later.
     }
 

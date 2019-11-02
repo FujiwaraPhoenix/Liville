@@ -295,6 +295,8 @@ public class Unit : MonoBehaviour
         {
             currEquip.currentClip--;
         }
+        BattleMenuUI.bmui.updatePlayerValues(BattleMenuUI.bmui.currentPlayer);
+        BattleMenuUI.bmui.updateEnemyValues(BattleMenuUI.bmui.currentEnemy);
         target.die();
     }
 
