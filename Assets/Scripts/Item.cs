@@ -21,6 +21,18 @@ public class Item : MonoBehaviour
     //What is this thing CALLED?
     public string itemName;
 
+    //Temp; check if randomized.
+    public bool randomized = false;
+
+    void Start()
+    {
+        if (!randomized)
+        {
+            tempRandGun();
+            randomized = true;
+        }
+    }
+
     public bool useItem(Unit user)
     {
         //Uses the item. If used, true. Else, false.
@@ -48,5 +60,13 @@ public class Item : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public void tempRandGun()
+    {
+        dmg = Random.Range(1, 5);
+        //Maintain clip size for now
+        accuracy = Random.Range(75, 100);
+        range = Random.Range(2, 4);
     }
 }

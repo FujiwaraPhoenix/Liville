@@ -2282,7 +2282,7 @@ PrefabInstance:
     - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: maxhp
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
@@ -2292,7 +2292,7 @@ PrefabInstance:
     - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: hp
-      value: 9
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
@@ -9708,6 +9708,7 @@ MonoBehaviour:
   isMelee: 1
   healAmt: 0
   itemName: ???
+  randomized: 1
 --- !u!4 &1946752659
 Transform:
   m_ObjectHideFlags: 0
