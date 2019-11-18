@@ -9,6 +9,7 @@ public class Controller : MonoBehaviour
 {
     public static Controller c;
     public Tile tilePrefab;
+    public Unit[] playerRoster;
     public Unit[] playerUnits;
     public Unit[] enemyUnits;
     public Map currMap;
@@ -16,9 +17,13 @@ public class Controller : MonoBehaviour
     public MapPointer mp;
     public bool playerTurn = true;
     public bool saidWL = false;
-    //For testing purposes; 0 is map gen test; 1 is pre-gen map.
+    public GameObject grid;
+    //0 is battle map; 1 is overworld; 2 is party select; 3 is gacha.
     public int gameMode = 0;
-    
+
+    //For testing purposes.
+    public bool switchGameMode = false;
+
     //Gacha mat rewards
     public int materialAGain, materialBGain, materialCGain, materialDGain;
 
@@ -38,22 +43,23 @@ public class Controller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            forceETurnEnd();
-        }
         //Run EP.
-        if (!playerTurn)
+        if (gameMode == 0)
         {
-            runEnemyTurn();
+            if (!playerTurn)
+            {
+                runEnemyTurn();
+            }
+            checkWLState();
         }
-        checkWLState();
+        //Debugging.
+        switchGameState();
     }
     
     public void checkTurn()
@@ -63,6 +69,10 @@ public class Controller : MonoBehaviour
             bool allUnitsMoved = true;
             foreach (Unit u in playerUnits)
             {
+                if (u.stunned)
+                {
+                    u.hasMoved = true;
+                }
                 if (u != null && !u.isDead)
                 {
                     if (!u.hasMoved)
@@ -79,6 +89,7 @@ public class Controller : MonoBehaviour
                     if (u != null && !u.isDead)
                     {
                         u.hasMoved = false;
+                        u.stunned = false;
                     }
                 }
                 Debug.Log("Player Turn: Over. Enemy Phase Begins.");
@@ -89,6 +100,10 @@ public class Controller : MonoBehaviour
             bool allUnitsMoved = true;
             foreach (Unit u in enemyUnits)
             {
+                if (u.stunned)
+                {
+                    u.hasMoved = true;
+                }
                 if (u != null)
                 {
                     if (!u.hasMoved && !u.isDead)
@@ -105,6 +120,16 @@ public class Controller : MonoBehaviour
                     if (u != null && !u.isDead)
                     {
                         u.hasMoved = false;
+                        u.stunned = false;
+                        //Regeneration procs at the start of turn.
+                        if (u.checkMod(4))
+                        {
+                            if (u.hp < u.maxhp)
+                            {
+                                u.hp++;
+                                Debug.Log(u.name + " healed for 1 HP!");
+                            }
+                        }
                     }
                 }
                 Debug.Log("Enemy Turn: Over. Player Phase Begins.");
@@ -183,6 +208,70 @@ public class Controller : MonoBehaviour
             u.huntPlayers();
         }
         checkTurn();
+    }
+
+    public void switchGameState()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            switchGameMode = !switchGameMode;
+            Debug.Log("Game mode switch flipped!");
+        }
+        if (switchGameMode)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                gameMode = 0;
+                switchGameMode = false;
+                Debug.Log("Game mode 0!");
+                foreach (Unit u in playerRoster)
+                {
+                    u.GetComponent<SpriteRenderer>().enabled = true;
+                }
+                BattleMenuUI.bmui.gameObject.SetActive(true);
+                mp.gameObject.SetActive(true);
+                grid.SetActive(true);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                gameMode = 1;
+                switchGameMode = false;
+                Debug.Log("Game mode 1!");
+                foreach (Unit u in playerRoster)
+                {
+                    u.GetComponent<SpriteRenderer>().enabled = false;
+                }
+                BattleMenuUI.bmui.gameObject.SetActive(false);
+                grid.SetActive(false);
+                mp.gameObject.SetActive(false);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                gameMode = 2;
+                switchGameMode = false;
+                Debug.Log("Game mode 2!");
+                foreach (Unit u in playerRoster)
+                {
+                    u.GetComponent<SpriteRenderer>().enabled = false;
+                }
+                BattleMenuUI.bmui.gameObject.SetActive(false);
+                mp.gameObject.SetActive(false);
+                grid.SetActive(false);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                gameMode = 3;
+                switchGameMode = false;
+                Debug.Log("Game mode 3!");
+                foreach (Unit u in playerRoster)
+                {
+                    u.GetComponent<SpriteRenderer>().enabled = false;
+                }
+                BattleMenuUI.bmui.gameObject.SetActive(false);
+                mp.gameObject.SetActive(false);
+                grid.SetActive(false);
+            }
+        }
     }
 }
 

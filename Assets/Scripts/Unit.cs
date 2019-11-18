@@ -7,7 +7,7 @@ public class Unit : MonoBehaviour
     public int hp, maxhp, spd, eva, def, lck, mvt, unitAllegiance;
     public int[] position;
     public int[] lastPosition;
-    public bool isDead, hasMoved, currUnit;
+    public bool isDead, hasMoved, currUnit, stunned;
     public List<Item> inventory = new List<Item>();
     //Limit inv to 5.
     public Item currEquip;
@@ -41,11 +41,6 @@ public class Unit : MonoBehaviour
         if (Controller.c.unitMap[position[0], position[1]] != unitAllegiance)
         {
             Controller.c.unitMap[position[0], position[1]] = unitAllegiance;
-        }
-
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            die();
         }
     }
 
@@ -99,6 +94,7 @@ public class Unit : MonoBehaviour
 
     public void clearPaths()
     {
+        //Removes all paths on a unit.
         for (int i = 0; i < pathMap.GetLength(0); i++)
         {
             for (int j = 0; j < pathMap.GetLength(1); j++)
@@ -110,6 +106,7 @@ public class Unit : MonoBehaviour
 
     public void showMovement()
     {
+        //Disables all tiles that can be moved to. Will be changed to tint later.
         for (int i = 0; i < pathMap.GetLength(0); i++)
         {
             for (int j = 0; j < pathMap.GetLength(1); j++)
@@ -127,6 +124,7 @@ public class Unit : MonoBehaviour
 
     public void hideMovement()
     {
+        //Inverse of showMovement.
         for (int i = 0; i < pathMap.GetLength(0); i++)
         {
             for (int j = 0; j < pathMap.GetLength(1); j++)
@@ -144,14 +142,73 @@ public class Unit : MonoBehaviour
 
     public void die()
     {
+        //Self-explanatory.
         if (hp <= 0)
         {
             hp = 0;
             isDead = true;
             Controller.c.unitMap[position[0], position[1]] = 0;
             hasMoved = true;
-            spr.enabled = false;
-            this.gameObject.SetActive(false);
+            //If kamikaze, boom.
+            bool kamikazeActive = false;
+            foreach (int i in currEquip.mods)
+            {
+                if (i == 1)
+                {
+                    kamikazeActive = true;
+                }
+            }
+            if (kamikazeActive)
+            {
+                //Hits in a 3x3 radius around the character.
+                //Check location. We have the position, so we need min/max X/Y.
+                int minExpX = position[0] - 1;
+                int maxExpX = position[0] + 1;
+                int minExpY = position[1] - 1;
+                int maxExpY = position[1] + 1;
+                //Edge cases: next to a tile bound.
+                if (minExpX < 0)
+                {
+                    minExpX = 0;
+                }
+                if (minExpY < 0)
+                {
+                    minExpY = 0;
+                }
+                if (maxExpX > Controller.c.currMap.xBound)
+                {
+                    maxExpX = Controller.c.currMap.xBound;
+                }
+                if (minExpY > Controller.c.currMap.yBound)
+                {
+                    maxExpY = Controller.c.currMap.yBound;
+                }
+                //Given these bounds, check for all units present. Give them hell.
+                foreach (Unit u in Controller.c.playerUnits)
+                {
+                    bool inXRange = (position[0] >= minExpX && position[0] <= maxExpX);
+                    bool inYRange = (position[1] >= minExpY && position[1] <= maxExpY);
+                    if (inXRange && inYRange)
+                    {
+                        u.hp -= (hp - u.def);
+                        Debug.Log(u.unitName + " took " + (hp - u.def) + "damage!");
+                        u.die();
+                    }
+                }
+                foreach (Unit u in Controller.c.enemyUnits)
+                {
+                    bool inXRange = (position[0] >= minExpX && position[0] <= maxExpX);
+                    bool inYRange = (position[1] >= minExpY && position[1] <= maxExpY);
+                    if (inXRange && inYRange)
+                    {
+                        u.hp -= (hp - u.def);
+                        Debug.Log(u.unitName + " took " + (hp - u.def) + "damage!");
+                        u.die();
+                    }
+                }
+                spr.enabled = false;
+                this.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -217,7 +274,7 @@ public class Unit : MonoBehaviour
                                 int pTargetHP = u.hp;
                                 int targetDef = target.def;
                                 int pTargetDef = u.def;
-                                if (targetHP - (currEquip.dmg - targetDef) > pTargetHP - (currEquip.dmg - pTargetDef))
+                                if (targetHP - (currEquip.minDmg - targetDef) > pTargetHP - (currEquip.minDmg - pTargetDef))
                                 {
                                     target = u;
                                 }
@@ -256,14 +313,14 @@ public class Unit : MonoBehaviour
                             //Target possible kill targets
                             else if (distToPotential == distToTarget)
                             {
-                                if (targetHP - (currEquip.dmg - targetDef) > pTargetHP - (currEquip.dmg - pTargetDef))
+                                if (targetHP - (currEquip.minDmg - targetDef) > pTargetHP - (currEquip.minDmg - pTargetDef))
                                 {
                                     target = u;
                                 }
-                                else if (targetHP - (currEquip.dmg - targetDef) == pTargetHP - (currEquip.dmg - pTargetDef))
+                                else if (targetHP - (currEquip.minDmg - targetDef) == pTargetHP - (currEquip.minDmg - pTargetDef))
                                 {
                                     //Target squishy.
-                                    if (currEquip.dmg - targetDef < currEquip.dmg - pTargetDef)
+                                    if (currEquip.minDmg - targetDef < currEquip.minDmg - pTargetDef)
                                     {
                                         target = u;
                                     }
@@ -282,16 +339,70 @@ public class Unit : MonoBehaviour
         //So, we have a target, we have a gun. Use them.
         int hitChance = currEquip.accuracy - target.eva;
         int randChance = Random.Range(0, 100);
+        int dmgTaken = 0;
+        bool refundShot = false;
         if (randChance < hitChance)
         {
-            Debug.Log("Hit target!");
-            target.hp -= (currEquip.dmg - target.def);
+            //Frontloaded and Backloaded proc inside the damage window, as seen below.
+            //We've hit. Check for a crit.
+            if (Random.Range(0, 100) <= lck)
+            {
+                Debug.Log("Crit target!");
+                dmgTaken = Random.Range(currEquip.minDmg, currEquip.maxDmg) +currEquip.maxDmg;
+                if (checkMod(5) && currEquip.currentClip == currEquip.clipSize)
+                {
+                    dmgTaken = (int)(dmgTaken * 1.3);
+                    Debug.Log("Frontloaded activated!");
+                }
+                if (checkMod(6) && currEquip.currentClip == 1)
+                {
+                    dmgTaken = (int)(dmgTaken * 1.5);
+                    Debug.Log("Backloaded activated!");
+                }
+                target.hp -= (dmgTaken - target.def);
+                Debug.Log(target.unitName + " took " + dmgTaken + " damage!");
+            }
+            else
+            {
+                Debug.Log("Hit target!");
+                if (checkMod(5) && currEquip.currentClip == currEquip.clipSize)
+                {
+                    dmgTaken = (int)(dmgTaken * 1.3);
+                    Debug.Log("Frontloaded activated!");
+                }
+                if (checkMod(6) && currEquip.currentClip == 1)
+                {
+                    dmgTaken = (int)(dmgTaken * 1.5);
+                    Debug.Log("Backloaded activated!");
+                }
+                dmgTaken = Random.Range(currEquip.minDmg, currEquip.maxDmg);
+                target.hp -= (dmgTaken - target.def);
+                Debug.Log(target.unitName + " took " + dmgTaken + " damage!");
+            }
+            //This is where Stun procs.
+            if (checkMod(2))
+            {
+                if (Random.Range(0, 100) < 25)
+                {
+                    target.stunned = true;
+                    Debug.Log("Enemy was stunned!");
+                }
+            }
+            //This is where Recycle procs.
+            if (checkMod(3))
+            {
+                if (Random.Range(0, 100) < lck)
+                {
+                    refundShot = true;
+                    Debug.Log("Recycle activated!");
+                }
+            }
         }
         else
         {
             Debug.Log("Missed target!");
         }
-        if (!currEquip.isMelee)
+        if (!currEquip.isMelee && !refundShot)
         {
             currEquip.currentClip--;
         }
@@ -421,5 +532,17 @@ public class Unit : MonoBehaviour
                 hasMoved = true;
             }
         }
+    }
+
+    public bool checkMod(int modID)
+    {
+        foreach (int i in currEquip.mods)
+        {
+            if (modID == i)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

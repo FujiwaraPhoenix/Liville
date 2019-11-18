@@ -15,7 +15,7 @@ public class Map : MonoBehaviour
         {
             Controller.c.currMap = this;
         }
-        if (Controller.c.gameMode == 1)
+        if (Controller.c.gameMode == 0)
         {
             grid = new Tile[xBound, yBound];
             for (int i = 0; i < xBound; i++)
@@ -33,24 +33,6 @@ public class Map : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Initialize a grid; test
-        if (Controller.c.gameMode == 0)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                grid = new Tile[10, 10];
-                for (int i = 0; i < 10; i++)
-                {
-                    for (int j = 0; j < 10; j++)
-                    {
-                        grid[i, j] = Instantiate(Controller.c.tilePrefab, new Vector3(i, j, 0f), Quaternion.identity);
-                    }
-                }
-                Controller.c.tileMap = new int[10, 10];
-                Controller.c.unitMap = new int[10, 10];
-                xBound = 10;
-                yBound = 10;
-            }
-        }
+
     }
 }

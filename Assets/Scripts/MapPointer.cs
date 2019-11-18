@@ -34,12 +34,15 @@ public class MapPointer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        moveCursor();
-        if (boundX == 0 || boundY == 0)
+        if (Controller.c.gameMode == 0)
         {
-            updateBounds();
+            moveCursor();
+            if (boundX == 0 || boundY == 0)
+            {
+                updateBounds();
+            }
+            selectTile();
         }
-        selectTile();
     }
 
     public void updateBounds()
