@@ -21,7 +21,8 @@ public class BattleMenuUI : MonoBehaviour
     public Image pImg;
     public Text HPDisplay, statDisplay, gunStatDisplay, modDisplay;
     public int pHP, pMaxHP, pDef, pEva, pSpd, pLck;
-    public int pClipSize, pCurrClip, pDmg, pAcc, pRng, pMod1, pMod2, pMod3;
+    public int pClipSize, pCurrClip, pMinDmg, pMaxDmg, pAcc, pRng, pMod1, pMod2, pMod3;
+    public string pMod1Name, pMod2Name, pMod3Name;
     public bool pIsMelee = false;
     public Image[] pHPPips = new Image[40];
     public Image[] pAmmoPips = new Image[3];
@@ -32,7 +33,8 @@ public class BattleMenuUI : MonoBehaviour
     public Image eImg;
     public Text eHPDisplay, estatDisplay, egunStatDisplay, emodDisplay;
     public int eHP, eMaxHP, eDef, eEva, eSpd, eLck;
-    public int eClipSize, eCurrClip, eDmg, eAcc, eRng, eMod1, eMod2, eMod3;
+    public int eClipSize, eCurrClip, eMinDmg, eMaxDmg, eAcc, eRng, eMod1, eMod2, eMod3;
+    public string eMod1Name, eMod2Name, eMod3Name;
     public bool eIsMelee = false;
     public Image[] eHPPips = new Image[40];
     public Image[] eAmmoPips = new Image[3];
@@ -59,9 +61,12 @@ public class BattleMenuUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        updateMenuPosition();
-        updatePlayerDisplay();
-        updateEnemyDisplay();
+        if (Controller.c.gameMode == 0)
+        {
+            updateMenuPosition();
+            updatePlayerDisplay();
+            updateEnemyDisplay();
+        }
     }
 
     public void updateMenuPosition()
@@ -122,7 +127,8 @@ public class BattleMenuUI : MonoBehaviour
         }
         HPDisplay.text = "HP: " + pHP + "/" + pMaxHP;
         statDisplay.text = "DEF: " + pDef + "\t\t\tEVA: " + pEva + "\nSPD: " + pSpd + "\t\t\tLCK: " + pLck;
-        gunStatDisplay.text = "DMG: " + pDmg + "\nACC: " + pAcc + "\nRNG: " + pRng;
+        gunStatDisplay.text = "DMG: " + pMinDmg + "-" + pMaxDmg + "\nACC: " + pAcc + "\nRNG: " + pRng;
+        modDisplay.text = "Mod 1: " + pMod1Name + "\nMod 2: " + pMod2Name + "\nMod 3: " + pMod3Name;
 
         for (int i = 0; i < 40; i++)
         {
@@ -184,7 +190,8 @@ public class BattleMenuUI : MonoBehaviour
         }
         eHPDisplay.text = "HP: " + eHP + "/" + eMaxHP;
         estatDisplay.text = "DEF: " + eDef + "\t\t\tEVA: " + eEva + "\nSPD: " + eSpd + "\t\t\tLCK: " + eLck;
-        egunStatDisplay.text = "DMG: " + eDmg + "\nACC: " + eAcc + "\nRNG: " + eRng;
+        egunStatDisplay.text = "DMG: " + eMinDmg + "-" + eMaxDmg + "\nACC: " + eAcc + "\nRNG: " + eRng;
+        emodDisplay.text = "Mod 1: " + eMod1Name + "\nMod 2: " + eMod2Name + "\nMod 3: " + eMod3Name;
         for (int i = 0; i < 40; i++)
         {
             if (i < eHP)
@@ -236,13 +243,20 @@ public class BattleMenuUI : MonoBehaviour
 
         //Gun stats
         pGunName.text = playerUnit.currEquip.itemName;
-        pDmg = playerUnit.currEquip.dmg;
+        pMinDmg = playerUnit.currEquip.minDmg;
+        pMaxDmg = playerUnit.currEquip.maxDmg;
         pClipSize = playerUnit.currEquip.clipSize;
         pCurrClip = playerUnit.currEquip.currentClip;
         pAcc = playerUnit.currEquip.accuracy;
         pRng = playerUnit.currEquip.range;
         pIsMelee = playerUnit.currEquip.isMelee;
         //Add mods later.
+        pMod1 = playerUnit.currEquip.mods[0];
+        pMod2 = playerUnit.currEquip.mods[1];
+        pMod3 = playerUnit.currEquip.mods[2];
+        pMod1Name = determineModName(pMod1);
+        pMod2Name = determineModName(pMod2);
+        pMod3Name = determineModName(pMod3);
     }
 
     public void updateEnemyValues(Unit enemyUnit)
@@ -261,13 +275,41 @@ public class BattleMenuUI : MonoBehaviour
 
         //Gun stats
         eGunName.text = enemyUnit.currEquip.itemName;
-        eDmg = enemyUnit.currEquip.dmg;
+        eMinDmg = enemyUnit.currEquip.minDmg;
+        eMaxDmg = enemyUnit.currEquip.maxDmg;
         eClipSize = enemyUnit.currEquip.clipSize;
         eCurrClip = enemyUnit.currEquip.currentClip;
         eAcc = enemyUnit.currEquip.accuracy;
         eRng = enemyUnit.currEquip.range;
         eIsMelee = enemyUnit.currEquip.isMelee;
         //Add mods later.
+        eMod1 = enemyUnit.currEquip.mods[0];
+        eMod2 = enemyUnit.currEquip.mods[1];
+        eMod3 = enemyUnit.currEquip.mods[2];
+        eMod1Name = determineModName(eMod1);
+        eMod2Name = determineModName(eMod2);
+        eMod3Name = determineModName(eMod3);
+    }
+
+    public string determineModName(int modID)
+    {
+        switch (modID)
+        {
+            case 1:
+                return ("Kamikaze");
+            case 2:
+                return ("Stun");
+            case 3:
+                return ("Recycle");
+            case 4:
+                return ("Regeneration");
+            case 5:
+                return ("Frontloaded");
+            case 6:
+                return ("Backloaded");
+            default:
+                return ("--");
+        }
     }
 
 }

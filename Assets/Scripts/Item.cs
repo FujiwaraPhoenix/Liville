@@ -11,7 +11,7 @@ public class Item : MonoBehaviour
     public int itemID = 0;
 
     //Is this a weapon?
-    public int dmg, clipSize, currentClip, accuracy, range;
+    public int minDmg, maxDmg, clipSize, currentClip, accuracy, range;
     public int[] mods = new int[3];
     public bool isMelee = false;
 
@@ -64,9 +64,12 @@ public class Item : MonoBehaviour
 
     public void tempRandGun()
     {
-        dmg = Random.Range(1, 5);
+        minDmg = Random.Range(1, 5);
+        maxDmg = Random.Range(minDmg, minDmg + 5);
         //Maintain clip size for now
         accuracy = Random.Range(75, 100);
         range = Random.Range(2, 4);
+        //For starters, we want a gun mod. A SINGLE gun mod.
+        mods[0] = Random.Range(1, 7);
     }
 }

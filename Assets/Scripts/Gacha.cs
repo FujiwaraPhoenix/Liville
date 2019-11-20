@@ -20,7 +20,7 @@ public class Gacha : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && Controller.c.gameMode == 3)
         {
             generateItem(testA, testB, testC, testD);
         }
@@ -209,7 +209,7 @@ public class Gacha : MonoBehaviour
         else
         {
             //Somehow you failed to get the recipe working. Good job. Spit out failure.
-            Debug.Log("NO results. Oops.");
+            Debug.Log("No results. Oops.");
         }
         
     }
