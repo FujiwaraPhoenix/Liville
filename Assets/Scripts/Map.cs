@@ -7,6 +7,7 @@ public class Map : MonoBehaviour
 {
     public Tile[,] grid;
     public int xBound, yBound;
+    public int[,] tileTypes;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +28,7 @@ public class Map : MonoBehaviour
             }
             Controller.c.tileMap = new int[xBound, yBound];
             Controller.c.unitMap = new int[xBound, yBound];
+            loadMap(1);
         }
     }
 
@@ -34,5 +36,17 @@ public class Map : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void loadMap(int mapNo)
+    {
+        tileTypes = TextFileParser.tfp.readMap(mapNo);
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                grid[i, j].tileType = tileTypes[i, j];
+            }
+        }
     }
 }

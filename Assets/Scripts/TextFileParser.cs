@@ -10,7 +10,6 @@ public class TextFileParser : MonoBehaviour {
     //For storing what we read from a string/output for other scripts.
     public string heldData;
     public string[] itemList;
-    public string[] fileLocs;
 
     //This is temporary for the sake of testing. Wipe this when we start for real.
     private void Start()
@@ -44,5 +43,25 @@ public class TextFileParser : MonoBehaviour {
     void tStringToList()
     {
         itemList = heldData.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
+    }
+
+    //Reads a map.
+    public int[,] readMap(int mapNo)
+    {
+        string mapName = "Assets/Text Files/Map" + mapNo + ".csv";
+        readString(mapName);
+        //heldData is now the map. Let's turn this into a 2D array.
+        itemList = heldData.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
+        int[,] output = new int[10, 10];
+        for (int i = 0; i < 10; i++)
+        {
+            string[] tempList = itemList[i].Split(new string[] { "," }, System.StringSplitOptions.None);
+            for (int j = 0; j < 10; j++)
+            {
+                output[i, j] = int.Parse(tempList[j]);
+            }
+        }
+        //Debug.Log("Map read!");
+        return output;
     }
 }

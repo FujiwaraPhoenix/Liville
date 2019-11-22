@@ -278,6 +278,7 @@ public class Gacha : MonoBehaviour
         Debug.Log(output);
     }
 
+    //Rework this into generating mods properly.
     public string generateMods(int noOfMods)
     {
         string[] mods = TextFileParser.tfp.itemList;
