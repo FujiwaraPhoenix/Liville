@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public int hp, maxhp, spd, eva, def, lck, mvt, unitAllegiance;
+    public int hp, maxhp, spd, eva, def, lck, mvt, unitAllegiance, statusResist;
     public int[] position;
     public int[] lastPosition;
-    public bool isDead, hasMoved, currUnit, stunned;
+    public bool isDead, hasMoved, currUnit, stunned, determination;
     public List<Item> inventory = new List<Item>();
     //Limit inv to 5.
     public Item currEquip;
@@ -107,15 +107,19 @@ public class Unit : MonoBehaviour
     public void showMovement()
     {
         //Disables all tiles that can be moved to. Will be changed to tint later.
-        for (int i = 0; i < pathMap.GetLength(0); i++)
+        if (unitAllegiance == 1)
         {
-            for (int j = 0; j < pathMap.GetLength(1); j++)
+            for (int i = 0; i < pathMap.GetLength(0); i++)
             {
-                if (pathMap[i, j].set == true)
+                for (int j = 0; j < pathMap.GetLength(1); j++)
                 {
-                    if (pathMap[i, j].path.Count >= 0 || pathMap[i, j].currentTile)
+                    if (pathMap[i, j].set == true)
                     {
-                        Controller.c.currMap.grid[i, j].gameObject.SetActive(false);
+                        if (pathMap[i, j].path.Count >= 0 || pathMap[i, j].currentTile)
+                        {
+                            Controller.c.currMap.grid[i, j].indicatorOL.gameObject.SetActive(true);
+                            Controller.c.currMap.grid[i, j].iolsr.sprite = Controller.c.currMap.grid[i, j].indicOLSpriteList[0];
+                        }
                     }
                 }
             }
@@ -125,15 +129,18 @@ public class Unit : MonoBehaviour
     public void hideMovement()
     {
         //Inverse of showMovement.
-        for (int i = 0; i < pathMap.GetLength(0); i++)
+        if (unitAllegiance == 1)
         {
-            for (int j = 0; j < pathMap.GetLength(1); j++)
+            for (int i = 0; i < pathMap.GetLength(0); i++)
             {
-                if (pathMap[i, j].set == true)
+                for (int j = 0; j < pathMap.GetLength(1); j++)
                 {
-                    if (pathMap[i, j].path.Count >= 0)
+                    if (pathMap[i, j].set == true)
                     {
-                        Controller.c.currMap.grid[i, j].gameObject.SetActive(true);
+                        if (pathMap[i, j].path.Count >= 0)
+                        {
+                            Controller.c.currMap.grid[i, j].indicatorOL.gameObject.SetActive(false);
+                        }
                     }
                 }
             }
@@ -150,15 +157,7 @@ public class Unit : MonoBehaviour
             Controller.c.unitMap[position[0], position[1]] = 0;
             hasMoved = true;
             //If kamikaze, boom.
-            bool kamikazeActive = false;
-            foreach (int i in currEquip.mods)
-            {
-                if (i == 1)
-                {
-                    kamikazeActive = true;
-                }
-            }
-            if (kamikazeActive)
+            if (checkMod(3, 2))
             {
                 //Hits in a 3x3 radius around the character.
                 //Check location. We have the position, so we need min/max X/Y.
@@ -191,7 +190,7 @@ public class Unit : MonoBehaviour
                     if (inXRange && inYRange)
                     {
                         u.hp -= (hp - u.def);
-                        Debug.Log(u.unitName + " took " + (hp - u.def) + "damage!");
+                        Debug.Log(u.unitName + " took " + (u.def + u.currEquip.tempDef) + "damage!");
                         u.die();
                     }
                 }
@@ -201,7 +200,7 @@ public class Unit : MonoBehaviour
                     bool inYRange = (position[1] >= minExpY && position[1] <= maxExpY);
                     if (inXRange && inYRange)
                     {
-                        u.hp -= (hp - u.def);
+                        u.hp -= (hp - (u.def+ u.currEquip.tempDef));
                         Debug.Log(u.unitName + " took " + (hp - u.def) + "damage!");
                         u.die();
                     }
@@ -337,7 +336,7 @@ public class Unit : MonoBehaviour
     public void attack()
     {
         //So, we have a target, we have a gun. Use them.
-        int hitChance = currEquip.accuracy - target.eva;
+        int hitChance = currEquip.accuracy - (target.eva + target.currEquip.tempEva);
         int randChance = Random.Range(0, 100);
         int dmgTaken = 0;
         bool refundShot = false;
@@ -345,18 +344,18 @@ public class Unit : MonoBehaviour
         {
             //Frontloaded and Backloaded proc inside the damage window, as seen below.
             //We've hit. Check for a crit.
-            if (Random.Range(0, 100) <= lck)
+            if (Random.Range(0, 100) <= (lck + currEquip.tempLck))
             {
                 Debug.Log("Crit target!");
-                dmgTaken = Random.Range(currEquip.minDmg, currEquip.maxDmg) +currEquip.maxDmg;
-                if (checkMod(5) && currEquip.currentClip == currEquip.clipSize)
+                dmgTaken = Random.Range(currEquip.minDmg + currEquip.tempMinDmg, currEquip.maxDmg + currEquip.tempMaxDmg);
+                if (checkMod(2, 3) && currEquip.currentClip == currEquip.clipSize)
                 {
-                    dmgTaken = (int)(dmgTaken * 1.3);
+                    dmgTaken = (int)(dmgTaken * 1.3f);
                     Debug.Log("Frontloaded activated!");
                 }
-                if (checkMod(6) && currEquip.currentClip == 1)
+                if (checkMod(3, 3) && currEquip.currentClip == 1)
                 {
-                    dmgTaken = (int)(dmgTaken * 1.5);
+                    dmgTaken = (int)(dmgTaken * 1.5f);
                     Debug.Log("Backloaded activated!");
                 }
                 target.hp -= (dmgTaken - target.def);
@@ -365,33 +364,33 @@ public class Unit : MonoBehaviour
             else
             {
                 Debug.Log("Hit target!");
-                if (checkMod(5) && currEquip.currentClip == currEquip.clipSize)
+                if (checkMod(2, 3) && currEquip.currentClip == currEquip.clipSize)
                 {
-                    dmgTaken = (int)(dmgTaken * 1.3);
+                    dmgTaken = (int)(dmgTaken * 1.3f);
                     Debug.Log("Frontloaded activated!");
                 }
-                if (checkMod(6) && currEquip.currentClip == 1)
+                if (checkMod(3, 3) && currEquip.currentClip == 1)
                 {
-                    dmgTaken = (int)(dmgTaken * 1.5);
+                    dmgTaken = (int)(dmgTaken * 1.5f);
                     Debug.Log("Backloaded activated!");
                 }
-                dmgTaken = Random.Range(currEquip.minDmg, currEquip.maxDmg);
-                target.hp -= (dmgTaken - target.def);
+                dmgTaken = Random.Range(currEquip.minDmg + currEquip.tempMinDmg, currEquip.maxDmg + currEquip.tempMaxDmg);
+                target.hp -= (dmgTaken - (target.def + target.currEquip.tempDef));
                 Debug.Log(target.unitName + " took " + dmgTaken + " damage!");
             }
             //This is where Stun procs.
-            if (checkMod(2))
+            if (checkMod(2, 5))
             {
-                if (Random.Range(0, 100) < 25)
+                if (Random.Range(0, 100) < (statusResist + currEquip.tempRes))
                 {
                     target.stunned = true;
                     Debug.Log("Enemy was stunned!");
                 }
             }
             //This is where Recycle procs.
-            if (checkMod(3))
+            if (checkMod(3, 1))
             {
-                if (Random.Range(0, 100) < lck)
+                if (Random.Range(0, 100) < (lck + currEquip.tempLck))
                 {
                     refundShot = true;
                     Debug.Log("Recycle activated!");
@@ -401,6 +400,11 @@ public class Unit : MonoBehaviour
         else
         {
             Debug.Log("Missed target!");
+            if (checkMod(1, 6) && (Random.Range(0, 100) < (lck + currEquip.tempLck) / 2))
+            {
+                determination = true;
+                Debug.Log("Determined activated! Move again!");
+            }
         }
         if (!currEquip.isMelee && !refundShot)
         {
@@ -534,11 +538,11 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public bool checkMod(int modID)
+    public bool checkMod(int modTier, int modID)
     {
-        foreach (int i in currEquip.mods)
+        for (int i = 0; i < 3; i++)
         {
-            if (modID == i)
+            if (currEquip.mods[i, 0] == modTier && currEquip.mods[i, 1] == modID)
             {
                 return true;
             }

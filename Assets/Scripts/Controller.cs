@@ -77,7 +77,7 @@ public class Controller : MonoBehaviour
                 {
                     if (!u.hasMoved)
                     {
-                        allUnitsMoved = !allUnitsMoved;
+                        allUnitsMoved = false;
                     }
                 }
             }
@@ -122,7 +122,7 @@ public class Controller : MonoBehaviour
                         u.hasMoved = false;
                         u.stunned = false;
                         //Regeneration procs at the start of turn.
-                        if (u.checkMod(4))
+                        if (u.checkMod(2, 4))
                         {
                             if (u.hp < u.maxhp)
                             {
@@ -166,6 +166,16 @@ public class Controller : MonoBehaviour
         if (enemiesDead && !saidWL)
         {
             Debug.Log("Victory!");
+            foreach (Unit u in playerUnits)
+            {
+                if (u.checkMod(1, 7))
+                {
+                    materialAGain = (int)(materialAGain * 1.2f);
+                    materialBGain = (int)(materialBGain * 1.2f);
+                    materialCGain = (int)(materialCGain * 1.2f);
+                    materialDGain = (int)(materialDGain * 1.2f);
+                }
+            }
             InvManager.im.materialA += materialAGain;
             InvManager.im.materialB += materialBGain;
             InvManager.im.materialC += materialCGain;

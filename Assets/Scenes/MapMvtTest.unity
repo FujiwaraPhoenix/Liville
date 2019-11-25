@@ -2422,15 +2422,35 @@ PrefabInstance:
       propertyPath: unitName
       value: Lord
       objectReference: {fileID: 0}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: position.Array.data[0]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: position.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: lastPosition.Array.data[0]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: lastPosition.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
@@ -3016,7 +3036,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 56a1e5da8075195439cb9e658092d6f3, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.27450982}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5953,12 +5973,12 @@ PrefabInstance:
     - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: position.Array.data[0]
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: lastPosition.Array.data[0]
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
@@ -5971,15 +5991,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: e5290a262e7021941b0b9bdf2ff124fa,
         type: 3}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: position.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: lastPosition.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
@@ -9897,10 +9927,16 @@ MonoBehaviour:
   currentClip: 3
   accuracy: 85
   range: 1
-  mods: 000000000000000000000000000000000000000000000000
   isMelee: 1
   healAmt: 0
   itemName: ???
+  tempSpd: 0
+  tempDef: 0
+  tempEva: 0
+  tempLck: 0
+  tempRes: 0
+  tempMinDmg: 0
+  tempMaxDmg: 0
   randomized: 1
 --- !u!4 &1946752659
 Transform:
@@ -10783,9 +10819,14 @@ MonoBehaviour:
   pMaxDmg: 0
   pAcc: 0
   pRng: 0
-  pMod1: 0
-  pMod2: 0
-  pMod3: 0
+  pTempSpd: 0
+  pTempDef: 0
+  pTempEva: 0
+  pTempLck: 0
+  pTempRng: 0
+  pTempRes: 0
+  pTempMinDmg: 0
+  pTempMaxDmg: 0
   pMod1Name: 
   pMod2Name: 
   pMod3Name: 
@@ -10855,9 +10896,14 @@ MonoBehaviour:
   eMaxDmg: 0
   eAcc: 0
   eRng: 0
-  eMod1: 0
-  eMod2: 0
-  eMod3: 0
+  eTempSpd: 0
+  eTempDef: 0
+  eTempEva: 0
+  eTempLck: 0
+  eTempRng: 0
+  eTempRes: 0
+  eTempMinDmg: 0
+  eTempMaxDmg: 0
   eMod1Name: 
   eMod2Name: 
   eMod3Name: 
@@ -10938,7 +10984,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heldData: 
   itemList: []
-  fileLocs: []
 --- !u!4 &2109613781
 Transform:
   m_ObjectHideFlags: 0
@@ -11090,12 +11135,12 @@ PrefabInstance:
     - target: {fileID: 7436398899150319326, guid: 1c6322dc3c0e5a54495d4b509eb5ac6a,
         type: 3}
       propertyPath: position.Array.data[0]
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7436398899150319326, guid: 1c6322dc3c0e5a54495d4b509eb5ac6a,
         type: 3}
       propertyPath: position.Array.data[1]
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7436398899150319326, guid: 1c6322dc3c0e5a54495d4b509eb5ac6a,
         type: 3}
@@ -11126,12 +11171,12 @@ PrefabInstance:
     - target: {fileID: 5462478749336140127, guid: 1c6322dc3c0e5a54495d4b509eb5ac6a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5462478749336140127, guid: 1c6322dc3c0e5a54495d4b509eb5ac6a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5462478749336140127, guid: 1c6322dc3c0e5a54495d4b509eb5ac6a,
         type: 3}

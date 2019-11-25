@@ -231,8 +231,12 @@ public class MapPointer : MonoBehaviour
                 //At this point, you are hovering over a target. So just, like attack them?
                 targetUnit.target = targetUnitTargetList[currentTargetIndex];
                 targetUnit.attack();
+                if (!targetUnit.determination)
+                {
+                    targetUnit.hasMoved = true;
+                }
+                targetUnit.determination = false;
                 //Then, as usual, run the wait stuff.
-                targetUnit.hasMoved = true;
                 targetUnit.currUnit = false;
                 //Reset pathmap.
                 targetUnit.clearPaths();
