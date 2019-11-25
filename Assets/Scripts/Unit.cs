@@ -234,7 +234,7 @@ public class Unit : MonoBehaviour
         if (unitAllegiance == 2) 
         {
             //This is an enemy unit; search for players BEFORE moving.
-            foreach (Unit u in Controller.c.playerUnits)
+            /*foreach (Unit u in Controller.c.playerUnits)
             {
                 if (u != null && !u.isDead)
                 {
@@ -244,7 +244,24 @@ public class Unit : MonoBehaviour
                         possibleTargets.Add(u);
                     }
                 }
+            }*/
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    if (pathMap[i, j].set)
+                    {
+                        foreach (Unit u in Controller.c.playerUnits)
+                        {
+                            if (u.position[0] == i && u.position[1] == j)
+                            {
+                                possibleTargets.Add(u);
+                            }
+                        }
+                    }
+                }
             }
+
             //PossibleTargets is now populated. Let's find a target.
             //If the list is empty (no units in range)
             if (possibleTargets.Count == 0)

@@ -135,6 +135,11 @@ public class Controller : MonoBehaviour
                 Debug.Log("Enemy Turn: Over. Player Phase Begins.");
             }
         }
+        GameObject[] foundPaths = GameObject.FindGameObjectsWithTag("Path");
+        foreach (GameObject path in foundPaths)
+        {
+            Destroy(path.gameObject); 
+        }
     }
 
     public void forceETurnEnd()

@@ -26,7 +26,6 @@ public class Path : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     public string toString()
@@ -50,6 +49,6 @@ public class Path : MonoBehaviour
 
     public void suicide()
     {
-        Destroy(this.gameObject);
+            Destroy(this.gameObject);
     }
 }

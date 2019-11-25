@@ -70,7 +70,7 @@ public class Item : MonoBehaviour
         minDmg = Random.Range(2, 5);
         maxDmg = Random.Range(minDmg, minDmg + 5);
         //Maintain clip size for now
-        accuracy = Random.Range(75, 100);
+        accuracy = Random.Range(65, 100);
         range = Random.Range(2, 4);
         //Mods are set up in a 2d array, 3x2. First number is the mod rarity, second is the mod ID of that given rarity.
         mods[0,0] = Random.Range(1, 4);
