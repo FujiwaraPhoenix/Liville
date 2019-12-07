@@ -29,11 +29,7 @@ public class Item : MonoBehaviour
 
     void Start()
     {
-        if (!randomized)
-        {
-            tempRandGun();
-            randomized = true;
-        }
+
     }
 
     public bool useItem(Unit user)
@@ -65,7 +61,7 @@ public class Item : MonoBehaviour
         return false;
     }
 
-    public void tempRandGun()
+    /*public void tempRandGun()
     {
         minDmg = Random.Range(2, 5);
         maxDmg = Random.Range(minDmg, minDmg + 5);
@@ -268,5 +264,5 @@ public class Item : MonoBehaviour
                     break;
             }
         }
-    }
+    }*/
 }

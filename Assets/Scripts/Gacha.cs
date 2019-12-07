@@ -143,9 +143,7 @@ public class Gacha : MonoBehaviour
     public void generateItem(int matA, int matB, int matC, int matD)
     {
         determinePools(matA, matB, matC, matD);
-
-        Item newItem = null;
-
+        
         //What kind of gun are we making?
         int gunType = -1;
         bool validSet = false;
@@ -216,54 +214,60 @@ public class Gacha : MonoBehaviour
 
     public void generateGun(int gunType, int gunRarity)
     {
-        /*Item newItem = null;
-        newItem = Instantiate(template, transform.position, Quaternion.identity);
+        Item newItem = Instantiate(template, transform.position, Quaternion.identity);
         //This is always a gun.
-        newItem.itemID = 0;*/
+        newItem.itemID = 0;
 
         //Placeholder stuff; output string.
         string output = "Result: ";
         string outputRarity = "";
         string outputType = "";
         string mods = "";
-        switch (gunRarity)
-        {
-            case 1:
-                outputRarity = "Common ";
-                mods = generateMods(1);
-                break;
-            case 2:
-                outputRarity = "Uncommon ";
-                mods = generateMods(2);
-                break;
-            case 3:
-                outputRarity = "Rare ";
-                mods = generateMods(3);
-                break;
-            case 4:
-                outputRarity = "Super Rare ";
-                mods = generateMods(4);
-                break;
-            case 5:
-                outputRarity = "Unique ";
-                break;
-        }
+        string[] modList = null;
         switch (gunType)
         {
             case 0:
                 outputType = "Assault Rifle";
+                generateAR(gunRarity, newItem);
                 break;
             case 1:
                 outputType = "Shotgun";
+                generateSG(gunRarity, newItem);
                 break;
             case 2:
                 outputType = "Handgun";
+                generateHG(gunRarity, newItem);
                 break;
             case 3:
                 outputType = "Sniper Rifle";
+                generateRF(gunRarity, newItem);
                 break;
             case 4:
                 outputType = "Sword";
+                generateSWD(gunRarity, newItem);
+                break;
+        }
+        //TODO: Add mod output into... Well, the output. Again.
+        switch (gunRarity)
+        {
+            case 1:
+                outputRarity = "Common ";
+                generateMods(1, modList, newItem.isMelee, newItem);
+                break;
+            case 2:
+                outputRarity = "Uncommon ";
+                generateMods(2, modList, newItem.isMelee, newItem);
+                break;
+            case 3:
+                outputRarity = "Rare ";
+                generateMods(3, modList, newItem.isMelee, newItem);
+                break;
+            case 4:
+                outputRarity = "Super Rare ";
+                generateMods(4, modList, newItem.isMelee, newItem);
+                break;
+            case 5:
+                outputRarity = "Unique ";
                 break;
         }
         //Assemble output:
@@ -276,19 +280,642 @@ public class Gacha : MonoBehaviour
             output += outputRarity + outputType;
         }
         Debug.Log(output);
+        for (int i = 0; i < newItem.mods.Length / 2; i++)
+        {
+            Debug.Log("Mod " + (i + 1) + ": " + newItem.mods[i, 0] + "," + newItem.mods[i, 1]);
+        }
     }
 
-    //Rework this into generating mods properly.
-    public string generateMods(int noOfMods)
+    //This generates the mods
+    //TODO: Finish this.
+    public void generateMods(int weaponRarity, string[] modList, bool isMelee, Item moddedItem)
     {
-        string[] mods = TextFileParser.tfp.itemList;
-        string modOutput = "";
-        for (int i = 0; i < noOfMods; i++)
+        int modCountChance = Random.Range(0, 100);
+        int modCount = 0;
+        switch (weaponRarity)
         {
-            int randMod = Random.Range(0, mods.Length);
-            modOutput += mods[randMod] + ", ";
+            //Here, we determine the number of mods to be generated on a given gun.
+            case 1:
+                //Common gun.
+                if (modCountChance < 30)
+                {
+                    modCount = 0;
+                }
+                else if (modCountChance < 80)
+                {
+                    modCount = 1;
+                }
+                else if (modCountChance < 90)
+                {
+                    modCount = 2;
+                }
+                else if (modCountChance < 99)
+                {
+                    modCount = 3;
+                }
+                else
+                {
+                    modCount = 4;
+                }
+                break;
+            case 2:
+                //Uncommon gun.
+                if (modCountChance < 10)
+                {
+                    modCount = 0;
+                }
+                else if (modCountChance < 45)
+                {
+                    modCount = 1;
+                }
+                else if (modCountChance < 74)
+                {
+                    modCount = 2;
+                }
+                else if (modCountChance < 90)
+                {
+                    modCount = 3;
+                }
+                else
+                {
+                    modCount = 4;
+                }
+                break;
+
+            case 3:
+                //Rare gun.
+                if (modCountChance < 5)
+                {
+                    modCount = 0;
+                }
+                else if (modCountChance < 35)
+                {
+                    modCount = 1;
+                }
+                else if (modCountChance < 75)
+                {
+                    modCount = 2;
+                }
+                else if (modCountChance < 90)
+                {
+                    modCount = 3;
+                }
+                else
+                {
+                    modCount = 4;
+                }
+                break;
+
+            case 4:
+                //Super rare gun.
+                if (modCountChance < 5)
+                {
+                    modCount = 0;
+                }
+                else if (modCountChance < 25)
+                {
+                    modCount = 1;
+                }
+                else if (modCountChance < 60)
+                {
+                    modCount = 2;
+                }
+                else if (modCountChance < 80)
+                {
+                    modCount = 3;
+                }
+                else
+                {
+                    modCount = 4;
+                }
+                break;
         }
-        modOutput = modOutput.Substring(0, modOutput.Length - 2);
-        return modOutput;
+
+        //Now that we have a number of the mods that we need to make... Well, let's generate them.
+        if (modCount != 0)
+        {
+            int[,] modsToAdd = new int[modCount, 2];
+            for (int i = 0; i < modCount; i++)
+            {
+                bool foundMod = false;
+                int modTier = 0;
+                int modIndex = -1;
+                while (!foundMod)
+                {
+                    int modRarity = Random.Range(0, 100);
+                    //First, we generate the mod tier.
+                    switch (weaponRarity)
+                    {
+                        case 1:
+                            if (modRarity < 75)
+                            {
+                                modTier = 1;
+                            }
+                            else if (modRarity < 90)
+                            {
+                                modTier = 2;
+                            }
+                            else if (modRarity < 99)
+                            {
+                                modTier = 3;
+                            }
+                            else
+                            {
+                                modTier = 4;
+                            }
+                            break;
+                        case 2:
+                            if (modRarity < 55)
+                            {
+                                modTier = 1;
+                            }
+                            else if (modRarity < 80)
+                            {
+                                modTier = 2;
+                            }
+                            else if (modRarity < 95)
+                            {
+                                modTier = 3;
+                            }
+                            else
+                            {
+                                modTier = 4;
+                            }
+                            break;
+                        case 3:
+                            if (modRarity < 50)
+                            {
+                                modTier = 1;
+                            }
+                            else if (modRarity < 75)
+                            {
+                                modTier = 2;
+                            }
+                            else if (modRarity < 90)
+                            {
+                                modTier = 3;
+                            }
+                            else
+                            {
+                                modTier = 4;
+                            }
+                            break;
+                        case 4:
+                            if (modRarity < 40)
+                            {
+                                modTier = 1;
+                            }
+                            else if (modRarity < 65)
+                            {
+                                modTier = 2;
+                            }
+                            else if (modRarity < 85)
+                            {
+                                modTier = 3;
+                            }
+                            else
+                            {
+                                modTier = 4;
+                            }
+                            break;
+                    }
+                    //Now we generate the mod proper.
+                    switch (modTier)
+                    {
+                        case 1:
+                            modIndex = Random.Range(1, 9);
+                            if (!isMelee && modIndex != 8)
+                            {
+                                foundMod = true;
+                            }
+                            break;
+                        case 2:
+                            modIndex = Random.Range(1, 8);
+                            if (!isMelee && modIndex != 3 && modIndex != 6 && modIndex != 7)
+                            {
+                                foundMod = true;
+                            }
+                            break;
+                        case 3:
+                            modIndex = Random.Range(1, 12);
+                            if (!isMelee && modIndex != 1 && modIndex != 3 && modIndex != 10)
+                            {
+                                foundMod = true;
+                            }
+                            break;
+                        case 4:
+                            //No mods for T4 yet, so.
+                            break;
+                    }
+                }
+                modsToAdd[i, 0] = modTier;
+                modsToAdd[i, 1] = modIndex;
+            }
+            moddedItem.mods = modsToAdd;
+        }
+        Debug.Log("Mods: " + modCount);
     }
+
+    //The proceeding 5 functions are for the stat generation of guns.
+
+    public void generateAR(int rarityValue, Item moddedItem)
+    {
+        switch (rarityValue)
+        {
+            case 1:
+                //Common
+                moddedItem.minDmg = Random.Range(1, 3);
+                moddedItem.maxDmg = Random.Range(3, 5);
+                moddedItem.range = Random.Range(1, 4);
+                moddedItem.accuracy = Random.Range(50, 81);
+                moddedItem.clipSize = Random.Range(2, 4);
+                break;
+            case 2:
+                //Uncommon
+                moddedItem.minDmg = Random.Range(1, 3);
+                moddedItem.maxDmg = Random.Range(3, 6);
+                moddedItem.range = Random.Range(2, 4);
+                moddedItem.accuracy = Random.Range(65, 86);
+                moddedItem.clipSize = 3;
+                break;
+            case 3:
+                //Rare
+                moddedItem.minDmg = Random.Range(2, 4);
+                moddedItem.maxDmg = Random.Range(3, 6);
+                moddedItem.range = Random.Range(2, 4);
+                moddedItem.accuracy = Random.Range(70, 91);
+                moddedItem.clipSize = 3;
+                break;
+            case 4:
+                //Super Rare
+                moddedItem.minDmg = 3;
+                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.range = Random.Range(2, 5);
+                moddedItem.accuracy = Random.Range(75, 91);
+                moddedItem.clipSize = Random.Range(3, 5);
+                break;
+        }
+        moddedItem.currentClip = moddedItem.clipSize;
+    }
+    public void generateSG(int rarityValue, Item moddedItem)
+    {
+        switch (rarityValue)
+        {
+            case 1:
+                //Common
+                moddedItem.minDmg = Random.Range(2, 3);
+                moddedItem.maxDmg = Random.Range(3, 6);
+                moddedItem.range = 1;
+                moddedItem.accuracy = Random.Range(50, 71);
+                moddedItem.clipSize = Random.Range(2, 4);
+                break;
+            case 2:
+                //Uncommon
+                moddedItem.minDmg = 2;
+                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.range = Random.Range(1, 3);
+                moddedItem.accuracy = Random.Range(65, 76);
+                moddedItem.clipSize = 3;
+                break;
+            case 3:
+                //Rare
+                moddedItem.minDmg = 2;
+                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.range = 2;
+                moddedItem.accuracy = Random.Range(70, 81);
+                moddedItem.clipSize = 2;
+                break;
+            case 4:
+                //Super Rare
+                moddedItem.minDmg = 3;
+                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.range = Random.Range(2, 4);
+                moddedItem.accuracy = Random.Range(75, 86);
+                moddedItem.clipSize = Random.Range(3, 5);
+                break;
+        }
+        moddedItem.currentClip = moddedItem.clipSize;
+    }
+    public void generateHG(int rarityValue, Item moddedItem)
+    {
+        switch (rarityValue)
+        {
+            case 1:
+                //Common
+                moddedItem.minDmg = Random.Range(1, 4);
+                moddedItem.maxDmg = Random.Range(2, 5);
+                moddedItem.range = Random.Range(1, 4);
+                moddedItem.accuracy = Random.Range(50, 81);
+                moddedItem.clipSize = Random.Range(3, 5);
+                break;
+            case 2:
+                //Uncommon
+                moddedItem.minDmg = Random.Range(1, 4);
+                moddedItem.maxDmg = Random.Range(2, 5);
+                moddedItem.range = Random.Range(2, 4);
+                moddedItem.accuracy = Random.Range(65, 86);
+                moddedItem.clipSize = Random.Range(3, 5);
+                break;
+            case 3:
+                //Rare
+                moddedItem.minDmg = Random.Range(2, 4);
+                moddedItem.maxDmg = Random.Range(3, 5);
+                moddedItem.range = Random.Range(2, 4);
+                moddedItem.accuracy = Random.Range(70, 91);
+                moddedItem.clipSize = 4;
+                break;
+            case 4:
+                //Super Rare
+                moddedItem.minDmg = Random.Range(2, 4);
+                moddedItem.maxDmg = Random.Range(3, 6);
+                moddedItem.range = Random.Range(2, 5);
+                moddedItem.accuracy = Random.Range(75, 91);
+                moddedItem.clipSize = Random.Range(4, 6);
+                break;
+        }
+        moddedItem.currentClip = moddedItem.clipSize;
+    }
+    public void generateRF(int rarityValue, Item moddedItem)
+    {
+        switch (rarityValue)
+        {
+            case 1:
+                //Common
+                moddedItem.minDmg = Random.Range(2, 4);
+                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.range = 3;
+                moddedItem.accuracy = Random.Range(50, 81);
+                moddedItem.clipSize = Random.Range(1, 3);
+                break;
+            case 2:
+                //Uncommon
+                moddedItem.minDmg = Random.Range(2, 4);
+                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.range = Random.Range(3, 5);
+                moddedItem.accuracy = Random.Range(65, 86);
+                moddedItem.clipSize = Random.Range(1, 3);
+                break;
+            case 3:
+                //Rare
+                moddedItem.minDmg = 3;
+                moddedItem.maxDmg = Random.Range(4, 7);
+                moddedItem.range = Random.Range(3, 6);
+                moddedItem.accuracy = Random.Range(70, 91);
+                moddedItem.clipSize = 2;
+                break;
+            case 4:
+                //Super Rare
+                moddedItem.minDmg = 3;
+                moddedItem.maxDmg = Random.Range(5, 7);
+                moddedItem.range = Random.Range(4, 6);
+                moddedItem.accuracy = Random.Range(75, 91);
+                moddedItem.clipSize = 2;
+                break;
+        }
+        moddedItem.currentClip = moddedItem.clipSize;
+    }
+    public void generateSWD(int rarityValue, Item moddedItem)
+    {
+        switch (rarityValue)
+        {
+            case 1:
+                //Common
+                moddedItem.minDmg = Random.Range(2, 4);
+                moddedItem.maxDmg = Random.Range(3, 6);
+                moddedItem.range = 1;
+                moddedItem.accuracy = Random.Range(50, 71);
+                break;
+            case 2:
+                //Uncommon
+                moddedItem.minDmg = 2;
+                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.range = 1;
+                moddedItem.accuracy = Random.Range(65, 76);
+                break;
+            case 3:
+                //Rare
+                moddedItem.minDmg = 2;
+                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.range = 1;
+                moddedItem.accuracy = Random.Range(70, 81);
+                break;
+            case 4:
+                //Super Rare
+                moddedItem.minDmg = 3;
+                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.range = Random.Range(1, 3);
+                moddedItem.accuracy = Random.Range(75, 86);
+                break;
+        }
+        moddedItem.currentClip = 1;
+        moddedItem.clipSize = 1;
+        moddedItem.isMelee = true;
+    }
+
+
+
+    /*public void generateGun()
+    {
+        minDmg = Random.Range(2, 5);
+        maxDmg = Random.Range(minDmg, minDmg + 5);
+        //Maintain clip size for now
+        accuracy = Random.Range(75, 100);
+        range = Random.Range(2, 4);
+        //Mods are set up in a 2d array, 3x2. First number is the mod rarity, second is the mod ID of that given rarity.
+        mods[0,0] = Random.Range(1, 4);
+        switch (mods[0, 0])
+        {
+            case 1:
+                mods[0, 1] = Random.Range(1, 9);
+                switch (mods[0, 1])
+                {
+                    case 1:
+                        //Fleetfoot: Spd+
+                        tempSpd = 5;
+                        break;
+                    case 2:
+                        //Ironclad: Def+
+                        tempDef = 5;
+                        break;
+                    case 3:
+                        //Aware: Eva+
+                        tempEva = 5;
+                        break;
+                    case 4:
+                        //Lucky: Lck+
+                        tempLck = 5;
+                        break;
+                    case 5:
+                        //Resistant: Res+
+                        tempRes = 10;
+                        break;
+                    case 8:
+                        //Ammo Capacity+: 1.5x Cap
+                        clipSize = (int) (clipSize * 1.5f);
+                        currentClip = clipSize;
+                        break;
+                }
+                break;
+            case 2:
+                mods[0, 1] = Random.Range(1, 8);
+                switch (mods[0, 1])
+                {
+                    case 1:
+                        //Brutal: Dmg+
+                        tempMinDmg = 5;
+                        tempMaxDmg = 5;
+                        break;
+                    case 2:
+                        //Scope: Range+
+                        range += 1;
+                        break;
+                    case 6:
+                        //Ammo Capacity++: 2x Cap
+                        clipSize = (int)(clipSize * 2f);
+                        currentClip = clipSize;
+                        break;
+                    case 7:
+                        //Ammo Capacity-: .75x Cap
+                        clipSize = (int)(clipSize * .75f);
+                        currentClip = clipSize;
+                        break;
+                }
+                break;
+            case 3:
+                mods[0, 1] = Random.Range(1, 12);
+                switch (mods[0, 1])
+                {
+                    case 4:
+                        //Gentle: Dmg-
+                        tempMinDmg = -2;
+                        tempMaxDmg = -2;
+                        break;
+                    case 5:
+                        //Flatfoot: Spd-
+                        tempSpd = -2;
+                        break;
+                    case 6:
+                        //Paperclad: Def-
+                        tempDef = -2;
+                        break;
+                    case 7:
+                        //Unaware: Eva-
+                        tempEva = -2;
+                        break;
+                    case 8:
+                        //Unlucky: Lck-
+                        tempLck = -2;
+                        break;
+                    case 9:
+                        //Uncalibrated: Rng-
+                        range += -1;
+                        break;
+                    case 10:
+                        //Ammo Capacity--: .5x Cap
+                        clipSize = (int)(clipSize * .5f);
+                        currentClip = clipSize;
+                        break;
+                }
+                break;
+        }
+        if (Random.Range(0,100) < 5)
+        {
+            mods[1, 0] = Random.Range(1, 4);
+            switch (mods[1, 0])
+            {
+                case 1:
+                    mods[1, 1] = Random.Range(1, 9);
+                    switch (mods[1, 1])
+                    {
+                        case 1:
+                            //Fleetfoot: Spd+
+                            tempSpd = 5;
+                            break;
+                        case 2:
+                            //Ironclad: Def+
+                            tempDef = 5;
+                            break;
+                        case 3:
+                            //Aware: Eva+
+                            tempEva = 5;
+                            break;
+                        case 4:
+                            //Lucky: Lck+
+                            tempLck = 5;
+                            break;
+                        case 5:
+                            //Resistant: Res+
+                            tempRes = 10;
+                            break;
+                        case 8:
+                            //Ammo Capacity+: 1.5x Cap
+                            clipSize = (int)(clipSize * 1.5f);
+                            currentClip = clipSize;
+                            break;
+                    }
+                    break;
+                case 2:
+                    mods[1, 1] = Random.Range(1, 8);
+                    switch (mods[1, 1])
+                    {
+                        case 1:
+                            //Brutal: Dmg+
+                            tempMinDmg = 5;
+                            tempMaxDmg = 5;
+                            break;
+                        case 2:
+                            //Scope: Range+
+                            range += 1;
+                            break;
+                        case 6:
+                            //Ammo Capacity++: 2x Cap
+                            clipSize = (int)(clipSize * 2f);
+                            currentClip = clipSize;
+                            break;
+                        case 7:
+                            //Ammo Capacity-: .75x Cap
+                            clipSize = (int)(clipSize * .75f);
+                            currentClip = clipSize;
+                            break;
+                    }
+                    break;
+                case 3:
+                    mods[1, 1] = Random.Range(1, 12);
+                    switch (mods[1, 1])
+                    {
+                        case 4:
+                            //Gentle: Dmg-
+                            tempMinDmg = -2;
+                            tempMaxDmg = -2;
+                            break;
+                        case 5:
+                            //Flatfoot: Spd-
+                            tempSpd = -2;
+                            break;
+                        case 6:
+                            //Paperclad: Def-
+                            tempDef = -2;
+                            break;
+                        case 7:
+                            //Unaware: Eva-
+                            tempEva = -2;
+                            break;
+                        case 8:
+                            //Unlucky: Lck-
+                            tempLck = -2;
+                            break;
+                        case 9:
+                            //Uncalibrated: Rng-
+                            range += -1;
+                            break;
+                        case 10:
+                            //Ammo Capacity--: .5x Cap
+                            clipSize = (int)(clipSize * .5f);
+                            currentClip = clipSize;
+                            break;
+                    }
+                    break;
+            }
+        }
+    }*/
 }
