@@ -7,13 +7,14 @@ public class GachaUI : MonoBehaviour
 {
     public static GachaUI gaui;
 
-    public Image menuPointer;
-    public GameObject inputValues;
+    public GameObject menuPointer;
     public bool modifyingValue = false;
     //Values are from 0 -> 3, then 4 is 'go'.
     public int currentModdedValue = 0;
     public int matAVal, matBVal, matCVal, matDVal;
     public Text matADisplay, matBDisplay, matCDisplay, matDDisplay;
+    public Gacha generator;
+    public Sprite selectDefault, selectChosen, selectUp, selectDown;
 
     // Start is called before the first frame update
     void Start()
