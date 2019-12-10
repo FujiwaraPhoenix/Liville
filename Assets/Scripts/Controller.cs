@@ -18,8 +18,10 @@ public class Controller : MonoBehaviour
     public bool playerTurn = true;
     public bool saidWL = false;
     public GameObject grid;
-    //0 is battle map; 1 is overworld; 2 is party select; 3 is gacha.
+    //0 is overworld menu; 1 is map select; 2 is party select; 3 is gacha; 4 is battle screen.
     public int gameMode = 0;
+
+    public bool missionSelected = false;
 
     //For testing purposes.
     public bool switchGameMode = false;

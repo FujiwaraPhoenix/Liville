@@ -14,7 +14,7 @@ public class TextFileParser : MonoBehaviour {
     //This is temporary for the sake of testing. Wipe this when we start for real.
     private void Start()
     {
-        readString("Assets/Text Files/ModNames.txt");
+        readMissionData(0);
     }
 
     void Awake()
@@ -64,4 +64,49 @@ public class TextFileParser : MonoBehaviour {
         //Debug.Log("Map read!");
         return output;
     }
+
+    //Reads a text file for information on a given mission.
+    public void readMissionData(int missionID)
+    {
+        //We're splitting the data with new lines. It might get a bit painful to read, but that's a sacrifice I'm willing to take.
+        string missionName = "Assets/Text Files/Mission" + missionID + ".txt";
+        readString(missionName);
+        //heldData is now what we just read from the mission file. Let's split that.
+        itemList = heldData.Split(new string[] { "\n", "\r\n" }, System.StringSplitOptions.None);
+        //So, in order; string 0 is the map ID.
+        //String 1 values are the possible starting locations of the player units.
+        //String 2 are the values of the gacha resources to be obtained upon mission completion.
+        //String 3 is the enemy count. Slightly useful.
+        //String 4 and on are the enemy variants, followed by coordinates, then stats.
+        //These stats are, in order: HP, Speed, Evasion, Def, Luck, Mvt, Status Resist.
+        //Weapon stats: min dmg, max dmg, clip size, accuracy, range, heal amount, temp spd/def/eva/lck/res/min/max (if needed).
+    }
+
+    public void loadResources()
+    {
+        string[] tempHolder = itemList[2].Split(new string[] { "," }, System.StringSplitOptions.None);
+        int[] convertedValues = new int[4];
+        for (int i = 0; i < 4; i++)
+        {
+            convertedValues[i] = int.Parse(tempHolder[i]);
+        }
+        Controller.c.materialAGain = convertedValues[0];
+        Controller.c.materialBGain = convertedValues[1];
+        Controller.c.materialCGain = convertedValues[2];
+        Controller.c.materialDGain = convertedValues[3];
+    }
+
+    public int[,] availablePlayerCoords(int playerCount)
+    {
+        string[] tempHolder = itemList[1].Split(new string[] { " " }, System.StringSplitOptions.None);
+        int[,] output = new int[playerCount, 2];
+        for (int i = 0; i < tempHolder.Length; i++)
+        {
+            string[] tempHolder2 = tempHolder[i].Split(new string[] { "," }, System.StringSplitOptions.None);
+            output[i, 0] = int.Parse(tempHolder2[0]);
+            output[i, 1] = int.Parse(tempHolder2[1]);
+        }
+        return output;
+    }
+
 }

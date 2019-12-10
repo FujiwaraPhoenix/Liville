@@ -1,57 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &493972372447466838
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8588625124420167800}
-  - component: {fileID: 256313210840973955}
-  m_Layer: 0
-  m_Name: TempGun
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8588625124420167800
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 493972372447466838}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 5357607185979830121}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &256313210840973955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 493972372447466838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed03916083aab664a950077f802168c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemID: 0
-  dmg: 2
-  clipSize: 3
-  currentClip: 3
-  accuracy: 85
-  range: 2
-  mods: 000000000000000000000000000000000000000000000000
-  healAmt: 0
-  itemName: Prometheus
 --- !u!1 &8790499242838739755
 GameObject:
   m_ObjectHideFlags: 0
@@ -80,8 +28,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
-  m_Children:
-  - {fileID: 8588625124420167800}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -105,13 +52,16 @@ MonoBehaviour:
   lck: 0
   mvt: 3
   unitAllegiance: 1
+  statusResist: 0
   position: 0000000000000000
   lastPosition: 0000000000000000
   isDead: 0
   hasMoved: 0
   currUnit: 0
+  stunned: 0
+  determination: 0
   inventory: []
-  currEquip: {fileID: 256313210840973955}
+  currEquip: {fileID: 0}
   p: {fileID: 7859531966707666669, guid: 61c715a91f59ac8459d5069af83e19b6, type: 3}
   target: {fileID: 0}
   possibleTargets:

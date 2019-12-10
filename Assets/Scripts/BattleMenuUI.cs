@@ -65,7 +65,7 @@ public class BattleMenuUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Controller.c.gameMode == 0)
+        if (Controller.c.gameMode == 4)
         {
             updateMenuPosition();
             updatePlayerDisplay();

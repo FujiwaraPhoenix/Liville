@@ -38,9 +38,12 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Controller.c.unitMap[position[0], position[1]] != unitAllegiance)
+        if (Controller.c.gameMode == 4)
         {
-            Controller.c.unitMap[position[0], position[1]] = unitAllegiance;
+            if (Controller.c.unitMap[position[0], position[1]] != unitAllegiance)
+            {
+                Controller.c.unitMap[position[0], position[1]] = unitAllegiance;
+            }
         }
     }
 

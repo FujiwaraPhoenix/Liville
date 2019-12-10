@@ -34,7 +34,7 @@ public class MapPointer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Controller.c.gameMode == 0)
+        if (Controller.c.gameMode == 4)
         {
             moveCursor();
             if (boundX == 0 || boundY == 0)
