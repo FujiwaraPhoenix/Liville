@@ -38,7 +38,7 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Controller.c.gameMode == 4)
+        if (Controller.c.gameMode == 4 && Controller.c.currMap.loaded)
         {
             if (Controller.c.unitMap[position[0], position[1]] != unitAllegiance)
             {
@@ -551,5 +551,35 @@ public class Unit : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public void setUnitStats(int newHP, int newSpd, int newEva, int newDef, int newLck, int newMvt, int newRes)
+    {
+        hp = newHP;
+        maxhp = newHP;
+        spd = newSpd;
+        eva = newEva;
+        def = newDef;
+        lck = newLck;
+        mvt = newMvt;
+        statusResist = newRes;
+    }
+
+    public void setUnitWeaponStats(int newMinDmg, int newMaxDmg, int newClip, int newAcc, int newRng, int newHealAmt, int newTempSpd, int newTempEva, int newTempDef, int newTempLck, int newTempRes, int newTempMin, int newTempMax)
+    {
+        currEquip.minDmg = newMinDmg;
+        currEquip.maxDmg = newMaxDmg;
+        currEquip.clipSize = newClip;
+        currEquip.currentClip = newClip;
+        currEquip.accuracy = newAcc;
+        currEquip.range = newRng;
+        currEquip.healAmt = newHealAmt;
+        currEquip.tempSpd = newTempSpd;
+        currEquip.tempDef = newTempDef;
+        currEquip.tempEva = newTempEva;
+        currEquip.tempLck = newTempLck;
+        currEquip.tempRes = newTempRes;
+        currEquip.tempMinDmg = newTempMin;
+        currEquip.tempMaxDmg = newTempMax;
     }
 }

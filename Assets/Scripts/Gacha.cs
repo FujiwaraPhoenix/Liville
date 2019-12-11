@@ -270,6 +270,14 @@ public class Gacha : MonoBehaviour
                 outputRarity = "Unique ";
                 break;
         }
+        for (int i = 0; i < newItem.mods.Length / 2; i++)
+        {
+            mods += Controller.c.determineModName(newItem.mods[i, 0], newItem.mods[i, 1]);
+            if (newItem.mods.Length / 2 - i > 1)
+            {
+                mods += ", ";
+            }
+        }
         //Assemble output:
         if (gunRarity != 5)
         {
@@ -280,10 +288,8 @@ public class Gacha : MonoBehaviour
             output += outputRarity + outputType;
         }
         Debug.Log(output);
-        for (int i = 0; i < newItem.mods.Length / 2; i++)
-        {
-            Debug.Log("Mod " + (i + 1) + ": " + newItem.mods[i, 0] + "," + newItem.mods[i, 1]);
-        }
+        InvManager.im.convoy.Add(newItem);
+        newItem.transform.parent = InvManager.im.transform;
     }
 
     //This generates the mods
@@ -513,7 +519,6 @@ public class Gacha : MonoBehaviour
             }
             moddedItem.mods = modsToAdd;
         }
-        Debug.Log("Mods: " + modCount);
     }
 
     //The proceeding 5 functions are for the stat generation of guns.

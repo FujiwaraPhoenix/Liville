@@ -41,6 +41,7 @@ public class Map : MonoBehaviour
             TextFileParser.tfp.readMissionData(0);
             playersInPosition();
             TextFileParser.tfp.loadResources();
+            spawnEnemies();
             //As loadMap overrides heldData, it gets moved to the tail end of the function.
             loadMap(int.Parse(TextFileParser.tfp.itemList[0]));
             loaded = true;
@@ -71,6 +72,37 @@ public class Map : MonoBehaviour
             Controller.c.playerUnits[i].lastPosition[1] = coordList[i, 0];
             Controller.c.playerUnits[i].lastPosition[1] = coordList[i, 1];
             Controller.c.playerUnits[i].transform.position = new Vector3(coordList[i, 0], coordList[i, 1], -1);
+        }
+    }
+
+    public void spawnEnemies()
+    {
+        //Clear the enemyList
+        foreach (Unit u in Controller.c.enemyUnits)
+        {
+            if (u != null)
+            {
+                Destroy(u.gameObject);
+            }
+        }
+        //Make a new one.
+        Controller.c.enemyUnits = new List<Unit>();
+        //And add every enemy, in order.
+        for (int i = 4; i < TextFileParser.tfp.itemList.Length; i++)
+        {
+            int[] unitValues = TextFileParser.tfp.numbersToUnitValues(TextFileParser.tfp.itemList[i]);
+            //For now, we ignore value 0, as we only have one base at the moment.
+            Unit newEnemy = Instantiate(enemyBase, new Vector3(0, 0, 0), Quaternion.identity);
+            //First, location.
+            newEnemy.transform.position = new Vector3(unitValues[1], unitValues[2], -1);
+            newEnemy.position[0] = unitValues[1];
+            newEnemy.position[1] = unitValues[2];
+            //Next, stats.
+            //Values 3 to 9.
+            newEnemy.setUnitStats(unitValues[3], unitValues[4], unitValues[5], unitValues[6], unitValues[7], unitValues[8], unitValues[9]);
+            //Now, weapon stats. 10 to 22.
+            newEnemy.setUnitWeaponStats(unitValues[10], unitValues[11], unitValues[12], unitValues[13], unitValues[14], unitValues[15], unitValues[16], unitValues[17], unitValues[18], unitValues[19], unitValues[20], unitValues[21], unitValues[22]);
+            Controller.c.enemyUnits.Add(newEnemy);
         }
     }
 }

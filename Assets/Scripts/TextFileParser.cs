@@ -78,8 +78,9 @@ public class TextFileParser : MonoBehaviour {
         //String 2 are the values of the gacha resources to be obtained upon mission completion.
         //String 3 is the enemy count. Slightly useful.
         //String 4 and on are the enemy variants, followed by coordinates, then stats.
-        //These stats are, in order: HP, Speed, Evasion, Def, Luck, Mvt, Status Resist.
-        //Weapon stats: min dmg, max dmg, clip size, accuracy, range, heal amount, temp spd/def/eva/lck/res/min/max (if needed).
+        //First is the variant type, then coordinates. 3 values.
+        //These stats are, in order: HP, Speed, Evasion, Def, Luck, Mvt, Status Resist. 7 in all.
+        //Weapon stats: min dmg, max dmg, clip size, accuracy, range, heal amount, temp spd/def/eva/lck/res/min/max (if needed). 13 in total.
     }
 
     public void loadResources()
@@ -107,6 +108,18 @@ public class TextFileParser : MonoBehaviour {
             output[i, 1] = int.Parse(tempHolder2[1]);
         }
         return output;
+    }
+
+    public int[] numbersToUnitValues(string input)
+    {
+        //Splits the data up.
+        string[] tempHolder = input.Split(new string[] { "," }, System.StringSplitOptions.None);
+        int[] valHolder = new int[23];
+        for (int i = 0; i < tempHolder.Length; i++)
+        {
+            valHolder[i] = int.Parse(tempHolder[i]);
+        }
+        return valHolder;
     }
 
 }

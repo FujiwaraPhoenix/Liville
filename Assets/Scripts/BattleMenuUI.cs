@@ -65,7 +65,7 @@ public class BattleMenuUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Controller.c.gameMode == 4)
+        if (Controller.c.gameMode == 4 && Controller.c.currMap.loaded)
         {
             updateMenuPosition();
             updatePlayerDisplay();
@@ -272,9 +272,9 @@ public class BattleMenuUI : MonoBehaviour
 
         //Mods
         pMods = playerUnit.currEquip.mods;
-        pMod1Name = determineModName(pMods[0,0], pMods[0,1]);
-        pMod2Name = determineModName(pMods[1, 0], pMods[1, 1]);
-        pMod3Name = determineModName(pMods[2, 0], pMods[2, 1]);
+        pMod1Name = Controller.c.determineModName(pMods[0,0], pMods[0,1]);
+        pMod2Name = Controller.c.determineModName(pMods[1, 0], pMods[1, 1]);
+        pMod3Name = Controller.c.determineModName(pMods[2, 0], pMods[2, 1]);
     }
 
     public void updateEnemyValues(Unit enemyUnit)
@@ -312,9 +312,9 @@ public class BattleMenuUI : MonoBehaviour
         
         //Mods
         eMods = enemyUnit.currEquip.mods;
-        eMod1Name = determineModName(eMods[0, 0], eMods[0, 1]);
-        eMod2Name = determineModName(eMods[0, 0], eMods[0, 1]);
-        eMod3Name = determineModName(eMods[0, 0], eMods[0, 1]);
+        eMod1Name = Controller.c.determineModName(eMods[0, 0], eMods[0, 1]);
+        eMod2Name = Controller.c.determineModName(eMods[0, 0], eMods[0, 1]);
+        eMod3Name = Controller.c.determineModName(eMods[0, 0], eMods[0, 1]);
     }
 
     //The following two functions generate stat displays.
@@ -427,93 +427,5 @@ public class BattleMenuUI : MonoBehaviour
         return stats;
     }
 
-    public string determineModName(int modTier, int modID)
-    {
-        switch (modTier)
-        {
-            //From here, T1
-            case 1:
-                switch (modID)
-                {
-                    case 1:
-                        return ("Fleetfoot");
-                    case 2:
-                        return ("Ironclad");
-                    case 3:
-                        return ("Aware");
-                    case 4:
-                        return ("Lucky");
-                    case 5:
-                        return ("Resistant");
-                    case 6:
-                        return ("Determined");
-                    case 7:
-                        return ("Scavenger");
-                    case 8:
-                        return ("Ammo Capacity+");
-                    default:
-                        return ("--");
-                }
-            //From here, T2
-            case 2:
-                switch (modID)
-                {
-                    case 1:
-                        return ("Brutal");
-                    case 2:
-                        return ("Scope");
-                    case 3:
-                        return ("Frontloaded");
-                    case 4:
-                        return ("Regeneration");
-                    case 5:
-                        return ("Stun");
-                    case 6:
-                        return ("Ammo Capacity++");
-                    case 7:
-                        return ("Ammo Capacity-");
-                    default:
-                        return ("--");
-                }
-            //From here, T3
-            case 3:
-                switch (modID)
-                {
-                    case 1:
-                        return ("Recycle");
-                    case 2:
-                        return ("Kamikaze");
-                    case 3:
-                        return ("Backloaded");
-                    case 4:
-                        return ("Gentle");
-                    case 5:
-                        return ("Flatfoot");
-                    case 6:
-                        return ("Paperclad");
-                    case 7:
-                        return ("Unaware");
-                    case 8:
-                        return ("Unlucky");
-                    case 9:
-                        return ("Uncalibrated");
-                    case 10:
-                        return ("Ammo Capacity--");
-                    case 11:
-                        return ("Ethereal");
-                    default:
-                        return ("--");
-                }
-            //From here, T4
-            case 4:
-                switch (modID)
-                {
-                    default:
-                        return ("--");
-                }
-            //Default case.
-            default:
-                return ("--");
-        }
-    }
+    
 }

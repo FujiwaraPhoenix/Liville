@@ -11,7 +11,7 @@ public class Controller : MonoBehaviour
     public Tile tilePrefab;
     public Unit[] playerRoster;
     public Unit[] playerUnits;
-    public Unit[] enemyUnits;
+    public List<Unit> enemyUnits = new List<Unit>();
     public Map currMap;
     public int[,] tileMap, unitMap;
     public MapPointer mp;
@@ -40,6 +40,7 @@ public class Controller : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        unitMap = new int[10, 10];
     }
 
     // Start is called before the first frame update
@@ -283,6 +284,96 @@ public class Controller : MonoBehaviour
                 mp.gameObject.SetActive(false);
                 grid.SetActive(false);
             }
+        }
+    }
+
+    public string determineModName(int modTier, int modID)
+    {
+        switch (modTier)
+        {
+            //From here, T1
+            case 1:
+                switch (modID)
+                {
+                    case 1:
+                        return ("Fleetfoot");
+                    case 2:
+                        return ("Ironclad");
+                    case 3:
+                        return ("Aware");
+                    case 4:
+                        return ("Lucky");
+                    case 5:
+                        return ("Resistant");
+                    case 6:
+                        return ("Determined");
+                    case 7:
+                        return ("Scavenger");
+                    case 8:
+                        return ("Ammo Capacity+");
+                    default:
+                        return ("--");
+                }
+            //From here, T2
+            case 2:
+                switch (modID)
+                {
+                    case 1:
+                        return ("Brutal");
+                    case 2:
+                        return ("Scope");
+                    case 3:
+                        return ("Frontloaded");
+                    case 4:
+                        return ("Regeneration");
+                    case 5:
+                        return ("Stun");
+                    case 6:
+                        return ("Ammo Capacity++");
+                    case 7:
+                        return ("Ammo Capacity-");
+                    default:
+                        return ("--");
+                }
+            //From here, T3
+            case 3:
+                switch (modID)
+                {
+                    case 1:
+                        return ("Recycle");
+                    case 2:
+                        return ("Kamikaze");
+                    case 3:
+                        return ("Backloaded");
+                    case 4:
+                        return ("Gentle");
+                    case 5:
+                        return ("Flatfoot");
+                    case 6:
+                        return ("Paperclad");
+                    case 7:
+                        return ("Unaware");
+                    case 8:
+                        return ("Unlucky");
+                    case 9:
+                        return ("Uncalibrated");
+                    case 10:
+                        return ("Ammo Capacity--");
+                    case 11:
+                        return ("Ethereal");
+                    default:
+                        return ("--");
+                }
+            //From here, T4
+            case 4:
+                switch (modID)
+                {
+                    default:
+                        return ("--");
+                }
+            //Default case.
+            default:
+                return ("--");
         }
     }
 }
