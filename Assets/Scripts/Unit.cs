@@ -208,9 +208,13 @@ public class Unit : MonoBehaviour
                         u.die();
                     }
                 }
-                spr.enabled = false;
-                this.gameObject.SetActive(false);
             }
+            if (unitAllegiance == 2)
+            {
+                Destroy(this.gameObject);
+            }
+            spr.enabled = false;
+            this.gameObject.SetActive(false);
         }
     }
 
@@ -241,10 +245,19 @@ public class Unit : MonoBehaviour
             {
                 if (u != null && !u.isDead)
                 {
-                    float distToTarget = Vector2.Distance(transform.position, u.transform.position);
-                    if (distToTarget <= currEquip.range + mvt)
+                    for (int i = 0; i < Controller.c.currMap.xBound; i++)
                     {
-                        possibleTargets.Add(u);
+                        for (int j = 0; j < Controller.c.currMap.yBound; j++)
+                        {
+                            if (pathMap[i, j].set && pathMap[i, j] != null)
+                            {
+                                float distToTarget = Vector2.Distance(new Vector2(i, j), u.transform.position);
+                                if (distToTarget <= currEquip.range)
+                                {
+                                    possibleTargets.Add(u);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -413,8 +426,17 @@ public class Unit : MonoBehaviour
         {
             currEquip.currentClip--;
         }
-        BattleMenuUI.bmui.updatePlayerValues(BattleMenuUI.bmui.currentPlayer);
-        BattleMenuUI.bmui.updateEnemyValues(BattleMenuUI.bmui.currentEnemy);
+        if (unitAllegiance == 1)
+        {
+            BattleMenuUI.bmui.updatePlayerValues(this);
+            BattleMenuUI.bmui.updateEnemyValues(target);
+        }
+        else
+        {
+            BattleMenuUI.bmui.updatePlayerValues(target);
+            BattleMenuUI.bmui.updateEnemyValues(this);
+
+        }
         target.die();
     }
 

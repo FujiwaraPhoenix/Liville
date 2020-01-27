@@ -57,7 +57,7 @@ public class Controller : MonoBehaviour
     void Update()
     {
         //Run EP.
-        if (gameMode == 0)
+        if (gameMode == 4)
         {
             if (!playerTurn)
             {

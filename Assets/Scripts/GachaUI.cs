@@ -479,6 +479,22 @@ public class GachaUI : MonoBehaviour
                 InvManager.im.materialB -= matBVal;
                 InvManager.im.materialC -= matCVal;
                 InvManager.im.materialD -= matDVal;
+                if (InvManager.im.materialA < matAVal)
+                {
+                    matAVal = InvManager.im.materialA;
+                }
+                if (InvManager.im.materialB < matBVal)
+                {
+                    matBVal = InvManager.im.materialB
+                }
+                if (InvManager.im.materialC < matCVal)
+                {
+                    matCVal = InvManager.im.materialC;
+                }
+                if (InvManager.im.materialD < matDVal)
+                {
+                    matDVal = InvManager.im.materialD;
+                }
             }
         }
     }
