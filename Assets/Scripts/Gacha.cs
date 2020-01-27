@@ -10,6 +10,8 @@ public class Gacha : MonoBehaviour
     public Item template;
     public float c, uc, r, sr;
     public int testA, testB, testC, testD;
+    public Item lastGeneratedGun;
+    public string basicGunData;
 
     // Start is called before the first frame update
     void Start()
@@ -20,10 +22,7 @@ public class Gacha : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && Controller.c.gameMode == 3)
-        {
-            generateItem(testA, testB, testC, testD);
-        }
+
     }
 
     public void determinePools(int matA, int matB, int matC, int matD)
@@ -219,7 +218,7 @@ public class Gacha : MonoBehaviour
         newItem.itemID = 0;
 
         //Placeholder stuff; output string.
-        string output = "Result: ";
+        string output = "Output\n";
         string outputRarity = "";
         string outputType = "";
         string mods = "";
@@ -227,23 +226,23 @@ public class Gacha : MonoBehaviour
         switch (gunType)
         {
             case 0:
-                outputType = "Assault Rifle";
+                outputType = "Assault Rifle\n";
                 generateAR(gunRarity, newItem);
                 break;
             case 1:
-                outputType = "Shotgun";
+                outputType = "Shotgun\n";
                 generateSG(gunRarity, newItem);
                 break;
             case 2:
-                outputType = "Handgun";
+                outputType = "Handgun\n";
                 generateHG(gunRarity, newItem);
                 break;
             case 3:
-                outputType = "Sniper Rifle";
+                outputType = "Sniper Rifle\n";
                 generateRF(gunRarity, newItem);
                 break;
             case 4:
-                outputType = "Sword";
+                outputType = "Sword\n";
                 generateSWD(gunRarity, newItem);
                 break;
         }
@@ -275,13 +274,13 @@ public class Gacha : MonoBehaviour
             mods += Controller.c.determineModName(newItem.mods[i, 0], newItem.mods[i, 1]);
             if (newItem.mods.Length / 2 - i > 1)
             {
-                mods += ", ";
+                mods += "\n";
             }
         }
         //Assemble output:
         if (gunRarity != 5)
         {
-            output += outputRarity + outputType + "; Mods: " + mods;
+            output += outputRarity + outputType + "Mods:\n" + mods;
         }
         else
         {
@@ -290,6 +289,8 @@ public class Gacha : MonoBehaviour
         Debug.Log(output);
         InvManager.im.convoy.Add(newItem);
         newItem.transform.parent = InvManager.im.transform;
+        lastGeneratedGun = newItem;
+        basicGunData = output;
     }
 
     //This generates the mods

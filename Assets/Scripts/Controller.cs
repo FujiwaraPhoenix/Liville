@@ -21,6 +21,10 @@ public class Controller : MonoBehaviour
     //0 is overworld menu; 1 is map select; 2 is party select; 3 is gacha; 4 is battle screen.
     public int gameMode = 0;
 
+    //Object groups.
+    public GameObject battleObjs, battleUI, overworldUI;
+    public GameObject defaultMenu, loadoutUI, gachaUI;
+
     public bool missionSelected = false;
 
     //For testing purposes.
