@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public class Controller : MonoBehaviour
 {
     public static Controller c;
+    
+    //This is all for the sake of managing battles. Controller's useful for other stuff too, though.
     public Tile tilePrefab;
     public Unit[] playerRoster;
     public Unit[] playerUnits;
@@ -18,12 +20,19 @@ public class Controller : MonoBehaviour
     public bool playerTurn = true;
     public bool saidWL = false;
     public GameObject grid;
+
     //0 is overworld menu; 1 is map select; 2 is party select; 3 is gacha; 4 is battle screen.
     public int gameMode = 0;
 
+    //For menuing.
+    public int lastMenu, currentHover;
+
+    //For map loading
+    public int chosenMission;
+
     //Object groups.
     public GameObject battleObjs, battleUI, overworldUI;
-    public GameObject defaultMenu, loadoutUI, gachaUI;
+    public GameObject defaultMenu, loadoutUI, gachaUI, mapSelectUI;
 
     public bool missionSelected = false;
 
@@ -65,7 +74,7 @@ public class Controller : MonoBehaviour
             }
             checkWLState();
         }
-        //Debugging.
+
         switchGameState();
     }
     
@@ -229,66 +238,108 @@ public class Controller : MonoBehaviour
 
     public void switchGameState()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
-            switchGameMode = !switchGameMode;
-            Debug.Log("Game mode switch flipped!");
-        }
-        if (switchGameMode)
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha0))
+            switch (gameMode)
             {
-                gameMode = 0;
-                switchGameMode = false;
-                Debug.Log("Game mode 0!");
-                foreach (Unit u in playerRoster)
-                {
-                    u.GetComponent<SpriteRenderer>().enabled = true;
-                }
-                BattleMenuUI.bmui.gameObject.SetActive(true);
-                mp.gameObject.SetActive(true);
-                grid.SetActive(true);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                gameMode = 1;
-                switchGameMode = false;
-                Debug.Log("Game mode 1!");
-                foreach (Unit u in playerRoster)
-                {
-                    u.GetComponent<SpriteRenderer>().enabled = false;
-                }
-                BattleMenuUI.bmui.gameObject.SetActive(false);
-                grid.SetActive(false);
-                mp.gameObject.SetActive(false);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                gameMode = 2;
-                switchGameMode = false;
-                Debug.Log("Game mode 2!");
-                foreach (Unit u in playerRoster)
-                {
-                    u.GetComponent<SpriteRenderer>().enabled = false;
-                }
-                BattleMenuUI.bmui.gameObject.SetActive(false);
-                mp.gameObject.SetActive(false);
-                grid.SetActive(false);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                gameMode = 3;
-                switchGameMode = false;
-                Debug.Log("Game mode 3!");
-                foreach (Unit u in playerRoster)
-                {
-                    u.GetComponent<SpriteRenderer>().enabled = false;
-                }
-                BattleMenuUI.bmui.gameObject.SetActive(false);
-                mp.gameObject.SetActive(false);
-                grid.SetActive(false);
+                case 0:
+                    //Here, we can cycle to either the battle setup, loadout, or gacha. Let's work accordingly.
+                    defaultMenu.gameObject.SetActive(false);
+                    switch (currentHover)
+                    {
+                        //Here, 0 is battle; 1 is loadout; 2 is gacha.
+                        case 0:
+                            mapSelectUI.gameObject.SetActive(true);
+                            break;
+                        case 1:
+                            loadoutUI.gameObject.SetActive(true);
+                            break;
+                        case 2:
+                            gachaUI.gameObject.SetActive(true);
+                            break;
+                    }
+                    gameMode = currentHover + 1;
+                    lastMenu = 0;
+                    break;
+                case 1:
+                    //We should be in the battle select screen.
+                    //Determine which map we're selecting with currentHover, then proceed to loadout.
+                    //Insert map select function here.
+                    chosenMission = MapSelect.ms.availableMissions[MapSelect.ms.currentChoice].missionNo;
+                    mapSelectUI.gameObject.SetActive(false);
+                    loadoutUI.gameObject.SetActive(true);
+                    missionSelected = true;
+                    lastMenu = 1;
+                    gameMode = 2;
+                    break;
+                case 2:
+                    //Loadout. If the last menu was 1 and the loadout UI's on 0 AND it's on the button that only appears when you came from the battle select menu,
+                    //proceed to 4.
+                    break;
+                case 3:
+                    //Gacha. It does nothing. Unless we implement moving to loadout from gacha, of course, but for now?
+                    break;
+                case 4:
+                    //We only cycle out of battle if we retreat, lose, or win, as dictated by saidWL.
+                    if (saidWL)
+                    {
+                        //return to 0. Turn off all battle objects, turn on all base menu objects.
+                        gameMode = 0;
+                    }
+                    break;
             }
         }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            switch (gameMode)
+            {
+                case 0:
+                    //Nothing happens. Unless we prompt to go back to title, which... Yeah no. Not right now.
+                    break;
+                    
+                case 1:
+                    //We should be in the battle select screen.
+                    //The only way to get here is from 0, so we simply turn off the battle stuff and turn the main menu back on.
+                    //Insert stuff turning things on/off.
+                    defaultMenu.gameObject.SetActive(true);
+                    mapSelectUI.gameObject.SetActive(false);
+                    lastMenu = 0;
+                    MainMenu.mm.highlighted = 0;
+                    gameMode = 0;
+                    break;
+                case 2:
+                    //Loadout.
+                    loadoutUI.gameObject.SetActive(false);
+                    switch (lastMenu)
+                    {
+                        case 0:
+                            //We came here from the main menu, so go back to the main menu.
+                            defaultMenu.gameObject.SetActive(true);
+                            gameMode = 0;
+                            break;
+                        case 1:
+                            //We came here from the battle select screen, so go back there.
+                            mapSelectUI.gameObject.SetActive(true);
+                            missionSelected = false;
+                            gameMode = 1;
+                            break;
+                    }
+                    lastMenu = 0;
+                    break;
+                case 3:
+                    //Gacha. Going back here means the same as going back from battle select, so.
+                    //Insert stuff turning things on/off.
+                    defaultMenu.gameObject.SetActive(true);
+                    gachaUI.gameObject.SetActive(false);
+                    lastMenu = 0;
+                    gameMode = 0;
+                    break;
+                case 4:
+                    //In battle. Doesn't work.
+                    break;
+            }
+        }
+
     }
 
     public string determineModName(int modTier, int modID)
@@ -346,11 +397,11 @@ public class Controller : MonoBehaviour
                     case 1:
                         return ("Recycle");
                     case 2:
-                        return ("Kamikaze");
+                        return ("Last Laugh");
                     case 3:
                         return ("Backloaded");
                     case 4:
-                        return ("Gentle");
+                        return ("Feeble");
                     case 5:
                         return ("Flatfoot");
                     case 6:

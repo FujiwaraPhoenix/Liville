@@ -31,7 +31,7 @@ public class TextFileParser : MonoBehaviour {
     }
 
     //Exactly what it sounds like. We read a string and... Well, turn the output into a list for us to use.
-    void readString(string pathName)
+    public void readString(string pathName)
     {
         StreamReader reader = new StreamReader(pathName);
         heldData = reader.ReadToEnd();
@@ -81,6 +81,8 @@ public class TextFileParser : MonoBehaviour {
         //First is the variant type, then coordinates. 3 values.
         //These stats are, in order: HP, Speed, Evasion, Def, Luck, Mvt, Status Resist. 7 in all.
         //Weapon stats: min dmg, max dmg, clip size, accuracy, range, heal amount, temp spd/def/eva/lck/res/min/max (if needed). 13 in total.
+
+
     }
 
     public void loadResources()
@@ -121,5 +123,5 @@ public class TextFileParser : MonoBehaviour {
         }
         return valHolder;
     }
-
+    
 }

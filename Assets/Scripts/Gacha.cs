@@ -223,27 +223,33 @@ public class Gacha : MonoBehaviour
         string outputType = "";
         string mods = "";
         string[] modList = null;
+        newItem.rarity = gunRarity;
         switch (gunType)
         {
             case 0:
                 outputType = "Assault Rifle\n";
                 generateAR(gunRarity, newItem);
+                newItem.itemType = "Assault Rifle";
                 break;
             case 1:
                 outputType = "Shotgun\n";
                 generateSG(gunRarity, newItem);
+                newItem.itemType = "Shotgun";
                 break;
             case 2:
                 outputType = "Handgun\n";
                 generateHG(gunRarity, newItem);
+                newItem.itemType = "Handgun";
                 break;
             case 3:
                 outputType = "Sniper Rifle\n";
                 generateRF(gunRarity, newItem);
+                newItem.itemType = "Sniper Rifle";
                 break;
             case 4:
                 outputType = "Sword\n";
                 generateSWD(gunRarity, newItem);
+                newItem.itemType = "Sword";
                 break;
         }
         //TODO: Add mod output into... Well, the output. Again.

@@ -9,6 +9,7 @@ public class Map : MonoBehaviour
     public int xBound, yBound;
     public int[,] tileTypes;
     public bool loaded = false;
+    public bool mapExists = false;
     public Unit enemyBase;
 
     // Start is called before the first frame update
@@ -26,19 +27,17 @@ public class Map : MonoBehaviour
         }
         if (Controller.c.gameMode == 4 && !loaded && Controller.c.missionSelected)
         {
-            grid = new Tile[xBound, yBound];
-            for (int i = 0; i < xBound; i++)
+            if (!mapExists)
             {
-                for (int j = 0; j < yBound; j++)
-                {
-                    grid[i, j] = Instantiate(Controller.c.tilePrefab, new Vector3(i, j, 0f), Quaternion.identity);
-                    grid[i, j].transform.parent = this.transform;
-                }
+                generateMap();
+                mapExists = true;
             }
-            Controller.c.tileMap = new int[xBound, yBound];
-            Controller.c.unitMap = new int[xBound, yBound];
-            //This bit is for testing purposes.
-            TextFileParser.tfp.readMissionData(0);
+            else
+            {
+                wipeGrid();
+                generateMap();
+            }
+            TextFileParser.tfp.readMissionData(Controller.c.chosenMission);
             playersInPosition();
             TextFileParser.tfp.loadResources();
             spawnEnemies();
@@ -104,5 +103,31 @@ public class Map : MonoBehaviour
             newEnemy.setUnitWeaponStats(unitValues[10], unitValues[11], unitValues[12], unitValues[13], unitValues[14], unitValues[15], unitValues[16], unitValues[17], unitValues[18], unitValues[19], unitValues[20], unitValues[21], unitValues[22]);
             Controller.c.enemyUnits.Add(newEnemy);
         }
+    }
+
+    public void wipeGrid()
+    {
+        for (int i = 0; i < xBound; i++)
+        {
+            for (int j = 0; j < yBound; j++)
+            {
+                Destroy(grid[i, j].gameObject);
+            }
+        }
+    }
+
+    public void generateMap()
+    {
+        grid = new Tile[xBound, yBound];
+        for (int i = 0; i < xBound; i++)
+        {
+            for (int j = 0; j < yBound; j++)
+            {
+                grid[i, j] = Instantiate(Controller.c.tilePrefab, new Vector3(i, j, 0f), Quaternion.identity);
+                grid[i, j].transform.parent = this.transform;
+            }
+        }
+        Controller.c.tileMap = new int[xBound, yBound];
+        Controller.c.unitMap = new int[xBound, yBound];
     }
 }

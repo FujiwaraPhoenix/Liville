@@ -14,12 +14,15 @@ public class Item : MonoBehaviour
     public int minDmg, maxDmg, clipSize, currentClip, accuracy, range;
     public int[,] mods = new int[3,2];
     public bool isMelee = false;
+    public int rarity;
 
     //Is this a healing item?
     public int healAmt;
 
     //What is this thing CALLED?
     public string itemName;
+    //What kind of thing is it?
+    public string itemType;
 
     //Does this thing have stat modifiers? If so, how big/small are they?
     public int tempSpd, tempDef, tempEva, tempLck, tempRes, tempMinDmg, tempMaxDmg;
