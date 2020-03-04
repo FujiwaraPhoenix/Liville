@@ -615,7 +615,7 @@ public class Unit : MonoBehaviour
     {
         isDead = false;
         hp = maxhp;
-        currEquip.currentClip = clipSize;
+        currEquip.currentClip = currEquip.clipSize;
         hasMoved = false;
         stunned = false;
         currUnit = false;
