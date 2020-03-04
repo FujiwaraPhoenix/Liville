@@ -311,6 +311,10 @@ public class Controller : MonoBehaviour
                         overworldUI.gameObject.SetActive(true);
                         defaultMenu.gameObject.SetActive(true);
                         gameMode = 0;
+                        foreach (Unit u in playerUnits)
+                        {
+                            u.resetChar();
+                        }
                     }
                     break;
             }

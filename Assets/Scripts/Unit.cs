@@ -610,4 +610,15 @@ public class Unit : MonoBehaviour
         currEquip.tempMinDmg = newTempMin;
         currEquip.tempMaxDmg = newTempMax;
     }
+
+    public void resetChar()
+    {
+        isDead = false;
+        hp = maxhp;
+        currEquip.currentClip = clipSize;
+        hasMoved = false;
+        stunned = false;
+        currUnit = false;
+        target = null;
+    }
 }
