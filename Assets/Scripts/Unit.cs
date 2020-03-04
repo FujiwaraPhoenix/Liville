@@ -211,6 +211,8 @@ public class Unit : MonoBehaviour
             }
             if (unitAllegiance == 2)
             {
+                Controller.c.enemyUnits.Remove(this);
+                Controller.c.unitMap[position[0], position[1]] = 0;
                 Destroy(this.gameObject);
             }
             spr.enabled = false;
@@ -241,6 +243,8 @@ public class Unit : MonoBehaviour
         if (unitAllegiance == 2) 
         {
             //This is an enemy unit; search for players BEFORE moving.
+            //First, reset target. Just in case.
+            target = null;
             foreach (Unit u in Controller.c.playerUnits)
             {
                 if (u != null && !u.isDead)
@@ -254,6 +258,7 @@ public class Unit : MonoBehaviour
                                 float distToTarget = Vector2.Distance(new Vector2(i, j), u.transform.position);
                                 if (distToTarget <= currEquip.range)
                                 {
+                                    Debug.Log("Targeting from " + i + "," + j);
                                     possibleTargets.Add(u);
                                 }
                             }
@@ -518,6 +523,7 @@ public class Unit : MonoBehaviour
         //Test for enemies
         if (unitAllegiance == 2)
         {
+            route.toString();
             if (route.path.Count > 0)
             {
                 Controller.c.unitMap[position[0], position[1]] = 0;

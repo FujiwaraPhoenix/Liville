@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class Controller : MonoBehaviour
 {
     public static Controller c;
-    
+
     //This is all for the sake of managing battles. Controller's useful for other stuff too, though.
     public Tile tilePrefab;
     public Unit[] playerRoster;
@@ -36,9 +36,6 @@ public class Controller : MonoBehaviour
 
     public bool missionSelected = false;
 
-    //For testing purposes.
-    public bool switchGameMode = false;
-
     //Gacha mat rewards
     public int materialAGain, materialBGain, materialCGain, materialDGain;
 
@@ -59,7 +56,7 @@ public class Controller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
+
     }
 
     // Update is called once per frame
@@ -72,12 +69,19 @@ public class Controller : MonoBehaviour
             {
                 runEnemyTurn();
             }
-            checkWLState();
+            if (currMap.loaded)
+            {
+                checkWLState();
+            }
         }
-
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            debugGridX = true;
+        }
+        debugGridLoc();
         switchGameState();
     }
-    
+
     public void checkTurn()
     {
         if (playerTurn)
@@ -253,6 +257,8 @@ public class Controller : MonoBehaviour
                             break;
                         case 1:
                             loadoutUI.gameObject.SetActive(true);
+                            LoadoutUI.lUI.currentLoadoutMenu = 0;
+                            LoadoutUI.lUI.loadoutLimitSetup();
                             break;
                         case 2:
                             gachaUI.gameObject.SetActive(true);
@@ -268,13 +274,29 @@ public class Controller : MonoBehaviour
                     chosenMission = MapSelect.ms.availableMissions[MapSelect.ms.currentChoice].missionNo;
                     mapSelectUI.gameObject.SetActive(false);
                     loadoutUI.gameObject.SetActive(true);
+                    LoadoutUI.lUI.currentLoadoutMenu = 0;
+                    LoadoutUI.lUI.updateBaseLoadoutSpr();
+                    LoadoutUI.lUI.currentX = 0;
+                    LoadoutUI.lUI.currentY = 0;
                     missionSelected = true;
+                    LoadoutUI.lUI.loadoutLimitSetup();
                     lastMenu = 1;
                     gameMode = 2;
                     break;
                 case 2:
-                    //Loadout. If the last menu was 1 and the loadout UI's on 0 AND it's on the button that only appears when you came from the battle select menu,
+                    //Loadout. If the last menu was 1 (goToBattle) and the loadout UI's on 0 AND it's on the button that only appears when you came from the battle select menu,
                     //proceed to 4.
+                    if (missionSelected)
+                    {
+                        if (LoadoutUI.lUI.currentY == -1)
+                        {
+                            loadoutUI.gameObject.SetActive(false);
+                            battleObjs.gameObject.SetActive(true);
+                            battleUI.gameObject.SetActive(true);
+                            playerTurn = true;
+                            gameMode = 4;
+                        }
+                    }
                     break;
                 case 3:
                     //Gacha. It does nothing. Unless we implement moving to loadout from gacha, of course, but for now?
@@ -284,6 +306,10 @@ public class Controller : MonoBehaviour
                     if (saidWL)
                     {
                         //return to 0. Turn off all battle objects, turn on all base menu objects.
+                        battleObjs.gameObject.SetActive(false);
+                        battleUI.gameObject.SetActive(false);
+                        overworldUI.gameObject.SetActive(true);
+                        defaultMenu.gameObject.SetActive(true);
                         gameMode = 0;
                     }
                     break;
@@ -296,7 +322,7 @@ public class Controller : MonoBehaviour
                 case 0:
                     //Nothing happens. Unless we prompt to go back to title, which... Yeah no. Not right now.
                     break;
-                    
+
                 case 1:
                     //We should be in the battle select screen.
                     //The only way to get here is from 0, so we simply turn off the battle stuff and turn the main menu back on.
@@ -309,37 +335,42 @@ public class Controller : MonoBehaviour
                     break;
                 case 2:
                     //Loadout.
-                    loadoutUI.gameObject.SetActive(false);
-                    switch (lastMenu)
+                    if (LoadoutUI.lUI.currentLoadoutMenu == 0)
                     {
-                        case 0:
-                            //We came here from the main menu, so go back to the main menu.
-                            defaultMenu.gameObject.SetActive(true);
-                            gameMode = 0;
-                            break;
-                        case 1:
-                            //We came here from the battle select screen, so go back there.
-                            mapSelectUI.gameObject.SetActive(true);
-                            missionSelected = false;
-                            gameMode = 1;
-                            break;
+                        loadoutUI.gameObject.SetActive(false);
+                        switch (lastMenu)
+                        {
+                            case 0:
+                                //We came here from the main menu, so go back to the main menu.
+                                defaultMenu.gameObject.SetActive(true);
+                                gameMode = 0;
+                                break;
+                            case 1:
+                                //We came here from the battle select screen, so go back there.
+                                mapSelectUI.gameObject.SetActive(true);
+                                missionSelected = false;
+                                gameMode = 1;
+                                break;
+                        }
+                        lastMenu = 0;
                     }
-                    lastMenu = 0;
                     break;
                 case 3:
                     //Gacha. Going back here means the same as going back from battle select, so.
                     //Insert stuff turning things on/off.
-                    defaultMenu.gameObject.SetActive(true);
-                    gachaUI.gameObject.SetActive(false);
-                    lastMenu = 0;
-                    gameMode = 0;
+                    if (!(GachaUI.gaUI.modifyingValue))
+                    {
+                        defaultMenu.gameObject.SetActive(true);
+                        gachaUI.gameObject.SetActive(false);
+                        lastMenu = 0;
+                        gameMode = 0;
+                    }
                     break;
                 case 4:
                     //In battle. Doesn't work.
                     break;
             }
         }
-
     }
 
     public string determineModName(int modTier, int modID)
@@ -429,6 +460,145 @@ public class Controller : MonoBehaviour
             //Default case.
             default:
                 return ("--");
+        }
+    }
+
+    //Temp debugging tool.
+    bool debugGridX = false;
+    bool debugGridY = false;
+    int gridX, gridY;
+
+    void debugGridLoc()
+    {
+        //Debugs for unitmap.
+        if (debugGridX && !debugGridY)
+        {
+            bool switchToY = false;
+            Debug.Log("Debug: Grid location. Input X now (0-9).");
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                gridX = 0;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                gridX = 1;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                gridX = 2;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                gridX = 3;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                gridX = 4;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                gridX = 5;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                gridX = 6;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha7))
+            {
+                gridX = 7;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha8))
+            {
+                gridX = 8;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha9))
+            {
+                gridX = 9;
+                switchToY = true;
+                Debug.Log("X value accepted. Please input a Y (0-9).");
+            }
+            if (switchToY)
+            {
+                debugGridY = true;
+            }
+        }
+        else if (debugGridY)
+        {
+            bool inputY = false;
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                gridY = 0;
+                inputY = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                gridY = 1;
+                inputY = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                gridY = 2;
+                inputY = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                gridY = 3;
+                inputY = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                gridY = 4;
+                inputY = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                gridY = 5;
+                inputY = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                gridY = 6;
+                inputY = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha7))
+            {
+                gridY = 7;
+                inputY = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha8))
+            {
+                gridY = 8;
+                inputY = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha9))
+            {
+                gridY = 9;
+                inputY = true;
+            }
+            if (inputY)
+            {
+                Debug.Log("Unit grid at " + gridX + ", " + gridY + " is " + Controller.c.unitMap[gridX, gridY]);
+                debugGridX = false;
+                debugGridY = false;
+            }
         }
     }
 }

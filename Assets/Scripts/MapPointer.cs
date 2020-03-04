@@ -294,12 +294,17 @@ public class MapPointer : MonoBehaviour
                     targetUnit.showMovement();
                     targetUnit.position[0] = targetUnit.lastPosition[0];
                     targetUnit.position[1] = targetUnit.lastPosition[1];
+                    Controller.c.unitMap[targetUnit.position[0], targetUnit.position[1]] = 0;
                     targetUnit.transform.position = Controller.c.currMap.grid[targetUnit.position[0], targetUnit.position[1]].transform.position;
                 }
                 else if (choosingTarget)
                 {
                     //Go back to loc select.
                     choosingTarget = !choosingTarget;
+                    //Move this back to the player.
+                    currX = targetUnit.position[0];
+                    currY = targetUnit.position[1];
+                    transform.position = new Vector2(targetUnit.position[0], targetUnit.position[1] + 0.5f);
                     currentTargetIndex = 0;
                 }
                 else
@@ -330,6 +335,8 @@ public class MapPointer : MonoBehaviour
                 case 0:
                     //Attack
                     //Run attack stuff
+                    //First: reset currentTargetIndex.
+                    currentTargetIndex = 0;
                     if (targetUnit.currEquip.currentClip > 0)
                     {
                         totalPossibleTargets = 0;

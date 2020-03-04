@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GachaUI : MonoBehaviour
 {
-    public static GachaUI gaui;
+    public static GachaUI gaUI;
 
     public GameObject menuPointer;
     public bool modifyingValue = false;
@@ -26,6 +26,19 @@ public class GachaUI : MonoBehaviour
     public Sprite[] inputIndicSprites = new Sprite[4];
 
     public Text itemOutput;
+
+    void Awake()
+    {
+        if (gaUI == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            gaUI = this;
+        }
+        else if (gaUI != this)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -48,20 +61,6 @@ public class GachaUI : MonoBehaviour
             else
             {
                 cycleValues();
-            }
-            if (Input.GetKeyDown(KeyCode.Z))
-            {
-                if (!modifyingValue)
-                {
-                    modifyingValue = true;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.X))
-            {
-                if (modifyingValue)
-                {
-                    modifyingValue = false;
-                }
             }
             updateSprites();
         }
@@ -90,6 +89,11 @@ public class GachaUI : MonoBehaviour
             {
                 currentModdedValue++;
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            modifyingValue = true;
         }
     }
 
@@ -423,6 +427,11 @@ public class GachaUI : MonoBehaviour
                 //Generate gacha gun. Uwee hee hee.
                 //Confirmation message here.
                 break;
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            modifyingValue = false;
+            Debug.Log("No longer modifying.");
         }
     }
 

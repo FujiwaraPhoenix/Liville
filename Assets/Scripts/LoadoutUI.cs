@@ -23,6 +23,19 @@ public class LoadoutUI : MonoBehaviour
     public int xHardCap = 3;
     public int yHardCap = 4;
 
+    //UI stuff holders.
+    public GameObject baseMenu, charMenu, invMenu, gunMenu;
+    //In order: playerBGs, invs, next.
+    public Sprite[] baseLoadoutSprList = new Sprite[6];
+    public Sprite[] gunEquippedBorders = new Sprite[5];
+    public Sprite[] gunEquippedBordersHL = new Sprite[5];
+
+    //For base menu; all GameObjects present here.
+    public Image[] baseLoadoutPlayers = new Image[4];
+    public Image[] baseLoadoutInvs = new Image[4];
+    public GunInfo[] baseLoadoutGuns = new GunInfo[4];
+    public Image nextButton;
+
     //For gun select; need 2D array of guns
     public LoadoutGunMini template;
     public LoadoutGunMini[,] gunListing = new LoadoutGunMini[3, 4];
@@ -44,7 +57,7 @@ public class LoadoutUI : MonoBehaviour
     //For the gun swap screen:
     public GunInfo equipped, hovered;
 
-    bool test = false;
+    bool gunSelectLoaded = false;
 
     void Awake()
     {
@@ -62,8 +75,7 @@ public class LoadoutUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        initializeGunListing();
-        loadGunSwap();
+
     }
 
     // Update is called once per frame
@@ -71,12 +83,11 @@ public class LoadoutUI : MonoBehaviour
     {
         switch (currentLoadoutMenu)
         {
+            case 0:
+                navigateBaseMenu();
+                break;
             case 2:
-                if (!test)
-                {
-                    loadNextPage();
-                    test = !test;
-                }
+                
                 navigateGunUI();
                 break;
         }
@@ -165,151 +176,158 @@ public class LoadoutUI : MonoBehaviour
 
     public void navigateGunUI()
     {
-        if (currentLoadoutMenu == 2)
+        bool wasPressed = false;
+        //Arrow keys to navigate; Z confirm, X return to previous screen.
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            bool wasPressed = false;
-            //Arrow keys to navigate; Z confirm, X return to previous screen.
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            //First, we check if we're at the top of the screen.
+            if (currentY == 0)
             {
-                //First, we check if we're at the top of the screen.
-                if (currentY == 0)
+                //We are, so we cycle to the bottom.
+                //Check if xCap is 0; if it is, then the last row is the maximum, so go there.
+                //Otherwise, you're in the clear.
+                if (xCap == 0)
                 {
-                    //We are, so we cycle to the bottom.
-                    //Check if xCap is 0; if it is, then the last row is the maximum, so go there.
-                    //Otherwise, you're in the clear.
-                    if (xCap == 0)
-                    {
-                        //That being said, this means that the entire row is accessible; don't worry about repositioning it.
-                        currentY = yCap - 1;
-                    }
-                    else
-                    {
-                        //Because the cap's not at 0 and thus the entire row isn't filled... We need to fix it, too.
-                        currentY = yCap;
-                        if (currentX >= xCap && xCap != 2)
-                        {
-                            currentX = xCap - 1;
-                        }
-                    }
+                    //That being said, this means that the entire row is accessible; don't worry about repositioning it.
+                    currentY = yCap - 1;
                 }
                 else
                 {
-                    currentY--;
-                }
-                wasPressed = true;
-            }
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                //We're already at the bottom, so...
-                if ((currentY == yCap && xCap != 0) || (currentY == yCap - 1 && xCap == 0))
-                {
-                    currentY = 0;
-                }
-                else
-                {
-                    //Make sure that we aren't out of bounds somehow.
-                    currentY++;
+                    //Because the cap's not at 0 and thus the entire row isn't filled... We need to fix it, too.
+                    currentY = yCap;
                     if (currentX >= xCap && xCap != 2)
                     {
                         currentX = xCap - 1;
                     }
                 }
-                wasPressed = true;
             }
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            else
             {
-                if (currentX == 0)
+                currentY--;
+            }
+            wasPressed = true;
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            //We're already at the bottom, so...
+            if ((currentY == yCap && xCap != 0) || (currentY == yCap - 1 && xCap == 0))
+            {
+                currentY = 0;
+            }
+            else
+            {
+                //Make sure that we aren't out of bounds somehow.
+                currentY++;
+                if (currentX >= xCap && xCap != 2)
                 {
-                    //Cycle page -1;
-                    if (gunPage == 1)
-                    {
-                        gunPage = totalPages;
-                        loadNextPage();
-                    }
-                    else
-                    {
-                        gunPage--;
-                        loadNextPage();
-                    }
-                    //Now, we check where on the page we end up.
-                    //First, we examine if we're past the y-bound... Which also means checking the x-bound first.
-                    //If it's 0, then just shift the y position to the lowest possible and flip the X.
-                    if (xCap == 0)
-                    {
-                        currentX = 2;
-                        if (currentY > yCap - 1)
-                        {
-                            currentY = yCap - 1;
-                        }
-                    }
-                    //Otherwise, we attempt to line up the y and force the x.
-                    else
-                    {
-                        if (currentY < yCap)
-                        {
-                            currentX = 2;
-                        }
-                        else
-                        {
-                            currentY = yCap;
-                            if (currentX >= xCap)
-                            {
-                                currentX = xCap - 1;
-                            }
-                        }
-                    }
+                    currentX = xCap - 1;
+                }
+            }
+            wasPressed = true;
+        }
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if (currentX == 0)
+            {
+                //Cycle page -1;
+                if (gunPage == 1)
+                {
+                    gunPage = totalPages;
+                    loadNextPage();
                 }
                 else
                 {
-                    currentX--;
+                    gunPage--;
+                    loadNextPage();
                 }
-                wasPressed = true;
-            }
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                if ((currentX == 2) || (currentY == yCap && currentX == xCap - 1 && xCap < 2))
+                //Now, we check where on the page we end up.
+                //First, we examine if we're past the y-bound... Which also means checking the x-bound first.
+                //If it's 0, then just shift the y position to the lowest possible and flip the X.
+                if (xCap == 0)
                 {
-                    //Cycle page +1
-                    if (gunPage == totalPages)
-                    {
-                        gunPage = 1;
-                        loadNextPage();
-                    }
-                    else
-                    {
-                        gunPage++;
-                        loadNextPage();
-                    }
-                    //First, let's flip to 0. We'll end on 0 anyways, so that makes things a bit simple.
-                    currentX = 0;
-                    //As with before, check the y-bound to see if we're out of bounds; if we are, fix that.
-                    if (xCap == 0 && currentY > yCap - 1)
+                    currentX = 2;
+                    if (currentY > yCap - 1)
                     {
                         currentY = yCap - 1;
                     }
-                    else if (xCap != 0 && currentY > yCap)
+                }
+                //Otherwise, we attempt to line up the y and force the x.
+                else
+                {
+                    if (currentY < yCap)
+                    {
+                        currentX = 2;
+                    }
+                    else
                     {
                         currentY = yCap;
+                        if (currentX >= xCap)
+                        {
+                            currentX = xCap - 1;
+                        }
                     }
+                }
+            }
+            else
+            {
+                currentX--;
+            }
+            wasPressed = true;
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if ((currentX == 2) || (currentY == yCap && currentX == xCap - 1 && xCap < 2))
+            {
+                //Cycle page +1
+                if (gunPage == totalPages)
+                {
+                    gunPage = 1;
+                    loadNextPage();
                 }
                 else
                 {
-                    currentX++;
+                    gunPage++;
+                    loadNextPage();
                 }
-                wasPressed = true;
+                //First, let's flip to 0. We'll end on 0 anyways, so that makes things a bit simple.
+                currentX = 0;
+                //As with before, check the y-bound to see if we're out of bounds; if we are, fix that.
+                if (xCap == 0 && currentY > yCap - 1)
+                {
+                    currentY = yCap - 1;
+                }
+                else if (xCap != 0 && currentY > yCap)
+                {
+                    currentY = yCap;
+                }
             }
-            //Though it's a bit weird, we'll update the hover stuff here.
-            int currentGunIndex = 12 * (gunPage - 1) + currentX + 3 * (currentY);
-            if (wasPressed)
+            else
             {
-                hovered.updateStats(InvManager.im.armory[currentGunIndex]);
+                currentX++;
             }
-            if (Input.GetKeyDown(KeyCode.Z))
-            {
-                swapGun(currentGunIndex);
-            }
-            checkBorders();
+            wasPressed = true;
         }
+        //Though it's a bit weird, we'll update the hover stuff here.
+        int currentGunIndex = 12 * (gunPage - 1) + currentX + 3 * (currentY);
+        if (wasPressed)
+        {
+            hovered.updateStats(InvManager.im.armory[currentGunIndex]);
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            swapGun(currentGunIndex);
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            //Return to base loadout.
+            currentLoadoutMenu = 0;
+            baseMenu.gameObject.SetActive(true);
+            gunMenu.gameObject.SetActive(false);
+            loadoutLimitSetup();
+            currentX = currentPlayer;
+            currentY = 2;
+        }
+        checkBorders();
     }
     
     public void swapGun(int gunIndex)
@@ -348,6 +366,177 @@ public class LoadoutUI : MonoBehaviour
                     }
                 }
             }
+        }
+    }
+
+    public void loadoutLimitSetup()
+    {
+        switch (currentLoadoutMenu)
+        {
+            case 0:
+                //Default menu.
+                //The x cap is based on how many players there are; y is always 3.
+                xHardCap = Controller.c.playerUnits.Length;
+                yHardCap = 3;
+                break;
+            case 1:
+                //Character select.
+                //Nothing right now.
+                break;
+            case 2:
+                //Gun choice.
+                xHardCap = 3;
+                yHardCap = 4;
+                break;
+            case 3:
+                //Inventory.
+                //Nothing right now.
+                break;
+        }
+        if (Controller.c.missionSelected)
+        {
+            nextButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            nextButton.gameObject.SetActive(false);
+        }
+    }
+
+    void navigateBaseMenu()
+    {
+        //Should only be run while currentLoadout == 0
+        bool hasChanged = false;
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            if (currentY == 0)
+            {
+                if (Controller.c.missionSelected)
+                {
+                    //The battle button is available.
+                    currentY = -1;
+                }
+                else
+                {
+                    currentY = 2;
+                }
+            }
+            else if (currentY == -1)
+            {
+                currentY = 2;
+            }
+            else
+            {
+                currentY--;
+            }
+            hasChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            if (currentY == 2)
+            {
+                if (Controller.c.missionSelected)
+                {
+                    //The battle button is available.
+                    currentY = -1;
+                }
+                else
+                {
+                    currentY = 0;
+                }
+            }
+            else
+            {
+                currentY++;
+            }
+            hasChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if (currentX == 0)
+            {
+                currentX = xHardCap - 1;
+            }
+            else
+            {
+                currentX--;
+            }
+            hasChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if (currentX == xHardCap - 1)
+            {
+                currentX = 0;
+            }
+            else
+            {
+                currentX++;
+            }
+            hasChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.Z))
+        {
+            switch (currentY)
+            {
+                case 0:
+                    //Goto char select.
+                    //For now, nothing.
+                    break;
+                case 1:
+                    //Goto inv select.
+                    //For now, nothing.
+                    break;
+                case 2:
+                    //Goto gun select.
+                    currentLoadoutMenu = 2;
+                    gunPage = 1;
+                    currentPlayer = currentX;
+                    baseMenu.gameObject.SetActive(false);
+                    gunMenu.gameObject.SetActive(true);
+                    currentX = 0;
+                    currentY = 0;
+                    loadoutLimitSetup();
+                    if (!gunSelectLoaded)
+                    {
+                        initializeGunListing();
+                        loadGunSwap();
+                        gunSelectLoaded = true;
+                    }
+                    loadNextPage();
+                    break;
+            }
+        }
+        if (hasChanged)
+        {
+            updateBaseLoadoutSpr();
+        }
+    }
+
+    public void updateBaseLoadoutSpr()
+    {
+        for (int i = 0; i < Controller.c.playerUnits.Length; i++)
+        {
+            baseLoadoutPlayers[i].sprite = baseLoadoutSprList[0];
+            baseLoadoutInvs[i].sprite = baseLoadoutSprList[2];
+            baseLoadoutGuns[i].border.sprite = gunEquippedBorders[Controller.c.playerUnits[i].currEquip.rarity - 1];
+        }
+        nextButton.sprite = baseLoadoutSprList[6];
+        switch (currentY)
+        {
+            case -1:
+                nextButton.sprite = baseLoadoutSprList[7];
+                break;
+            case 0:
+                //Highlight the char select.
+                baseLoadoutPlayers[currentX].sprite = baseLoadoutSprList[1];
+                break;
+            case 1:
+                baseLoadoutInvs[currentX].sprite = baseLoadoutSprList[3];
+                break;
+            case 2:
+                baseLoadoutGuns[currentX].border.sprite = gunEquippedBordersHL[Controller.c.playerUnits[currentX].currEquip.rarity - 1];
+                break;
         }
     }
 }
