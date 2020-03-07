@@ -262,6 +262,10 @@ public class Controller : MonoBehaviour
                             loadoutUI.gameObject.SetActive(true);
                             LoadoutUI.lUI.currentLoadoutMenu = 0;
                             LoadoutUI.lUI.loadoutLimitSetup();
+                            LoadoutUI.lUI.currentX = 0;
+                            LoadoutUI.lUI.currentY = 0;
+                            LoadoutUI.lUI.updateBaseLoadoutSpr();
+                            gameMode = 2;
                             break;
                         case 2:
                             gachaUI.gameObject.SetActive(true);
@@ -324,6 +328,7 @@ public class Controller : MonoBehaviour
                         BattleMenuUI.bmui.currentPlayer = null;
                         BattleMenuUI.bmui.foundEnemy = false;
                         BattleMenuUI.bmui.currentEnemy = null;
+                        missionSelected = false;
                         currMap.loaded = false;
                     }
                     break;
