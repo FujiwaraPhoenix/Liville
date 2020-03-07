@@ -237,6 +237,9 @@ public class Controller : MonoBehaviour
         {
             u.huntPlayers();
         }
+        mp.currX = playerUnits[0].position[0];
+        mp.currY = playerUnits[0].position[1];
+        mp.transform.position = new Vector3(mp.currX, mp.currY + .5f, -3);
         checkTurn();
     }
 
@@ -280,6 +283,7 @@ public class Controller : MonoBehaviour
                     LoadoutUI.lUI.currentY = 0;
                     missionSelected = true;
                     LoadoutUI.lUI.loadoutLimitSetup();
+                    LoadoutUI.lUI.updateBaseLoadoutSpr();
                     lastMenu = 1;
                     gameMode = 2;
                     break;
@@ -315,6 +319,12 @@ public class Controller : MonoBehaviour
                         {
                             u.resetChar();
                         }
+                        saidWL = false;
+                        BattleMenuUI.bmui.foundPlayer = false;
+                        BattleMenuUI.bmui.currentPlayer = null;
+                        BattleMenuUI.bmui.foundEnemy = false;
+                        BattleMenuUI.bmui.currentEnemy = null;
+                        currMap.loaded = false;
                     }
                     break;
             }

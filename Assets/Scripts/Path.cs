@@ -7,6 +7,7 @@ public class Path : MonoBehaviour
     public List<int> path = new List<int>();
     public int hazardCount = 0;
     public bool set = false;
+    public int whoseSide = 0;
 
     public bool currentTile = false;
 
@@ -26,7 +27,10 @@ public class Path : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if ((Controller.c.playerTurn && whoseSide == 2) || (!(Controller.c.playerTurn) && whoseSide == 1) || (Controller.c.gameMode != 4) || (!set && whoseSide == 0))
+        {
+            suicide();
+        }
     }
 
     public string toString()
@@ -42,6 +46,7 @@ public class Path : MonoBehaviour
     public Path copyPath()
     {
         Path newPath = Instantiate(this, transform.position, Quaternion.identity);
+        newPath.whoseSide = whoseSide;
         newPath.path = new List<int>(path);
         newPath.hazardCount = hazardCount;
         newPath.set = true;

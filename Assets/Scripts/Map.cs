@@ -72,6 +72,10 @@ public class Map : MonoBehaviour
             Controller.c.playerUnits[i].lastPosition[1] = coordList[i, 1];
             Controller.c.playerUnits[i].transform.position = new Vector3(coordList[i, 0], coordList[i, 1], -1);
         }
+        Controller.c.mp.currX = coordList[0, 0];
+        Controller.c.mp.currY = coordList[0, 1];
+        Controller.c.mp.transform.position = new Vector3(Controller.c.mp.currX, Controller.c.mp.currY + 0.5f, -3);
+
     }
 
     public void spawnEnemies()

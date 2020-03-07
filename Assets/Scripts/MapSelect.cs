@@ -73,5 +73,4 @@ public class MapSelect : MonoBehaviour
         missionForecast.text = availableMissions[currentChoice].missionForecast;
         availableMissions[currentChoice].infoBG.sprite = hl;
     }
-    //TODO: Navigation, saving chosen map, etc.;
 }

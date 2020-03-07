@@ -63,6 +63,7 @@ public class Unit : MonoBehaviour
             }
         }
         Path newPath = Instantiate(p, transform.position, Quaternion.identity);
+        newPath.whoseSide = unitAllegiance;
         Pathfinder.pf.drawPath(this, position, mvt, newPath, unitAllegiance);
         newPath.currentTile = true;
         newPath.set = true;
@@ -84,6 +85,7 @@ public class Unit : MonoBehaviour
             }
         }
         Path newPath = Instantiate(p, transform.position, Quaternion.identity);
+        newPath.whoseSide = unitAllegiance;
         possibleTargets = new List<Unit>();
         Pathfinder.pf.drawPath(this, position, mvt, newPath, unitAllegiance);
         newPath.currentTile = true;
@@ -102,7 +104,10 @@ public class Unit : MonoBehaviour
         {
             for (int j = 0; j < pathMap.GetLength(1); j++)
             {
-                pathMap[i, j].suicide();
+                if (pathMap[i, j] != null)
+                {
+                    pathMap[i, j].suicide();
+                }
             }
         }
     }
