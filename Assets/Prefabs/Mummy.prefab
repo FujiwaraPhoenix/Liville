@@ -89,7 +89,7 @@ Transform:
   m_GameObject: {fileID: 6684577462181303541}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -2.3914886, y: -1.4850523, z: -1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1}
   m_Children:
   - {fileID: 5671830542220908819}
   m_Father: {fileID: 0}
@@ -179,5 +179,8 @@ MonoBehaviour:
   possibleTargets: []
   availableOptions: 00000000
   spr: {fileID: 7013498562011679944}
-  unitFace: {fileID: 0}
+  unitFace: {fileID: 21300000, guid: 2180bdd419b64d14fb80d9d68dd3fdef, type: 3}
   unitName: Mummy
+  nextIndex: 0
+  savedPath: 
+  procPath: 0

@@ -6,8 +6,7 @@ using UnityEngine.UI;
 public class BattleMenuUI : MonoBehaviour
 {
     public static BattleMenuUI bmui;
-
-    public Image menuPointer;
+    
     public GameObject menuItems;
     public GameObject enemyDisplay, playerDisplay;
     public GameObject pHPPipHolder, eHPPipHolder, pAmmoPipHolder, eAmmoPipHolder;
@@ -17,6 +16,10 @@ public class BattleMenuUI : MonoBehaviour
     public Image hpPip, ammoPip;
 
     public bool loadInitial = false;
+
+    //For selection of options.
+    public BattleMenuButton[] buttons = new BattleMenuButton[4];
+    
 
     //Player Stats
     public Unit currentPlayer;
@@ -81,28 +84,17 @@ public class BattleMenuUI : MonoBehaviour
 
     public void updateMenuPosition()
     {
-        if (!Controller.c.mp.menuActive)
+        if (Controller.c.mp.menuActive)
         {
-            menuPointer.gameObject.SetActive(false);
+            menuItems.gameObject.SetActive(true);
+            foreach (BattleMenuButton bmb in buttons)
+            {
+                bmb.updateSprite();
+            }
         }
         else
         {
-            menuPointer.gameObject.SetActive(true);
-            switch (Controller.c.mp.currentMenuChoice)
-            {
-                case 0:
-                    menuPointer.transform.localPosition = new Vector3(-475, -120, 0);
-                    break;
-                case 1:
-                    menuPointer.transform.localPosition = new Vector3(-475, -150f, 0);
-                    break;
-                case 2:
-                    menuPointer.transform.localPosition = new Vector3(-475, -180f, 0);
-                    break;
-                case 3:
-                    menuPointer.transform.localPosition = new Vector3(-475, -210f, 0);
-                    break;
-            }
+            menuItems.gameObject.SetActive(false);
         }
     }
 
@@ -153,31 +145,7 @@ public class BattleMenuUI : MonoBehaviour
         statDisplay.text = genPlayerStatDisplay();
         gunStatDisplay.text = "DMG: " + pMinDmg + "-" + pMaxDmg + "\nACC: " + pAcc + "\nRNG: " + pRng;
         modDisplay.text = "Mod 1: " + pMod1Name + "\nMod 2: " + pMod2Name + "\nMod 3: " + pMod3Name;
-        for (int i = 0; i < pHPPips.Length; i++)
-        {
-            if (i < pHP)
-            {
-                pHPPips[i].sprite = pipOn;
-            }
-            else if (i < pMaxHP)
-            {
-                pHPPips[i].sprite = pipOff;
-            }
-        }
-        if (!pIsMelee)
-        {
-            for (int i = 0; i < pAmmoPips.Length; i++)
-            {
-                if (i < pCurrClip)
-                {
-                    pAmmoPips[i].sprite = ammoPipOn;
-                }
-                else
-                {
-                    pAmmoPips[i].sprite = ammoPipOff;
-                }
-            }
-        }
+        forceUpdatePips();
     }
 
 
@@ -220,31 +188,7 @@ public class BattleMenuUI : MonoBehaviour
         estatDisplay.text = genEnemyStatDisplay();
         egunStatDisplay.text = "DMG: " + eMinDmg + "-" + eMaxDmg + "\nACC: " + eAcc + "\nRNG: " + eRng;
         emodDisplay.text = "Mod 1: " + eMod1Name + "\nMod 2: " + eMod2Name + "\nMod 3: " + eMod3Name;
-        for (int i = 0; i < eHPPips.Length; i++)
-        {
-            if (i < eHP)
-            {
-                eHPPips[i].sprite = pipOn;
-            }
-            else if (i < eMaxHP)
-            {
-                eHPPips[i].sprite = pipOff;
-            }
-        }
-        if (!eIsMelee)
-        {
-            for (int i = 0; i < eAmmoPips.Length; i++)
-            {
-                if (i <= eCurrClip)
-                {
-                    eAmmoPips[i].sprite = ammoPipOn;
-                }
-                else
-                {
-                    eAmmoPips[i].sprite = ammoPipOff;
-                }
-            }
-        }
+        forceUpdateEPips();
     }
 
     public void updatePlayerValues(Unit playerUnit)
@@ -475,115 +419,62 @@ public class BattleMenuUI : MonoBehaviour
         return output;
     }
 
-    //Older versions of the above two functions.
-
-    /*public string genPlayerStatDisplay()
+    public void forceUpdatePips()
     {
-        //Stats can be modified. Let's build this from scratch.
-        string stats = "DEF: " + pDef;
-        if (pTempDef < 0)
+        for (int i = 0; i < pHPPips.Length; i++)
         {
-            stats += " (" + pTempDef + ")\t";
+            if (i < pHP)
+            {
+                pHPPips[i].sprite = pipOn;
+            }
+            else if (i < pMaxHP)
+            {
+                pHPPips[i].sprite = pipOff;
+            }
         }
-        else if (pTempDef > 0)
+        if (!pIsMelee)
         {
-            stats += " (+" + pTempDef + ")\t";
+            for (int i = 0; i < pAmmoPips.Length; i++)
+            {
+                if (i < pCurrClip)
+                {
+                    pAmmoPips[i].sprite = ammoPipOn;
+                }
+                else
+                {
+                    pAmmoPips[i].sprite = ammoPipOff;
+                }
+            }
         }
-        else
-        {
-            stats += "\t\t\t";
-        }
-        stats += "EVA: " + pEva;
-        if (pTempEva < 0)
-        {
-            stats += " (" + pTempEva + ")\n";
-        }
-        else if (pTempEva > 0)
-        {
-            stats += " (+" + pTempEva + ")\n";
-        }
-        else
-        {
-            stats += "\n";
-        }
-        stats += "SPD: " + pSpd;
-        if (pTempSpd < 0)
-        {
-            stats += " (" + pTempSpd + ")\t";
-        }
-        else if (pTempSpd > 0)
-        {
-            stats += " (+" + pTempSpd + ")\t";
-        }
-        else
-        {
-            stats += "\t\t\t";
-        }
-        stats += "LCK: " + pLck;
-        if (pTempLck < 0)
-        {
-            stats += " (" + pTempLck + ")\n";
-        }
-        else if (pTempLck > 0)
-        {
-            stats += " (+" + pTempLck + ")\n";
-        }
-        return stats;
-    }*/
+    }
 
-    /*public string genEnemyStatDisplay()
+    public void forceUpdateEPips()
     {
-        //Stats can be modified. Let's build this from scratch.
-        string stats = "DEF: " + eDef;
-        if (eTempDef < 0)
+        for (int i = 0; i < eHPPips.Length; i++)
         {
-            stats += " (" + eTempDef + ")\t";
+            if (i < eHP)
+            {
+                eHPPips[i].sprite = pipOn;
+            }
+            else if (i < eMaxHP)
+            {
+                eHPPips[i].sprite = pipOff;
+            }
         }
-        else if (eTempDef > 0)
+        if (!eIsMelee)
         {
-            stats += " (+" + eTempDef + ")\t";
+            for (int i = 0; i < eAmmoPips.Length; i++)
+            {
+                if (i <= eCurrClip)
+                {
+                    eAmmoPips[i].sprite = ammoPipOn;
+                }
+                else
+                {
+                    eAmmoPips[i].sprite = ammoPipOff;
+                }
+            }
         }
-        else
-        {
-            stats += "\t\t\t";
-        }
-        stats += "EVA: " + eEva;
-        if (eTempEva < 0)
-        {
-            stats += " (" + eTempEva + ")\n";
-        }
-        else if (eTempEva > 0)
-        {
-            stats += " (+" + eTempEva + ")\n";
-        }
-        else
-        {
-            stats += "\n";
-        }
-        stats += "SPD: " + eSpd;
-        if (eTempSpd < 0)
-        {
-            stats += " (" + eTempSpd + ")\t";
-        }
-        else if (eTempSpd > 0)
-        {
-            stats += " (+" + eTempSpd + ")\t";
-        }
-        else
-        {
-            stats += "\t\t\t";
-        }
-        stats += "LCK: " + eLck;
-        if (eTempLck < 0)
-        {
-            stats += " (" + eTempLck + ")\n";
-        }
-        else if (eTempLck > 0)
-        {
-            stats += " (+" + eTempLck + ")\n";
-        }
-        return stats;
-    }*/
-
+    }
 
 }

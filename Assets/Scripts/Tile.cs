@@ -31,15 +31,31 @@ public class Tile : MonoBehaviour
         switch (tileType)
         {
             case 0:
+            case 1:
+            case 3:
                 isPassable = true;
                 overlayItem.gameObject.SetActive(false);
-                sr.sprite = spriteList[0];
+                sr.sprite = spriteList[tileType];
                 break;
 
-            case 1:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+            case 18:
                 isPassable = false;
                 overlayItem.gameObject.SetActive(false);
-                sr.sprite = spriteList[1];
+                sr.sprite = spriteList[tileType];
                 break;
 
             case 2:

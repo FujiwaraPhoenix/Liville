@@ -20,6 +20,8 @@ public class Controller : MonoBehaviour
     public bool playerTurn = true;
     public bool saidWL = false;
     public GameObject grid;
+    public int currentMovingEnemy = 0;
+    public bool allEnemiesMoved = false;
 
     //0 is overworld menu; 1 is map select; 2 is party select; 3 is gacha; 4 is battle screen.
     public int gameMode = 0;
@@ -112,6 +114,7 @@ public class Controller : MonoBehaviour
                         u.stunned = false;
                     }
                 }
+                allEnemiesMoved = false;
                 Debug.Log("Player Turn: Over. Enemy Phase Begins.");
             }
         }
@@ -233,14 +236,27 @@ public class Controller : MonoBehaviour
 
     public void runEnemyTurn()
     {
-        foreach (Unit u in enemyUnits)
+        if (!allEnemiesMoved)
         {
-            u.huntPlayers();
+            if (currentMovingEnemy < enemyUnits.Count)
+            {
+                Unit temp = enemyUnits[currentMovingEnemy];
+                if (!(temp.procPath) && !(temp.hasMoved))
+                {
+                    temp.huntPlayers();
+                }
+                else if (temp.hasMoved)
+                {
+                    currentMovingEnemy++;
+                }
+            }
+            else
+            {
+                allEnemiesMoved = true;
+                currentMovingEnemy = 0;
+                checkTurn();
+            }
         }
-        mp.currX = playerUnits[0].position[0];
-        mp.currY = playerUnits[0].position[1];
-        mp.transform.position = new Vector3(mp.currX, mp.currY + .5f, -3);
-        checkTurn();
     }
 
     public void switchGameState()

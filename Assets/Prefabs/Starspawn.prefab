@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2352872281567954066}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 4, y: 6, z: -1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1}
   m_Children:
   - {fileID: 3662856708362291572}
   m_Father: {fileID: 0}
@@ -117,8 +117,11 @@ MonoBehaviour:
   possibleTargets: []
   availableOptions: 00000000
   spr: {fileID: 2105297442641927343}
-  unitFace: {fileID: 0}
+  unitFace: {fileID: 21300000, guid: 7636391442084564e85b3bf97ebe5c9f, type: 3}
   unitName: Starspawn
+  nextIndex: 0
+  savedPath: 
+  procPath: 0
 --- !u!1 &3662856708362291574
 GameObject:
   m_ObjectHideFlags: 0

@@ -139,6 +139,22 @@ MonoBehaviour:
   - {fileID: 21300000, guid: db2a1ffdcb891f44ead77014e7ab36d1, type: 3}
   - {fileID: 21300000, guid: f617bda0df78060498cb095566514e8a, type: 3}
   - {fileID: 21300000, guid: bc963356e78cd0e4394df933a0abe460, type: 3}
+  - {fileID: 21300000, guid: 33710ba13a28416489feede4043c4c5c, type: 3}
+  - {fileID: 21300000, guid: 1b308feea813e024c838af1a471318b9, type: 3}
+  - {fileID: 21300000, guid: 41d36ecfdfbb6ab4e90a4481d985f137, type: 3}
+  - {fileID: 21300000, guid: a11a0cfbed63e5548a560d01ebd459d6, type: 3}
+  - {fileID: 21300000, guid: 87aae6ed0601c3e4b86418cb907d01dc, type: 3}
+  - {fileID: 21300000, guid: 5d7294022fb468e4d815df52bb63666b, type: 3}
+  - {fileID: 21300000, guid: 82dd0d910b77d0449b508f98e074617a, type: 3}
+  - {fileID: 21300000, guid: 18079d80ba67e1246ace4ae15114b925, type: 3}
+  - {fileID: 21300000, guid: da31edcbddc8fba4f888c806e398ce4f, type: 3}
+  - {fileID: 21300000, guid: 86731174d3b15264eba1b27a91c9c281, type: 3}
+  - {fileID: 21300000, guid: 859fb6e9622711a45a95371394d66555, type: 3}
+  - {fileID: 21300000, guid: 7d10eb0033ea5dd4f88b252e429ae63f, type: 3}
+  - {fileID: 21300000, guid: 0bbaad519450e644cbd54d2f35584db3, type: 3}
+  - {fileID: 21300000, guid: 1e8bb2f2a9780f140bc61ebe1dfd5441, type: 3}
+  - {fileID: 21300000, guid: 43d13550292a40d4aa82b96ae7671981, type: 3}
+  - {fileID: 21300000, guid: 1103afebe1317874b902a564cda09941, type: 3}
   olSpriteList:
   - {fileID: 21300000, guid: a7c7ed64ed9082f4f96c90150f595e03, type: 3}
   indicOLSpriteList:

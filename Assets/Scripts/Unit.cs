@@ -20,6 +20,11 @@ public class Unit : MonoBehaviour
     public Sprite unitFace;
     public string unitName = "temp";
 
+    public int nextIndex = 0;
+    public List<int> savedPath = new List<int>();
+    public bool procPath = false;
+    int timer = 15;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,13 +49,27 @@ public class Unit : MonoBehaviour
             {
                 Controller.c.unitMap[position[0], position[1]] = unitAllegiance;
             }
+            //For moving enemies.
+            if (procPath && savedPath != null && Controller.c.currentMovingEnemy < Controller.c.enemyUnits.Count)
+            {
+                if (Controller.c.enemyUnits[Controller.c.currentMovingEnemy] == this)
+                {
+                    if (timer <= 0)
+                    {
+                        processPath();
+                    }
+                    else
+                    {
+                        timer--;
+                    }
+                }
+            }
         }
     }
 
     public void startFinding()
     {
         //Test function; check for hazards. Player default.
-        //if (currUnit)Input.GetKeyDown(KeyCode.C) && 
 
         pathMap = new Path[Controller.c.currMap.xBound, Controller.c.currMap.yBound];
         for (int i = 0; i < Controller.c.currMap.xBound; i++)
@@ -445,8 +464,10 @@ public class Unit : MonoBehaviour
         {
             BattleMenuUI.bmui.updatePlayerValues(target);
             BattleMenuUI.bmui.updateEnemyValues(this);
-
         }
+        Controller.c.mp.currX = target.position[0];
+        Controller.c.mp.currY = target.position[1];
+        Controller.c.mp.transform.position = new Vector3(Controller.c.mp.currX, Controller.c.mp.currY + .5f, -3);
         target.die();
     }
 
@@ -504,7 +525,10 @@ public class Unit : MonoBehaviour
                 }
             }
             //Kick off processPath
-            processPath(chosenPath);
+            savedPath = chosenPath.path;
+            timer = 15;
+            procPath = true;
+            nextIndex = 0;
         }
         else
         {
@@ -521,19 +545,19 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public void processPath(Path route)
+    public void processPath()
     {
         //Reminder:
         //0 = up, 1 = right, 2 = down, 3 = left
         //Test for enemies
+        //Current problem: the function recurses. 
         if (unitAllegiance == 2)
         {
-            route.toString();
-            if (route.path.Count > 0)
+            if (savedPath.Count > nextIndex)
             {
                 Controller.c.unitMap[position[0], position[1]] = 0;
                 //TODO: Process tiles individually for effects.
-                switch (route.path[0])
+                switch (savedPath[nextIndex])
                 {
                     case 0:
                         //Move up one
@@ -556,8 +580,8 @@ public class Unit : MonoBehaviour
                         transform.position -= new Vector3(1, 0, 0);
                         break;
                 }
-                route.path.Remove(route.path[0]);
-                processPath(route);
+                timer = 15;
+                nextIndex++;
             }
             else
             {
@@ -570,6 +594,8 @@ public class Unit : MonoBehaviour
                     attack();
                 }
                 hasMoved = true;
+                procPath = false;
+                savedPath = null;
             }
         }
     }
