@@ -20,10 +20,14 @@ public class Unit : MonoBehaviour
     public Sprite unitFace;
     public string unitName = "temp";
 
+    public GameObject holder, holder2;
+    public SpriteRenderer modifierA, tens, tenOnes, modifierB, ones;
+
     public int nextIndex = 0;
     public List<int> savedPath = new List<int>();
     public bool procPath = false;
     int timer = 15;
+    int showDamageTimer = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -64,6 +68,13 @@ public class Unit : MonoBehaviour
                     }
                 }
             }
+            //Showing damage
+            if (showDamageTimer < 0)
+            {
+                holder.gameObject.SetActive(false);
+                holder2.gameObject.SetActive(false);
+            }
+            showDamageTimer--;
         }
     }
 
@@ -420,7 +431,9 @@ public class Unit : MonoBehaviour
                     Debug.Log("Backloaded activated!");
                 }
                 dmgTaken = Random.Range(currEquip.minDmg + currEquip.tempMinDmg, currEquip.maxDmg + currEquip.tempMaxDmg);
-                target.hp -= (dmgTaken - (target.def + target.currEquip.tempDef));
+                int finalDmg = dmgTaken - (target.def + target.currEquip.tempDef);
+                target.showDamage(finalDmg);
+                target.hp -= finalDmg;
                 Debug.Log(target.unitName + " took " + dmgTaken + " damage!");
             }
             //This is where Stun procs.
@@ -491,6 +504,7 @@ public class Unit : MonoBehaviour
     //given the pathmap, find a route to get to within attack range of the target.
     public void findRouteToTarget(bool inRange)
     {
+        Debug.Log(inRange);
         if (inRange)
         {
             //Check every set location on the map
@@ -651,5 +665,26 @@ public class Unit : MonoBehaviour
         stunned = false;
         currUnit = false;
         target = null;
+    }
+
+    public void showDamage(int dmgTaken)
+    {
+        if (dmgTaken < 10 && dmgTaken > 0)
+        {
+            //Single digit only.
+            holder2.gameObject.SetActive(true);
+            ones.sprite = Controller.c.damageNumbers[dmgTaken];
+            showDamageTimer = 30;
+        }
+        else if (dmgTaken > 9)
+        {
+            //Double digits.
+            holder.gameObject.SetActive(true);
+            int onesValue = dmgTaken % 10;
+            int tensValue = dmgTaken / 10;
+            tenOnes.sprite = Controller.c.damageNumbers[onesValue];
+            tens.sprite = Controller.c.damageNumbers[tensValue];
+            showDamageTimer = 30;
+        }
     }
 }

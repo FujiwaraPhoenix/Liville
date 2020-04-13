@@ -11,10 +11,16 @@ public class TextFileParser : MonoBehaviour {
     public string heldData;
     public string[] itemList;
 
+    //Because Assets doesn't exist during runtime..
+    public TextAsset[] mapList;
+    public TextAsset[] missionDataList;
+    public TextAsset[] missionSelectList;
+    public TextAsset namePrefixes, nameSuffixes;
+
     //This is temporary for the sake of testing. Wipe this when we start for real.
     private void Start()
     {
-        readMissionData(0);
+
     }
 
     void Awake()
@@ -40,7 +46,7 @@ public class TextFileParser : MonoBehaviour {
     }
 
     //This is just to make things more readable. We take the string and split it. Easy.
-    void tStringToList()
+    public void tStringToList()
     {
         itemList = heldData.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
     }
@@ -48,8 +54,9 @@ public class TextFileParser : MonoBehaviour {
     //Reads a map.
     public int[,] readMap(int mapNo)
     {
-        string mapName = "Assets/Text Files/Map" + mapNo + ".csv";
-        readString(mapName);
+        //string mapName = "Assets/Text Files/Map" + mapNo + ".csv";
+        //readString(mapName);
+        heldData = mapList[mapNo - 1].text;
         //heldData is now the map. Let's turn this into a 2D array.
         itemList = heldData.Split(new string[] { "\r\n", "\n" }, System.StringSplitOptions.None);
         int[,] output = new int[10, 10];
@@ -69,8 +76,9 @@ public class TextFileParser : MonoBehaviour {
     public void readMissionData(int missionID)
     {
         //We're splitting the data with new lines. It might get a bit painful to read, but that's a sacrifice I'm willing to take.
-        string missionName = "Assets/Text Files/Mission" + missionID + ".txt";
-        readString(missionName);
+        /*string missionName = "Assets/Text Files/Mission" + missionID + ".txt";
+        readString(missionName);*/
+        heldData = missionDataList[missionID].text;
         //heldData is now what we just read from the mission file. Let's split that.
         itemList = heldData.Split(new string[] { "\n", "\r\n" }, System.StringSplitOptions.None);
         //So, in order; string 0 is the map ID.

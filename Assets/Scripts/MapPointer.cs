@@ -23,6 +23,9 @@ public class MapPointer : MonoBehaviour
     public int invSize = 3;
     public int currentInvChoice = 0;
 
+    //Keep tabs on players.
+    public int lookingAtPlayerNo = -1;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -88,6 +91,7 @@ public class MapPointer : MonoBehaviour
                     transform.position += new Vector3(1, 0, 0);
                 }
             }
+            checkCurrentUnitIndex();
         }
         //If the menu IS active:
         else if (!choosingTarget && !selectingItem)
@@ -283,7 +287,7 @@ public class MapPointer : MonoBehaviour
                 }
             }
         }
-        if (Input.GetKeyDown(KeyCode.X))
+        else if (Input.GetKeyDown(KeyCode.X))
         {
             if (targetUnit != null)
             {
@@ -292,9 +296,9 @@ public class MapPointer : MonoBehaviour
                     menuActive = !menuActive;
                     currentMenuChoice = 0;
                     targetUnit.showMovement();
+                    Controller.c.unitMap[targetUnit.position[0], targetUnit.position[1]] = 0;
                     targetUnit.position[0] = targetUnit.lastPosition[0];
                     targetUnit.position[1] = targetUnit.lastPosition[1];
-                    Controller.c.unitMap[targetUnit.position[0], targetUnit.position[1]] = 0;
                     targetUnit.transform.position = Controller.c.currMap.grid[targetUnit.position[0], targetUnit.position[1]].transform.position;
                 }
                 else if (choosingTarget)
@@ -304,7 +308,7 @@ public class MapPointer : MonoBehaviour
                     //Move this back to the player.
                     currX = targetUnit.position[0];
                     currY = targetUnit.position[1];
-                    transform.position = new Vector2(targetUnit.position[0], targetUnit.position[1] + 0.5f);
+                    transform.position = new Vector3(targetUnit.position[0], targetUnit.position[1] + 0.5f, -3);
                     currentTargetIndex = 0;
                 }
                 else
@@ -323,6 +327,10 @@ public class MapPointer : MonoBehaviour
                 selectingItem = false;
                 currentInvChoice = 0;
             }
+        }
+        else if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            cycleNext();
         }
     }
 
@@ -433,6 +441,117 @@ public class MapPointer : MonoBehaviour
                     currentMenuChoice = 0;
                     Controller.c.checkTurn();
                     break;
+            }
+        }
+    }
+
+    public void checkCurrentUnitIndex()
+    {
+        //Updates lookingAtPlayerNo.
+        bool foundCurrent = false;
+        int givenIndex = 0;
+        foreach (Unit u in Controller.c.playerUnits){
+            if (!foundCurrent)
+            {
+                if (u.position[0] == currX && u.position[1] == currY && !u.isDead && !u.hasMoved)
+                {
+                    foundCurrent = true;
+                    lookingAtPlayerNo = givenIndex;
+                }
+                givenIndex++;
+            }
+        }
+        if (!foundCurrent)
+        {
+            lookingAtPlayerNo = -1;
+        }
+    }
+
+    public void cycleNext()
+    {
+        bool foundNext = false;
+        int givenIndex = 0;
+        Unit tempUnit = null;
+        if (!menuActive && Controller.c.playerTurn)
+        {
+            //First, check if we're on a player.
+            if (lookingAtPlayerNo != -1)
+            {
+                //We are, so check to see what's next.
+                if (lookingAtPlayerNo == Controller.c.playerUnits.Length - 1)
+                {
+                    for (int i = 0; i < Controller.c.playerUnits.Length; i++)
+                    {
+                        if (!foundNext)
+                        {
+                            if (!(Controller.c.playerUnits[i].isDead) && !(Controller.c.playerUnits[i].hasMoved))
+                            {
+                                foundNext = true;
+                                givenIndex = i;
+                            }
+                        }
+                    }
+                    //Move to that position.
+                    lookingAtPlayerNo = givenIndex;
+                    tempUnit = Controller.c.playerUnits[givenIndex];
+                    currX = tempUnit.position[0];
+                    currY = tempUnit.position[1];
+                    transform.position = new Vector3(tempUnit.position[0], tempUnit.position[1] + 0.5f, -3);
+                }
+                else
+                {
+                    //We're not at the end, so first look at what's next.
+                    givenIndex = lookingAtPlayerNo;
+                    for (int i = lookingAtPlayerNo + 1; i < Controller.c.playerUnits.Length; i++)
+                    {
+                        if (!(Controller.c.playerUnits[i].hasMoved) && !(Controller.c.playerUnits[i].isDead) && !foundNext)
+                        {
+                            foundNext = true;
+                            givenIndex = i;
+                        }
+                    }
+                    if (!foundNext)
+                    {
+                        for (int i = 0; i < Controller.c.playerUnits.Length; i++)
+                        {
+                            if (!foundNext)
+                            {
+                                if (!(Controller.c.playerUnits[i].isDead) && !(Controller.c.playerUnits[i].hasMoved))
+                                {
+                                    foundNext = true;
+                                    givenIndex = i;
+                                }
+                            }
+                        }
+                    }
+                    //Move to that position.
+                    lookingAtPlayerNo = givenIndex;
+                    tempUnit = Controller.c.playerUnits[givenIndex];
+                    currX = tempUnit.position[0];
+                    currY = tempUnit.position[1];
+                    transform.position = new Vector3(tempUnit.position[0], tempUnit.position[1] + 0.5f, -3);
+                }
+            }
+            else
+            {
+                //If we're not on a player, move to the first character that hasn't moved.
+                for (int i = 0; i < Controller.c.playerUnits.Length; i++)
+                {
+                    if (!foundNext)
+                    {
+                        if (!(Controller.c.playerUnits[i].isDead) && !(Controller.c.playerUnits[i].hasMoved))
+                        {
+                            foundNext = true;
+                            givenIndex = i;
+                        }
+                    }
+                }
+                //Move to that position.
+                lookingAtPlayerNo = givenIndex;
+                tempUnit = Controller.c.playerUnits[givenIndex];
+                currX = tempUnit.position[0];
+                currY = tempUnit.position[1];
+                transform.position = new Vector3(tempUnit.position[0], tempUnit.position[1] + 0.5f, -3);
             }
         }
     }

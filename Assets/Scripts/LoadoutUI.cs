@@ -21,7 +21,7 @@ public class LoadoutUI : MonoBehaviour
     public int yCap = 3;
 
     public int xHardCap = 3;
-    public int yHardCap = 4;
+    public int yHardCap = 5;
 
     //UI stuff holders.
     public GameObject baseMenu, charMenu, invMenu, gunMenu;
@@ -38,7 +38,7 @@ public class LoadoutUI : MonoBehaviour
 
     //For gun select; need 2D array of guns
     public LoadoutGunMini template;
-    public LoadoutGunMini[,] gunListing = new LoadoutGunMini[3, 4];
+    public LoadoutGunMini[,] gunListing;
 
     public GameObject displayBG;
 
@@ -95,6 +95,7 @@ public class LoadoutUI : MonoBehaviour
 
     public void initializeGunListing()
     {
+        gunListing = new LoadoutGunMini[xHardCap, yHardCap];
         for (int i = 0; i < xHardCap; i++)
         {
             for (int j = 0; j < yHardCap; j++)
@@ -102,7 +103,7 @@ public class LoadoutUI : MonoBehaviour
                 LoadoutGunMini newPiece = Instantiate(template, Vector2.zero, Quaternion.identity);
                 gunListing[i, j] = newPiece;
                 newPiece.transform.SetParent(displayBG.transform, false);
-                newPiece.transform.localPosition = new Vector2(-32.5f + (32.5f * i), 37.5f - (20 * j));
+                newPiece.transform.localPosition = new Vector2(-180f + (180f * i), 160f - (80 * j));
             }
         }
         //First, let's load up our equipped char's gun.
@@ -113,7 +114,7 @@ public class LoadoutUI : MonoBehaviour
     public void loadGunSwap()
     {
         //Determine page count.
-        totalPages = (InvManager.im.armory.Count / 12) + 1;
+        totalPages = (InvManager.im.armory.Count / 15) + 1;
 
         //Reset currX/Y
         currentX = 0;
@@ -134,17 +135,42 @@ public class LoadoutUI : MonoBehaviour
         {
             for (int j = 0; j < gunListing.GetLength(0); j++)
             {
-                int armoryPos = 12*(gunPage - 1) + j + 3*(i);
+                int armoryPos = 15 *(gunPage - 1) + j + 3*(i);
                 //If the gun at this position exists:
                 if (armoryPos < InvManager.im.armory.Count)
                 {
+                    Item tempGun = InvManager.im.armory[armoryPos];
                     gunListing[j, i].gameObject.SetActive(true);
-                    gunListing[j, i].gunName.text = InvManager.im.armory[armoryPos].itemName;
-                    gunListing[j, i].nameDrop.text = InvManager.im.armory[armoryPos].itemName;
-                    gunListing[j, i].gunType.text = InvManager.im.armory[armoryPos].itemType;
-                    gunListing[j, i].gunDrop.text = InvManager.im.armory[armoryPos].itemType;
-                    gunListing[j, i].gunRarity = InvManager.im.armory[armoryPos].rarity;
-                    gunListing[j, i].ammoCount = InvManager.im.armory[armoryPos].clipSize;
+                    gunListing[j, i].gunName.text = tempGun.itemName;
+                    gunListing[j, i].nameDrop.text = tempGun.itemName;
+                    gunListing[j, i].gunType.text = tempGun.itemType;
+                    gunListing[j, i].gunDrop.text = tempGun.itemType;
+                    gunListing[j, i].gunRarity = tempGun.rarity;
+                    gunListing[j, i].ammoCount = tempGun.clipSize;
+                    if (tempGun.mods.GetLength(0) > 0)
+                    {
+                        gunListing[j, i].modIcons[0].sprite = Controller.c.determineModIcon(tempGun.mods[0, 0], tempGun.mods[0, 1] - 1);
+                    }
+                    else
+                    {
+                        gunListing[j, i].modIcons[0].sprite = Controller.c.blankMod;
+                    }
+                    if (tempGun.mods.GetLength(0) > 1)
+                    {
+                        gunListing[j, i].modIcons[1].sprite = Controller.c.determineModIcon(tempGun.mods[1, 0], tempGun.mods[1, 1] - 1);
+                    }
+                    else
+                    {
+                        gunListing[j, i].modIcons[1].sprite = Controller.c.blankMod;
+                    }
+                    if (tempGun.mods.GetLength(0) > 2)
+                    {
+                        gunListing[j, i].modIcons[2].sprite = Controller.c.determineModIcon(tempGun.mods[2, 0], tempGun.mods[2, 1] - 1);
+                    }
+                    else
+                    {
+                        gunListing[j, i].modIcons[2].sprite = Controller.c.blankMod;
+                    }
                 }
                 //If it doesn't:
                 else
@@ -169,7 +195,7 @@ public class LoadoutUI : MonoBehaviour
         else
         {
             xCap = 2;
-            yCap = 3;
+            yCap = 4;
         }
         checkBorders();
     }
@@ -276,7 +302,7 @@ public class LoadoutUI : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if ((currentX == 2) || (currentY == yCap && currentX == xCap - 1 && xCap < 2))
+            if ((currentX == 2) || (currentY == yCap && currentX == xCap - 1 && xCap < 3))
             {
                 //Cycle page +1
                 if (gunPage == totalPages)
@@ -308,7 +334,7 @@ public class LoadoutUI : MonoBehaviour
             wasPressed = true;
         }
         //Though it's a bit weird, we'll update the hover stuff here.
-        int currentGunIndex = 12 * (gunPage - 1) + currentX + 3 * (currentY);
+        int currentGunIndex = 15 * (gunPage - 1) + currentX + 3 * (currentY);
         if (wasPressed)
         {
             hovered.updateStats(InvManager.im.armory[currentGunIndex]);
@@ -339,20 +365,19 @@ public class LoadoutUI : MonoBehaviour
         InvManager.im.armory.RemoveAt(gunIndex);
         loadNextPage();
         equipped.updateStats(Controller.c.playerUnits[currentPlayer].currEquip);
-        hovered.updateStats(InvManager.im.armory[12 * (gunPage - 1) + currentX + 3 * (currentY)]);
+        hovered.updateStats(InvManager.im.armory[15 * (gunPage - 1) + currentX + 3 * (currentY)]);
     }
 
     public void checkBorders()
     {
         for (int i = 0; i < 3; i++)
         {
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < 5; j++)
             {
                 gunListing[i, j].border.gameObject.SetActive(true);
                 if (currentX == i && currentY == j)
                 {
                     gunListing[i, j].border.sprite = borderList[gunListing[i, j].gunRarity - 1];
-
                 }
                 else
                 {
@@ -386,7 +411,7 @@ public class LoadoutUI : MonoBehaviour
             case 2:
                 //Gun choice.
                 xHardCap = 3;
-                yHardCap = 4;
+                yHardCap = 5;
                 break;
             case 3:
                 //Inventory.

@@ -7,6 +7,7 @@ public class LoadoutGunMini : MonoBehaviour
 {
     public Text gunName, gunType, nameDrop, gunDrop;
     public Image border;
+    public Image[] modIcons;
     public int gunRarity, ammoCount;
 
     // Start is called before the first frame update

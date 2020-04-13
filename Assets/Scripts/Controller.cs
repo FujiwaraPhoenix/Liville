@@ -23,6 +23,9 @@ public class Controller : MonoBehaviour
     public int currentMovingEnemy = 0;
     public bool allEnemiesMoved = false;
 
+    //Some stuff to display Player/Enemy Phase
+    public int timer;
+
     //0 is overworld menu; 1 is map select; 2 is party select; 3 is gacha; 4 is battle screen.
     public int gameMode = 0;
 
@@ -40,6 +43,13 @@ public class Controller : MonoBehaviour
 
     //Gacha mat rewards
     public int materialAGain, materialBGain, materialCGain, materialDGain;
+
+    //Stuffing these here because it's a giant pain to have to stash these in every unit.
+    public Sprite[] damageNumbers;
+
+    //Might as well.
+    public Sprite[] t1mods, t2mods, t3mods;
+    public Sprite blankMod;
 
     void Awake()
     {
@@ -67,20 +77,23 @@ public class Controller : MonoBehaviour
         //Run EP.
         if (gameMode == 4)
         {
-            if (!playerTurn)
+            if (timer > 0)
             {
-                runEnemyTurn();
+                timer--;
             }
-            if (currMap.loaded)
+            else
             {
-                checkWLState();
+                if (!playerTurn)
+                {
+                    runEnemyTurn();
+                }
+                if (currMap.loaded)
+                {
+                    checkWLState();
+                }
+                BattleMenuUI.bmui.phaseChange.gameObject.SetActive(false);
             }
         }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            debugGridX = true;
-        }
-        debugGridLoc();
         switchGameState();
     }
 
@@ -115,12 +128,15 @@ public class Controller : MonoBehaviour
                     }
                 }
                 allEnemiesMoved = false;
+                timer = 60;
+                BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.ePhase;
+                BattleMenuUI.bmui.phaseChange.gameObject.SetActive(true);
                 Debug.Log("Player Turn: Over. Enemy Phase Begins.");
             }
         }
         else
         {
-            bool allUnitsMoved = true;
+            /*bool allUnitsMoved = true;
             foreach (Unit u in enemyUnits)
             {
                 if (u.stunned)
@@ -134,8 +150,8 @@ public class Controller : MonoBehaviour
                         allUnitsMoved = !allUnitsMoved;
                     }
                 }
-            }
-            if (allUnitsMoved)
+            }*/
+            if (allEnemiesMoved)
             {
                 playerTurn = !playerTurn;
                 foreach (Unit u in playerUnits)
@@ -155,6 +171,9 @@ public class Controller : MonoBehaviour
                         }
                     }
                 }
+                timer = 60;
+                BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.pPhase;
+                BattleMenuUI.bmui.phaseChange.gameObject.SetActive(true);
                 Debug.Log("Enemy Turn: Over. Player Phase Begins.");
             }
         }
@@ -188,7 +207,9 @@ public class Controller : MonoBehaviour
         }
         if (enemiesDead && !saidWL)
         {
-            Debug.Log("Victory!");
+            //Debug.Log("Victory!");
+            BattleMenuUI.bmui.winLoss.sprite = BattleMenuUI.bmui.victory;
+            BattleMenuUI.bmui.winLoss.gameObject.SetActive(true);
             foreach (Unit u in playerUnits)
             {
                 if (u.checkMod(1, 7))
@@ -223,7 +244,9 @@ public class Controller : MonoBehaviour
         }
         if (playersDead && !saidWL)
         {
-            Debug.Log("Defeat!");
+            BattleMenuUI.bmui.winLoss.sprite = BattleMenuUI.bmui.defeat;
+            BattleMenuUI.bmui.winLoss.gameObject.SetActive(true);
+            //Debug.Log("Defeat!");
             saidWL = true;
         }
     }
@@ -256,6 +279,10 @@ public class Controller : MonoBehaviour
                 currentMovingEnemy = 0;
                 checkTurn();
             }
+        }
+        else
+        {
+            checkTurn();
         }
     }
 
@@ -344,6 +371,7 @@ public class Controller : MonoBehaviour
                         BattleMenuUI.bmui.currentPlayer = null;
                         BattleMenuUI.bmui.foundEnemy = false;
                         BattleMenuUI.bmui.currentEnemy = null;
+                        BattleMenuUI.bmui.winLoss.gameObject.SetActive(false);
                         missionSelected = false;
                         currMap.loaded = false;
                     }
@@ -498,142 +526,74 @@ public class Controller : MonoBehaviour
         }
     }
 
-    //Temp debugging tool.
-    bool debugGridX = false;
-    bool debugGridY = false;
-    int gridX, gridY;
-
-    void debugGridLoc()
+    public Sprite determineModIcon(int modTier, int modID)
     {
-        //Debugs for unitmap.
-        if (debugGridX && !debugGridY)
+        Debug.Log(modTier);
+        Debug.Log(modID);
+
+        switch (modTier)
         {
-            bool switchToY = false;
-            Debug.Log("Debug: Grid location. Input X now (0-9).");
-            if (Input.GetKeyDown(KeyCode.Alpha0))
-            {
-                gridX = 0;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                gridX = 1;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                gridX = 2;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                gridX = 3;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                gridX = 4;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                gridX = 5;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha6))
-            {
-                gridX = 6;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha7))
-            {
-                gridX = 7;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha8))
-            {
-                gridX = 8;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha9))
-            {
-                gridX = 9;
-                switchToY = true;
-                Debug.Log("X value accepted. Please input a Y (0-9).");
-            }
-            if (switchToY)
-            {
-                debugGridY = true;
-            }
-        }
-        else if (debugGridY)
-        {
-            bool inputY = false;
-            if (Input.GetKeyDown(KeyCode.Alpha0))
-            {
-                gridY = 0;
-                inputY = true;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                gridY = 1;
-                inputY = true;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                gridY = 2;
-                inputY = true;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                gridY = 3;
-                inputY = true;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                gridY = 4;
-                inputY = true;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                gridY = 5;
-                inputY = true;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha6))
-            {
-                gridY = 6;
-                inputY = true;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha7))
-            {
-                gridY = 7;
-                inputY = true;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha8))
-            {
-                gridY = 8;
-                inputY = true;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha9))
-            {
-                gridY = 9;
-                inputY = true;
-            }
-            if (inputY)
-            {
-                Debug.Log("Unit grid at " + gridX + ", " + gridY + " is " + Controller.c.unitMap[gridX, gridY]);
-                debugGridX = false;
-                debugGridY = false;
-            }
+            //From here, T1
+            case 1:
+                switch (modID)
+                {
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        return t1mods[modID];
+                    default:
+                        return blankMod;
+                }
+            //From here, T2
+            case 2:
+                switch (modID)
+                {
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        return t2mods[modID];
+                    default:
+                        return blankMod;
+                }
+            //From here, T3
+            case 3:
+                switch (modID)
+                {
+
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                        return t3mods[modID];
+                    default:
+                        return blankMod;
+                }
+            //From here, T4
+            case 4:
+                switch (modID)
+                {
+                    default:
+                        return blankMod;
+                }
+            //Default case.
+            default:
+                return blankMod;
         }
     }
 }

@@ -17,6 +17,12 @@ public class BattleMenuUI : MonoBehaviour
 
     public bool loadInitial = false;
 
+    public Image phaseChange;
+    public Sprite pPhase, ePhase;
+
+    public Image winLoss;
+    public Sprite victory, defeat;
+
     //For selection of options.
     public BattleMenuButton[] buttons = new BattleMenuButton[4];
     
@@ -226,9 +232,30 @@ public class BattleMenuUI : MonoBehaviour
 
         //Mods
         pMods = playerUnit.currEquip.mods;
-        pMod1Name = Controller.c.determineModName(pMods[0,0], pMods[0,1]);
-        pMod2Name = Controller.c.determineModName(pMods[1, 0], pMods[1, 1]);
-        pMod3Name = Controller.c.determineModName(pMods[2, 0], pMods[2, 1]);
+        if (pMods.GetLength(0) >= 3)
+        {
+            pMod3Name = Controller.c.determineModName(pMods[2, 0], pMods[2, 1]);
+        }
+        else
+        {
+            pMod3Name = null;
+        }
+        if (pMods.GetLength(0) >= 2)
+        {
+            pMod2Name = Controller.c.determineModName(pMods[1, 0], pMods[1, 1]);
+        }
+        else
+        {
+            pMod2Name = null;
+        }
+        if (pMods.GetLength(0) >= 1)
+        {
+            pMod1Name = Controller.c.determineModName(pMods[0, 0], pMods[0, 1]);
+        }
+        else
+        {
+            pMod1Name = null;
+        }
     }
 
     public void updateEnemyValues(Unit enemyUnit)

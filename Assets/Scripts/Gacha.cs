@@ -206,7 +206,9 @@ public class Gacha : MonoBehaviour
         else
         {
             //Somehow you failed to get the recipe working. Good job. Spit out failure.
-            Debug.Log("No results. Oops.");
+            string output = "Gun creation failed.\nInsufficient resources.";
+            lastGeneratedGun = null;
+            basicGunData = output;
         }
         
     }
@@ -218,10 +220,12 @@ public class Gacha : MonoBehaviour
         newItem.itemID = 0;
 
         //Placeholder stuff; output string.
-        string output = "Output\n";
+        string output = "";
         string outputRarity = "";
         string outputType = "";
         string mods = "";
+        string generatedName = generateName(newItem);
+        newItem.itemName = generatedName;
         string[] modList = null;
         newItem.rarity = gunRarity;
         switch (gunType)
@@ -286,14 +290,14 @@ public class Gacha : MonoBehaviour
         //Assemble output:
         if (gunRarity != 5)
         {
-            output += outputRarity + outputType + "Mods:\n" + mods;
+            output += generatedName + "\n" + outputRarity + outputType + "Mods:\n" + mods;
         }
         else
         {
             output += outputRarity + outputType;
         }
         Debug.Log(output);
-        InvManager.im.convoy.Add(newItem);
+        InvManager.im.armory.Add(newItem);
         newItem.transform.parent = InvManager.im.transform;
         lastGeneratedGun = newItem;
         basicGunData = output;
@@ -310,48 +314,36 @@ public class Gacha : MonoBehaviour
             //Here, we determine the number of mods to be generated on a given gun.
             case 1:
                 //Common gun.
-                if (modCountChance < 30)
+                if (modCountChance < 25)
                 {
                     modCount = 0;
                 }
-                else if (modCountChance < 80)
+                else if (modCountChance < 95)
                 {
                     modCount = 1;
                 }
-                else if (modCountChance < 90)
-                {
-                    modCount = 2;
-                }
-                else if (modCountChance < 99)
-                {
-                    modCount = 3;
-                }
                 else
-                {
-                    modCount = 4;
+                { 
+                    modCount = 2;
                 }
                 break;
             case 2:
                 //Uncommon gun.
-                if (modCountChance < 10)
+                if (modCountChance < 14)
                 {
                     modCount = 0;
                 }
-                else if (modCountChance < 45)
+                else if (modCountChance < 51)
                 {
                     modCount = 1;
                 }
-                else if (modCountChance < 74)
+                else if (modCountChance < 83)
                 {
                     modCount = 2;
                 }
-                else if (modCountChance < 90)
-                {
-                    modCount = 3;
-                }
                 else
                 {
-                    modCount = 4;
+                    modCount = 3;
                 }
                 break;
 
@@ -361,21 +353,17 @@ public class Gacha : MonoBehaviour
                 {
                     modCount = 0;
                 }
-                else if (modCountChance < 35)
+                else if (modCountChance < 40)
                 {
                     modCount = 1;
                 }
-                else if (modCountChance < 75)
+                else if (modCountChance < 85)
                 {
                     modCount = 2;
                 }
-                else if (modCountChance < 90)
-                {
-                    modCount = 3;
-                }
                 else
                 {
-                    modCount = 4;
+                    modCount = 3;
                 }
                 break;
 
@@ -385,21 +373,17 @@ public class Gacha : MonoBehaviour
                 {
                     modCount = 0;
                 }
-                else if (modCountChance < 25)
+                else if (modCountChance < 37)
                 {
                     modCount = 1;
                 }
-                else if (modCountChance < 60)
+                else if (modCountChance < 80)
                 {
                     modCount = 2;
                 }
-                else if (modCountChance < 80)
+                else 
                 {
                     modCount = 3;
-                }
-                else
-                {
-                    modCount = 4;
                 }
                 break;
         }
@@ -525,6 +509,7 @@ public class Gacha : MonoBehaviour
                 modsToAdd[i, 1] = modIndex;
             }
             moddedItem.mods = modsToAdd;
+            verifyMods(moddedItem);
         }
     }
 
@@ -724,7 +709,200 @@ public class Gacha : MonoBehaviour
         moddedItem.isMelee = true;
     }
 
+    public string generateName(Item newItem)
+    {
+        string output = null;
+        TextFileParser.tfp.heldData = TextFileParser.tfp.namePrefixes.text;
+        TextFileParser.tfp.tStringToList();
+        string[] data = TextFileParser.tfp.itemList;
+        output = data[Random.Range(0, data.Length)];
+        TextFileParser.tfp.heldData = TextFileParser.tfp.nameSuffixes.text;
+        TextFileParser.tfp.tStringToList();
+        data = TextFileParser.tfp.itemList;
+        output += " " + data[Random.Range(0, data.Length)];
+        return output;
+    }
 
+    public void verifyMods(Item itemToCheck)
+    {
+        //Check mod list length;
+        if (itemToCheck.mods.GetLength(0) > 1)
+        {
+            //We have at least two mods here. Let's check.
+            int modCount = itemToCheck.mods.GetLength(0);
+            if (modCount == 2)
+            {
+                //Compare the two.
+                bool isWepMelee = itemToCheck.isMelee;
+                int[] modSetA = { itemToCheck.mods[0, 0], itemToCheck.mods[0, 1] };
+                int[] modSetB = { itemToCheck.mods[1, 0], itemToCheck.mods[1, 1] };
+                int newModB = modSetB[1];
+                if (compareModSets(modSetA, modSetB))
+                {
+                    newModB = modConfirmTwo(modSetA, modSetB, isWepMelee);
+                }
+                itemToCheck.mods[1, 1] = newModB;
+            }
+            else if (modCount == 3)
+            {
+                //Has to have 3 mods, so.
+                //Compare them all to each other.
+                bool isWepMelee = itemToCheck.isMelee;
+                int[] modSetA = { itemToCheck.mods[0, 0], itemToCheck.mods[0, 1] };
+                int[] modSetB = { itemToCheck.mods[1, 0], itemToCheck.mods[1, 1] };
+                int[] modSetC = { itemToCheck.mods[2, 0], itemToCheck.mods[2, 1] };
+                bool compAB = compareModSets(modSetA, modSetB);
+                bool compAC = compareModSets(modSetA, modSetC);
+                bool compBC = compareModSets(modSetB, modSetC);
+                int newModA = modSetA[1];
+                int newModB = modSetB[1];
+                int newModC = modSetC[1];
+                //Checks, in order:
+                //If A == B, change B. Then run 3Check on A/B/C.
+                //Then, check if A == C. If so, change C, then run 3Check on A/C/B.
+                //Else, A != B and A != C, so run 2Check on B/C, then 3Check on B/C/A.
+                if (compAB)
+                {
+                    newModB = modConfirmTwo(modSetA, modSetB, isWepMelee);
+                    newModC = modConfirmThree(modSetA, modSetB, modSetC, isWepMelee);
+                }
+                else if (compAC)
+                {
+                    newModC = modConfirmTwo(modSetA, modSetC, isWepMelee);
+                    newModB = modConfirmThree(modSetA, modSetC, modSetB, isWepMelee);
+                }
+                else if (compBC)
+                {
+                    newModC = modConfirmTwo(modSetB, modSetC, isWepMelee);
+                    newModA = modConfirmThree(modSetB, modSetC, modSetB, isWepMelee);
+                }
+                itemToCheck.mods[0, 1] = newModA;
+                itemToCheck.mods[1, 1] = newModB;
+                itemToCheck.mods[2, 1] = newModC;
+            }
+        }
+    }
+
+    //Compares to sets of mods, and returns true if they are the same, false if they are not.
+    public bool compareModSets(int[] setA, int[] setB)
+    {
+        if ((setA[0] == setB[0]) && (setA[1] == setB[1]))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public int modConfirmTwo(int[] comparison, int[] toChange, bool isThisMelee)
+    {
+        //Let's be nice and reroll to same tier.
+        int modTier = comparison[0];
+        bool foundMod = false;
+        int newMod = toChange[1];
+        while ((comparison[1] == newMod) && !foundMod)
+        {
+            switch (modTier)
+            {
+                case 1:
+                    newMod = Random.Range(1, 9);
+                    if (!(isThisMelee) && newMod != 8 && newMod != comparison[1])
+                    {
+                        foundMod = true;
+                    }
+                    break;
+                case 2:
+                    newMod = Random.Range(1, 8);
+                    if (!(isThisMelee) && newMod != 3 && newMod != 6 && newMod != 7 && newMod != comparison[1])
+                    {
+                        foundMod = true;
+                    }
+                    break;
+                case 3:
+                    newMod = Random.Range(1, 12);
+                    if (!(isThisMelee) && newMod != 1 && newMod != 3 && newMod != 10 && newMod != comparison[1])
+                    {
+                        foundMod = true;
+                    }
+                    break;
+                case 4:
+                    //No mods for T4 yet, so.
+                    break;
+            }
+        }
+        return newMod;
+    }
+
+    public int modConfirmThree(int[] comparison, int[] comparisonTwo, int[] toChange, bool isThisMelee)
+    {
+        //Let's be nice and reroll to same tier.
+        int modTier = comparison[0];
+        bool foundMod = false;
+        int newMod = toChange[1];
+        bool sameTier = (comparisonTwo[0] == toChange[0]);
+        bool sameModVal = (comparisonTwo[1] == newMod);
+        while ((comparison[1] == newMod) && !foundMod)
+        {
+            switch (modTier)
+            {
+                case 1:
+                    newMod = Random.Range(1, 9);
+                    if (!(isThisMelee) && newMod != 8 && newMod != comparison[1])
+                    {
+                        //If modTier == sameTier, make sure it's not sameModVal.
+                        if (sameTier)
+                        {
+                            if (newMod != comparisonTwo[1])
+                            {
+                                foundMod = true;
+                            }
+                        }
+                        else
+                        {
+                            foundMod = true;
+                        }
+                    }
+                    break;
+                case 2:
+                    newMod = Random.Range(1, 8);
+                    if (!(isThisMelee) && newMod != 3 && newMod != 6 && newMod != 7 && newMod != comparison[1])
+                    {
+                        if (sameTier)
+                        {
+                            if (newMod != comparisonTwo[1])
+                            {
+                                foundMod = true;
+                            }
+                        }
+                        else
+                        {
+                            foundMod = true;
+                        }
+                    }
+                    break;
+                case 3:
+                    newMod = Random.Range(1, 12);
+                    if (!(isThisMelee) && newMod != 1 && newMod != 3 && newMod != 10 && newMod != comparison[1])
+                    {
+                        if (sameTier)
+                        {
+                            if (newMod != comparisonTwo[1])
+                            {
+                                foundMod = true;
+                            }
+                        }
+                        else
+                        {
+                            foundMod = true;
+                        }
+                    }
+                    break;
+                case 4:
+                    //No mods for T4 yet, so.
+                    break;
+            }
+        }
+        return newMod;
+    }
 
     /*public void generateGun()
     {

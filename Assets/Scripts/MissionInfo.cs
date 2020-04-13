@@ -31,8 +31,10 @@ public class MissionInfo : MonoBehaviour
 
     public void loadInfo()
     {
-        string pathname = "Assets/Text Files/Map Select/Mission" + missionNo + ".txt";
-        TextFileParser.tfp.readString(pathname);
+        /*string pathname = "Assets/Text Files/Map Select/Mission" + missionNo + ".txt";
+        TextFileParser.tfp.readString(pathname);*/
+        TextFileParser.tfp.heldData = TextFileParser.tfp.missionSelectList[missionNo].text;
+        TextFileParser.tfp.tStringToList();
         string[] data = TextFileParser.tfp.itemList;
         missionName = data[0];
         missionAbstract = data[1];

@@ -431,7 +431,6 @@ public class GachaUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X))
         {
             modifyingValue = false;
-            Debug.Log("No longer modifying.");
         }
     }
 
@@ -484,25 +483,28 @@ public class GachaUI : MonoBehaviour
                 modifyingValue = false;
                 //Update the text.
                 itemOutput.text = gachaMachine.basicGunData;
-                InvManager.im.materialA -= matAVal;
-                InvManager.im.materialB -= matBVal;
-                InvManager.im.materialC -= matCVal;
-                InvManager.im.materialD -= matDVal;
-                if (InvManager.im.materialA < matAVal)
+                if (gachaMachine.lastGeneratedGun != null)
                 {
-                    matAVal = InvManager.im.materialA;
-                }
-                if (InvManager.im.materialB < matBVal)
-                {
-                    matBVal = InvManager.im.materialB;
-                }
-                if (InvManager.im.materialC < matCVal)
-                {
-                    matCVal = InvManager.im.materialC;
-                }
-                if (InvManager.im.materialD < matDVal)
-                {
-                    matDVal = InvManager.im.materialD;
+                    InvManager.im.materialA -= matAVal;
+                    InvManager.im.materialB -= matBVal;
+                    InvManager.im.materialC -= matCVal;
+                    InvManager.im.materialD -= matDVal;
+                    if (InvManager.im.materialA < matAVal)
+                    {
+                        matAVal = InvManager.im.materialA;
+                    }
+                    if (InvManager.im.materialB < matBVal)
+                    {
+                        matBVal = InvManager.im.materialB;
+                    }
+                    if (InvManager.im.materialC < matCVal)
+                    {
+                        matCVal = InvManager.im.materialC;
+                    }
+                    if (InvManager.im.materialD < matDVal)
+                    {
+                        matDVal = InvManager.im.materialD;
+                    }
                 }
             }
         }
