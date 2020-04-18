@@ -48,7 +48,7 @@ public class Controller : MonoBehaviour
     public Sprite[] damageNumbers;
 
     //Might as well.
-    public Sprite[] t1mods, t2mods, t3mods;
+    public Sprite[] t1mods, t2mods, t3mods, demeritMods;
     public Sprite blankMod;
 
     void Awake()
@@ -79,6 +79,7 @@ public class Controller : MonoBehaviour
         {
             if (timer > 0)
             {
+                BattleMenuUI.bmui.phaseChange.gameObject.SetActive(true);
                 timer--;
             }
             else
@@ -127,12 +128,15 @@ public class Controller : MonoBehaviour
                         u.stunned = false;
                     }
                 }
-                allEnemiesMoved = false;
-                timer = 60;
-                BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.ePhase;
-                BattleMenuUI.bmui.phaseChange.gameObject.SetActive(true);
-                Debug.Log("Player Turn: Over. Enemy Phase Begins.");
+                if (enemyUnits.Count != 0)
+                {
+                    allEnemiesMoved = false;
+                    timer = 60;
+                    BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.ePhase;
+                    Debug.Log("Player Turn: Over. Enemy Phase Begins.");
+                }
             }
+
         }
         else
         {
@@ -171,28 +175,16 @@ public class Controller : MonoBehaviour
                         }
                     }
                 }
-                timer = 60;
-                BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.pPhase;
-                BattleMenuUI.bmui.phaseChange.gameObject.SetActive(true);
-                Debug.Log("Enemy Turn: Over. Player Phase Begins.");
-            }
-        }
-    }
-
-    public void forceETurnEnd()
-    {
-        foreach (Unit u in enemyUnits)
-        {
-            if (u != null && !u.isDead)
-            {
-                if (!u.hasMoved)
+                if (enemyUnits.Count != 0)
                 {
-                    u.hasMoved = true;
+                    timer = 60;
+                    BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.pPhase;
+                    Debug.Log("Enemy Turn: Over. Player Phase Begins.");
                 }
             }
         }
-        checkTurn();
     }
+    
 
     public void winMap()
     {
@@ -374,6 +366,13 @@ public class Controller : MonoBehaviour
                         BattleMenuUI.bmui.winLoss.gameObject.SetActive(false);
                         missionSelected = false;
                         currMap.loaded = false;
+                        if (enemyUnits.Count != 0)
+                        {
+                            foreach (Unit u in enemyUnits)
+                            {
+                                Destroy(u.gameObject);
+                            }
+                        }
                     }
                     break;
             }
@@ -440,8 +439,31 @@ public class Controller : MonoBehaviour
     {
         switch (modTier)
         {
-            //From here, T1
-            case 1:
+            //Negative mods here.
+            case -1:
+                switch (modID)
+                {
+                    case 1:
+                        return ("Feeble");
+                    case 2:
+                        return ("Flatfoot");
+                    case 3:
+                        return ("Paperclad");
+                    case 4:
+                        return ("Unaware");
+                    case 5:
+                        return ("Unlucky");
+                    case 6:
+                        return ("Uncalibrated");
+                    case 7:
+                        return ("Ammo Capacity-");
+                    case 8:
+                        return ("Ammo Capacity--");
+                    default:
+                        return ("--");
+                }
+                    //From here, T1
+                    case 1:
                 switch (modID)
                 {
                     case 1:
@@ -479,8 +501,6 @@ public class Controller : MonoBehaviour
                         return ("Stun");
                     case 6:
                         return ("Ammo Capacity++");
-                    case 7:
-                        return ("Ammo Capacity-");
                     default:
                         return ("--");
                 }
@@ -495,20 +515,6 @@ public class Controller : MonoBehaviour
                     case 3:
                         return ("Backloaded");
                     case 4:
-                        return ("Feeble");
-                    case 5:
-                        return ("Flatfoot");
-                    case 6:
-                        return ("Paperclad");
-                    case 7:
-                        return ("Unaware");
-                    case 8:
-                        return ("Unlucky");
-                    case 9:
-                        return ("Uncalibrated");
-                    case 10:
-                        return ("Ammo Capacity--");
-                    case 11:
                         return ("Ethereal");
                     default:
                         return ("--");
@@ -533,6 +539,22 @@ public class Controller : MonoBehaviour
 
         switch (modTier)
         {
+            //From here, Demerits
+            case -1:
+                switch (modID)
+                {
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        return demeritMods[modID];
+                    default:
+                        return blankMod;
+                }
             //From here, T1
             case 1:
                 switch (modID)
@@ -559,7 +581,6 @@ public class Controller : MonoBehaviour
                     case 4:
                     case 5:
                     case 6:
-                    case 7:
                         return t2mods[modID];
                     default:
                         return blankMod;
@@ -573,13 +594,6 @@ public class Controller : MonoBehaviour
                     case 2:
                     case 3:
                     case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
                         return t3mods[modID];
                     default:
                         return blankMod;

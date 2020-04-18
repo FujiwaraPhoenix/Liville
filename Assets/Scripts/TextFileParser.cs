@@ -87,8 +87,8 @@ public class TextFileParser : MonoBehaviour {
         //String 3 is the enemy count. Slightly useful.
         //String 4 and on are the enemy variants, followed by coordinates, then stats.
         //First is the variant type, then coordinates. 3 values.
-        //These stats are, in order: HP, Speed, Evasion, Def, Luck, Mvt, Status Resist. 7 in all.
-        //Weapon stats: min dmg, max dmg, clip size, accuracy, range, heal amount, temp spd/def/eva/lck/res/min/max (if needed). 13 in total.
+        //These stats are, in order: HP, Evasion, Def, Luck, Mvt, Status Resist. 6 in all.
+        //Weapon stats: min dmg, max dmg, clip size, accuracy, range, heal amount, temp mvt/def/eva/lck/res/min/max (if needed). 13 in total.
 
 
     }

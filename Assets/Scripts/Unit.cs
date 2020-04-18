@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public int hp, maxhp, spd, eva, def, lck, mvt, unitAllegiance, statusResist;
+    public int hp, maxhp, eva, def, lck, mvt, unitAllegiance, statusResist;
     public int[] position;
     public int[] lastPosition;
     public bool isDead, hasMoved, currUnit, stunned, determination;
@@ -28,7 +28,7 @@ public class Unit : MonoBehaviour
     public bool procPath = false;
     int timer = 15;
     int showDamageTimer = 0;
-
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -94,7 +94,7 @@ public class Unit : MonoBehaviour
         }
         Path newPath = Instantiate(p, transform.position, Quaternion.identity);
         newPath.whoseSide = unitAllegiance;
-        Pathfinder.pf.drawPath(this, position, mvt, newPath, unitAllegiance);
+        Pathfinder.pf.drawPath(this, position, mvt + currEquip.tempMvt, newPath, unitAllegiance);
         newPath.currentTile = true;
         newPath.set = true;
         pathMap[position[0], position[1]] = newPath;
@@ -117,7 +117,7 @@ public class Unit : MonoBehaviour
         Path newPath = Instantiate(p, transform.position, Quaternion.identity);
         newPath.whoseSide = unitAllegiance;
         possibleTargets = new List<Unit>();
-        Pathfinder.pf.drawPath(this, position, mvt, newPath, unitAllegiance);
+        Pathfinder.pf.drawPath(this, position, mvt + currEquip.tempMvt, newPath, unitAllegiance);
         newPath.currentTile = true;
         newPath.set = true;
         pathMap[position[0], position[1]] = newPath;
@@ -504,7 +504,6 @@ public class Unit : MonoBehaviour
     //given the pathmap, find a route to get to within attack range of the target.
     public void findRouteToTarget(bool inRange)
     {
-        Debug.Log(inRange);
         if (inRange)
         {
             //Check every set location on the map
@@ -530,7 +529,7 @@ public class Unit : MonoBehaviour
                             Vector3 tempLoc = new Vector3(i, j, -1);
                             //Check distance; can the target be shot?
                             float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
-                            if ((distToTarget <= currEquip.range) && pathMap[i,j].hazardCount < chosenPath.hazardCount)
+                            if ((distToTarget <= currEquip.range) && pathMap[i,j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count)
                             {
                                 chosenPath = pathMap[i, j];
                             }
@@ -548,14 +547,13 @@ public class Unit : MonoBehaviour
         {
             //Have fun chasing your target.
             //We'll make our own path.
-            Debug.Log(target.unitName);
-            /*clearPaths();
-            Path newPath = Instantiate(p, transform.position, Quaternion.identity);
-            Pathfinder.pf.drawPath(this, position, 20, newPath, unitAllegiance);*/
-
-            //For now, though? Do nothing.
-            hasMoved = true;
-            Controller.c.checkTurn();
+            if (!Controller.c.saidWL)
+            {
+                onTheHunt(target);
+                timer = 15;
+                procPath = true;
+                nextIndex = 0;
+            }
         }
     }
 
@@ -626,11 +624,10 @@ public class Unit : MonoBehaviour
         return false;
     }
 
-    public void setUnitStats(int newHP, int newSpd, int newEva, int newDef, int newLck, int newMvt, int newRes)
+    public void setUnitStats(int newHP, int newEva, int newDef, int newLck, int newMvt, int newRes)
     {
         hp = newHP;
         maxhp = newHP;
-        spd = newSpd;
         eva = newEva;
         def = newDef;
         lck = newLck;
@@ -638,7 +635,7 @@ public class Unit : MonoBehaviour
         statusResist = newRes;
     }
 
-    public void setUnitWeaponStats(int newMinDmg, int newMaxDmg, int newClip, int newAcc, int newRng, int newHealAmt, int newTempSpd, int newTempEva, int newTempDef, int newTempLck, int newTempRes, int newTempMin, int newTempMax)
+    public void setUnitWeaponStats(int newMinDmg, int newMaxDmg, int newClip, int newAcc, int newRng, int newHealAmt, int newTempAcc, int newTempEva, int newTempDef, int newTempLck, int newTempRes, int newTempMin, int newTempMax)
     {
         currEquip.minDmg = newMinDmg;
         currEquip.maxDmg = newMaxDmg;
@@ -647,7 +644,7 @@ public class Unit : MonoBehaviour
         currEquip.accuracy = newAcc;
         currEquip.range = newRng;
         currEquip.healAmt = newHealAmt;
-        currEquip.tempSpd = newTempSpd;
+        currEquip.tempAcc = newTempAcc;
         currEquip.tempDef = newTempDef;
         currEquip.tempEva = newTempEva;
         currEquip.tempLck = newTempLck;
@@ -665,6 +662,7 @@ public class Unit : MonoBehaviour
         stunned = false;
         currUnit = false;
         target = null;
+        spr.enabled = true;
     }
 
     public void showDamage(int dmgTaken)
@@ -686,5 +684,46 @@ public class Unit : MonoBehaviour
             tens.sprite = Controller.c.damageNumbers[tensValue];
             showDamageTimer = 30;
         }
+    }
+
+    public void onTheHunt(Unit targetUnit)
+    {
+        //In this scenario, the player MUST be out of range.
+        //Ergo, we move toward the player up to the amount of tiles we can move (aka mvt)
+        Pathfinder.pf.drawPath(this, position, 10, pathMap[position[0], position[1]], unitAllegiance);
+        //So let's say we have a theoretical max of 10 tiles to move. Next thing to do? Move towards the target.
+        Path chosenPath = null;
+        for (int i = 0; i < Controller.c.currMap.xBound; i++)
+        {
+            for (int j = 0; j < Controller.c.currMap.yBound; j++)
+            {
+                if (pathMap[i, j].set)
+                {
+                    if (chosenPath == null)
+                    {
+                        Vector3 tempLoc = new Vector3(i, j, -1);
+                        //Check distance; can the target be shot?
+                        float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
+                        if (distToTarget <= currEquip.range)
+                        {
+                            chosenPath = pathMap[i, j];
+                        }
+                    }
+                    else
+                    {
+                        Vector3 tempLoc = new Vector3(i, j, -1);
+                        //Check distance; can the target be shot?
+                        float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
+                        if ((distToTarget <= currEquip.range) && pathMap[i, j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count)
+                        {
+                            chosenPath = pathMap[i, j];
+                        }
+                    }
+                }
+            }
+        }
+        //Now that we have a path, let's cull it a bit.
+        //They're out of range, so let's shave the list down a bit.
+        savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt);
     }
 }

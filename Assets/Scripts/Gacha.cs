@@ -297,6 +297,7 @@ public class Gacha : MonoBehaviour
             output += outputRarity + outputType;
         }
         Debug.Log(output);
+        applyMods(newItem);
         InvManager.im.armory.Add(newItem);
         newItem.transform.parent = InvManager.im.transform;
         lastGeneratedGun = newItem;
@@ -304,7 +305,6 @@ public class Gacha : MonoBehaviour
     }
 
     //This generates the mods
-    //TODO: Finish this.
     public void generateMods(int weaponRarity, string[] modList, bool isMelee, Item moddedItem)
     {
         int modCountChance = Random.Range(0, 100);
@@ -404,33 +404,37 @@ public class Gacha : MonoBehaviour
                     switch (weaponRarity)
                     {
                         case 1:
-                            if (modRarity < 75)
+                            if (modRarity < 10)
+                            {
+                                modTier = -1;
+                            }
+                            else if (modRarity < 70)
                             {
                                 modTier = 1;
                             }
-                            else if (modRarity < 90)
+                            else if (modRarity < 95)
                             {
                                 modTier = 2;
-                            }
-                            else if (modRarity < 99)
-                            {
-                                modTier = 3;
                             }
                             else
                             {
-                                modTier = 4;
+                                modTier = 3;
                             }
                             break;
                         case 2:
-                            if (modRarity < 55)
+                            if (modRarity < 10)
+                            {
+                                modTier = -1;
+                            }
+                            else if (modRarity < 42)
                             {
                                 modTier = 1;
                             }
-                            else if (modRarity < 80)
+                            else if (modRarity < 72)
                             {
                                 modTier = 2;
                             }
-                            else if (modRarity < 95)
+                            else if (modRarity < 86)
                             {
                                 modTier = 3;
                             }
@@ -440,29 +444,15 @@ public class Gacha : MonoBehaviour
                             }
                             break;
                         case 3:
-                            if (modRarity < 50)
+                            if (modRarity < 5)
+                            {
+                                modTier = -1;
+                            }
+                            else if (modRarity < 10)
                             {
                                 modTier = 1;
                             }
-                            else if (modRarity < 75)
-                            {
-                                modTier = 2;
-                            }
-                            else if (modRarity < 90)
-                            {
-                                modTier = 3;
-                            }
-                            else
-                            {
-                                modTier = 4;
-                            }
-                            break;
-                        case 4:
-                            if (modRarity < 40)
-                            {
-                                modTier = 1;
-                            }
-                            else if (modRarity < 65)
+                            else if (modRarity < 42)
                             {
                                 modTier = 2;
                             }
@@ -475,10 +465,35 @@ public class Gacha : MonoBehaviour
                                 modTier = 4;
                             }
                             break;
+                        case 4:
+                            if (modRarity < 5)
+                            {
+                                modTier = 1;
+                            }
+                            else if (modRarity < 37)
+                            {
+                                modTier = 2;
+                            }
+                            else if (modRarity < 80)
+                            {
+                                modTier = 3;
+                            }
+                            else
+                            {
+                                modTier = 4;
+                            }
+                            break;
                     }
                     //Now we generate the mod proper.
                     switch (modTier)
                     {
+                        case -1:
+                            modIndex = Random.Range(1, 9);
+                            if (!isMelee && modIndex != 7 && modIndex != 8)
+                            {
+                                foundMod = true;
+                            }
+                            break;
                         case 1:
                             modIndex = Random.Range(1, 9);
                             if (!isMelee && modIndex != 8)
@@ -487,15 +502,15 @@ public class Gacha : MonoBehaviour
                             }
                             break;
                         case 2:
-                            modIndex = Random.Range(1, 8);
-                            if (!isMelee && modIndex != 3 && modIndex != 6 && modIndex != 7)
+                            modIndex = Random.Range(1, 7);
+                            if (!isMelee && modIndex != 3 && modIndex != 6)
                             {
                                 foundMod = true;
                             }
                             break;
                         case 3:
-                            modIndex = Random.Range(1, 12);
-                            if (!isMelee && modIndex != 1 && modIndex != 3 && modIndex != 10)
+                            modIndex = Random.Range(1, 5);
+                            if (!isMelee && modIndex != 1 && modIndex != 3)
                             {
                                 foundMod = true;
                             }
@@ -803,6 +818,13 @@ public class Gacha : MonoBehaviour
         {
             switch (modTier)
             {
+                case -1:
+                    newMod = Random.Range(1, 9);
+                    if (!(isThisMelee) && newMod != 7 && newMod != 8 && newMod != comparison[1])
+                    {
+                        foundMod = true;
+                    }
+                    break;
                 case 1:
                     newMod = Random.Range(1, 9);
                     if (!(isThisMelee) && newMod != 8 && newMod != comparison[1])
@@ -811,15 +833,15 @@ public class Gacha : MonoBehaviour
                     }
                     break;
                 case 2:
-                    newMod = Random.Range(1, 8);
-                    if (!(isThisMelee) && newMod != 3 && newMod != 6 && newMod != 7 && newMod != comparison[1])
+                    newMod = Random.Range(1, 7);
+                    if (!(isThisMelee) && newMod != 3 && newMod != 6 && newMod != comparison[1])
                     {
                         foundMod = true;
                     }
                     break;
                 case 3:
-                    newMod = Random.Range(1, 12);
-                    if (!(isThisMelee) && newMod != 1 && newMod != 3 && newMod != 10 && newMod != comparison[1])
+                    newMod = Random.Range(1, 5);
+                    if (!(isThisMelee) && newMod != 1 && newMod != 3 && newMod != comparison[1])
                     {
                         foundMod = true;
                     }
@@ -844,6 +866,23 @@ public class Gacha : MonoBehaviour
         {
             switch (modTier)
             {
+                case -1:
+                    newMod = Random.Range(1, 9);
+                    if (!(isThisMelee) && newMod != 7 && newMod != 8 && newMod != comparison[1])
+                    {
+                        if (sameTier)
+                        {
+                            if (newMod != comparisonTwo[1])
+                            {
+                                foundMod = true;
+                            }
+                        }
+                        else
+                        {
+                            foundMod = true;
+                        }
+                    }
+                    break;
                 case 1:
                     newMod = Random.Range(1, 9);
                     if (!(isThisMelee) && newMod != 8 && newMod != comparison[1])
@@ -864,7 +903,7 @@ public class Gacha : MonoBehaviour
                     break;
                 case 2:
                     newMod = Random.Range(1, 8);
-                    if (!(isThisMelee) && newMod != 3 && newMod != 6 && newMod != 7 && newMod != comparison[1])
+                    if (!(isThisMelee) && newMod != 3 && newMod != 6 && newMod != comparison[1])
                     {
                         if (sameTier)
                         {
@@ -881,7 +920,7 @@ public class Gacha : MonoBehaviour
                     break;
                 case 3:
                     newMod = Random.Range(1, 12);
-                    if (!(isThisMelee) && newMod != 1 && newMod != 3 && newMod != 10 && newMod != comparison[1])
+                    if (!(isThisMelee) && newMod != 1 && newMod != 3 && newMod != comparison[1])
                     {
                         if (sameTier)
                         {
@@ -902,6 +941,115 @@ public class Gacha : MonoBehaviour
             }
         }
         return newMod;
+    }
+
+    void applyMods(Item generatedGun)
+    {
+        for (int i = 0; i < generatedGun.mods.GetLength(0); i++)
+        {
+            switch (generatedGun.mods[i, 0])
+            {
+                case -1:
+                    switch(generatedGun.mods[i, 1])
+                    {
+                        case 1:
+                            //Feeble. Dmg down.
+                            generatedGun.tempMinDmg--;
+                            generatedGun.tempMaxDmg--;
+                            break;
+                        case 2:
+                            //Flatfoot. Mvt down.
+                            generatedGun.tempMvt--;
+                            break;
+                        case 3:
+                            //Paperclad. Def down.
+                            generatedGun.tempDef -= 5;
+                            break;
+                        case 4:
+                            //Unaware. Eva down.
+                            generatedGun.tempEva-= 5;
+                            break;
+                        case 5:
+                            //Unlucky. Lck down.
+                            generatedGun.tempLck -= 5;
+                            break;
+                        case 6:
+                            //Uncalibrated. Acc down.
+                            generatedGun.tempAcc -= 5;
+                            break;
+                        case 7:
+                            //Ammo-.
+                            if (generatedGun.clipSize > 1)
+                            {
+                                generatedGun.clipSize--;
+                                generatedGun.currentClip--;
+                            }
+                            break;
+                        case 8:
+                            //Ammo--.
+                            if (generatedGun.clipSize > 3)
+                            {
+                                generatedGun.clipSize-=2;
+                                generatedGun.currentClip = generatedGun.clipSize;
+                            }
+                            else
+                            {
+                                generatedGun.clipSize = 1;
+                                generatedGun.currentClip = generatedGun.clipSize;
+                            }
+                            break;
+                    }
+                    break;
+                case 1:
+                    switch (generatedGun.mods[i, 1])
+                    {
+                        case 1:
+                            //Fleetfoot. Spd up.
+                            generatedGun.tempMvt++;
+                            break;
+                        case 2:
+                            //Ironclad. Def up.
+                            generatedGun.tempDef += 5;
+                            break;
+                        case 3:
+                            //Aware. EVA up.
+                            generatedGun.tempEva += 5;
+                            break;
+                        case 4:
+                            //Lucky. LCK up.
+                            generatedGun.tempLck += 5;
+                            break;
+                        case 8:
+                            //Ammo+.
+                            generatedGun.clipSize++;
+                            generatedGun.currentClip = generatedGun.clipSize;
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch (generatedGun.mods[i, 1])
+                    {
+                        case 1:
+                            //Brutal. Dmg+
+                            generatedGun.tempMinDmg++;
+                            generatedGun.tempMaxDmg++;
+                            break;
+                        case 2:
+                            //Scope. Acc+
+                            generatedGun.tempAcc += 5;
+                            break;
+                        case 6:
+                            //Ammo++
+                            generatedGun.clipSize+=2;
+                            generatedGun.currentClip = generatedGun.clipSize;
+                            break;
+                    }
+                    break;
+                case 3:
+                    //No stat modifiers here.
+                    break;
+            }
+        }
     }
 
     /*public void generateGun()

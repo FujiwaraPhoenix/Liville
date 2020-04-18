@@ -377,15 +377,16 @@ MonoBehaviour:
   isMelee: 1
   rarity: 0
   healAmt: 0
-  itemName: ???
+  itemName: Tears
   itemType: 
-  tempSpd: 0
+  tempAcc: 0
   tempDef: 0
   tempEva: 0
   tempLck: 0
   tempRes: 0
   tempMinDmg: 0
   tempMaxDmg: 0
+  tempMvt: 0
 --- !u!1 &5913617519313748680
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,7 +566,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 15
   maxhp: 15
-  spd: 0
   eva: 0
   def: 0
   lck: 0
@@ -586,8 +586,8 @@ MonoBehaviour:
   possibleTargets: []
   availableOptions: 00000000
   spr: {fileID: 7013498562011679944}
-  unitFace: {fileID: 0}
-  unitName: Mummy
+  unitFace: {fileID: 21300000, guid: c872a1b4ff1807a4cbec983b8ed41231, type: 3}
+  unitName: Manticore
   holder: {fileID: 8177603002255089797}
   holder2: {fileID: 6994815750198933774}
   modifierA: {fileID: 186450197127085436}

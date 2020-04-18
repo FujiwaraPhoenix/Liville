@@ -34,8 +34,8 @@ public class BattleMenuUI : MonoBehaviour
     public Image pImg;
     public Text HPDisplay, statDisplay, gunStatDisplay, modDisplay;
     public int pHP, pMaxHP, pDef, pEva, pSpd, pLck;
-    public int pClipSize, pCurrClip, pMinDmg, pMaxDmg, pAcc, pRng;
-    public int pTempSpd, pTempDef, pTempEva, pTempLck, pTempRng, pTempRes, pTempMinDmg, pTempMaxDmg;
+    public int pClipSize, pCurrClip, pMinDmg, pMaxDmg, pAcc, pRng, pMvt;
+    public int pTempAcc, pTempDef, pTempEva, pTempLck, pTempRng, pTempRes, pTempMinDmg, pTempMaxDmg, pTempMvt;
     public int[,] pMods = new int[3,2];
     public string pMod1Name, pMod2Name, pMod3Name;
     public bool pIsMelee = false;
@@ -49,8 +49,8 @@ public class BattleMenuUI : MonoBehaviour
     public Image eImg;
     public Text eHPDisplay, estatDisplay, egunStatDisplay, emodDisplay;
     public int eHP, eMaxHP, eDef, eEva, eSpd, eLck;
-    public int eClipSize, eCurrClip, eMinDmg, eMaxDmg, eAcc, eRng;
-    public int eTempSpd, eTempDef, eTempEva, eTempLck, eTempRng, eTempRes, eTempMinDmg, eTempMaxDmg;
+    public int eClipSize, eCurrClip, eMinDmg, eMaxDmg, eAcc, eRng, eMvt;
+    public int eTempAcc, eTempDef, eTempEva, eTempLck, eTempRng, eTempRes, eTempMinDmg, eTempMaxDmg, eTempMvt;
     public int[,] eMods = new int[3, 2];
     public string eMod1Name, eMod2Name, eMod3Name;
     public bool eIsMelee = false;
@@ -206,10 +206,10 @@ public class BattleMenuUI : MonoBehaviour
         //Player stats
         pHP = playerUnit.hp;
         pMaxHP = playerUnit.maxhp;
-        pSpd = playerUnit.spd;
         pEva = playerUnit.eva;
         pDef = playerUnit.def;
         pLck = playerUnit.lck;
+        pMvt = playerUnit.mvt;
 
         //Gun stats
         pGunName.text = playerUnit.currEquip.itemName;
@@ -222,13 +222,14 @@ public class BattleMenuUI : MonoBehaviour
         pIsMelee = playerUnit.currEquip.isMelee;
 
         //Gun mod values
-        pTempSpd = playerUnit.currEquip.tempSpd;
+        pTempAcc = playerUnit.currEquip.tempAcc;
         pTempDef = playerUnit.currEquip.tempDef;
         pTempEva = playerUnit.currEquip.tempEva;
         pTempLck = playerUnit.currEquip.tempLck;
         pTempRes = playerUnit.currEquip.tempRes;
         pTempMinDmg = playerUnit.currEquip.tempMinDmg;
         pTempMaxDmg = playerUnit.currEquip.tempMaxDmg;
+        pTempMvt = playerUnit.currEquip.tempMvt;
 
         //Mods
         pMods = playerUnit.currEquip.mods;
@@ -267,10 +268,10 @@ public class BattleMenuUI : MonoBehaviour
         //Player stats
         eHP = enemyUnit.hp;
         eMaxHP = enemyUnit.maxhp;
-        eSpd = enemyUnit.spd;
         eEva = enemyUnit.eva;
         eDef = enemyUnit.def;
         eLck = enemyUnit.lck;
+        eMvt = enemyUnit.mvt;
 
         //Gun stats
         eGunName.text = enemyUnit.currEquip.itemName;
@@ -283,13 +284,14 @@ public class BattleMenuUI : MonoBehaviour
         eIsMelee = enemyUnit.currEquip.isMelee;
 
         //Gun mod values
-        eTempSpd = enemyUnit.currEquip.tempSpd;
+        eTempAcc = enemyUnit.currEquip.tempAcc;
         eTempDef = enemyUnit.currEquip.tempDef;
         eTempEva = enemyUnit.currEquip.tempEva;
         eTempLck = enemyUnit.currEquip.tempLck;
         eTempRes = enemyUnit.currEquip.tempRes;
         eTempMinDmg = enemyUnit.currEquip.tempMinDmg;
         eTempMaxDmg = enemyUnit.currEquip.tempMaxDmg;
+        eTempMvt = enemyUnit.currEquip.tempMvt;
         
         //Mods
         eMods = enemyUnit.currEquip.mods;
@@ -431,7 +433,7 @@ public class BattleMenuUI : MonoBehaviour
         string output = "";
         output += "DEF: " + pDef + "\t\t\t";
         output += "EVA: " + pEva + "\n";
-        output += "SPD: " + pSpd + "\t\t\t";
+        output += "MVT: " + pMvt + "\t\t\t";
         output += "LCK: " + pLck;
         return output;
     }
@@ -441,7 +443,7 @@ public class BattleMenuUI : MonoBehaviour
         string output = "";
         output += "DEF: " + eDef + "\t\t\t";
         output += "EVA: " + eEva + "\n";
-        output += "SPD: " + eSpd + "\t\t\t";
+        output += "MVT: " + eMvt + "\t\t\t";
         output += "LCK: " + eLck;
         return output;
     }

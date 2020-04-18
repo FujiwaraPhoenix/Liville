@@ -7,7 +7,7 @@ public class PlayerData : MonoBehaviour
 {
     public int pID;
     public Text pName, pHPDisplay, pStats;
-    public int pHP, pMaxHP, pSpd, pEva, pDef, pLck;
+    public int pHP, pMaxHP, pSpd, pEva, pDef, pLck, pMvt;
     public Image pImg;
     public Image[] pHPPips;
     public bool preloaded = false;
@@ -39,10 +39,10 @@ public class PlayerData : MonoBehaviour
         //Player stats
         pHP = playerUnit.hp;
         pMaxHP = playerUnit.maxhp;
-        pSpd = playerUnit.spd;
         pEva = playerUnit.eva;
         pDef = playerUnit.def;
         pLck = playerUnit.lck;
+        pMvt = playerUnit.mvt;
 
         //Now, strings.
         pHPDisplay.text = "HP: " + pHP + "/" + pMaxHP;
@@ -57,7 +57,7 @@ public class PlayerData : MonoBehaviour
         string output = "";
         output += "DEF: " + pDef + "\t\t\t";
         output += "EVA: " + pEva + "\n";
-        output += "SPD: " + pSpd + "\t\t";
+        output += "MVT: " + pMvt + "\t\t";
         output += "LCK: " + pLck;
         return output;
     }

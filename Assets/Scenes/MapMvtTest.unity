@@ -647,8 +647,11 @@ MonoBehaviour:
   yBound: 10
   loaded: 0
   mapExists: 0
-  enemyBase: {fileID: 4555169367758286380, guid: e54fbc0492d3f7f4d9328349faf2441d,
-    type: 3}
+  enemyVariants:
+  - {fileID: 4555169367758286380, guid: e54fbc0492d3f7f4d9328349faf2441d, type: 3}
+  - {fileID: 4555169367758286380, guid: 85506e611ccd0a6459e855e66c2b4231, type: 3}
+  - {fileID: 4851574652350742091, guid: 23f6fdf9cc7853e4bb8b443aebfaea15, type: 3}
+  - {fileID: 4851574652350742091, guid: fc991f21386c62249ae829f50c5ad1fd, type: 3}
 --- !u!4 &51308011
 Transform:
   m_ObjectHideFlags: 0
@@ -1343,6 +1346,7 @@ MonoBehaviour:
   pEva: 0
   pDef: 0
   pLck: 0
+  pMvt: 0
   pImg: {fileID: 1286471846}
   pHPPips: []
   preloaded: 0
@@ -2108,7 +2112,7 @@ PrefabInstance:
     - target: {fileID: 7085249397015268344, guid: b03bf051a5e2f4142a538fe625cb8689,
         type: 3}
       propertyPath: missionNo
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b03bf051a5e2f4142a538fe625cb8689, type: 3}
@@ -5971,6 +5975,7 @@ MonoBehaviour:
   pEva: 0
   pDef: 0
   pLck: 0
+  pMvt: 0
   pImg: {fileID: 984153105}
   pHPPips: []
   preloaded: 0
@@ -7551,6 +7556,7 @@ MonoBehaviour:
   pEva: 0
   pDef: 0
   pLck: 0
+  pMvt: 0
   pImg: {fileID: 838722986}
   pHPPips: []
   preloaded: 0
@@ -7761,10 +7767,10 @@ MonoBehaviour:
   menuPointer: {fileID: 9368803}
   menuItems: {fileID: 1288747482}
   currInvShown: {fileID: 1718387625}
-  materialA: 10000
-  materialB: 10000
-  materialC: 10000
-  materialD: 10000
+  materialA: 75
+  materialB: 75
+  materialC: 75
+  materialD: 75
 --- !u!4 &1211713533
 Transform:
   m_ObjectHideFlags: 0
@@ -8063,27 +8069,28 @@ MonoBehaviour:
   - {fileID: -3207216406822134232, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: -3429170224263652132, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: -7072805555903741572, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
-  - {fileID: -6937652681300489007, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
+  - {fileID: -6604085344013911844, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   t2mods:
   - {fileID: -8341158227142225001, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: 9156360730540957488, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: -5069398646095906140, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: -7677189247841571312, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: 7111568476178514173, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
-  - {fileID: -6937652681300489007, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
-  - {fileID: -6937652681300489007, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
+  - {fileID: 27380987693015333, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   t3mods:
   - {fileID: -5163776963367555003, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: 4945160598228058494, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: 4160256591078358064, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
+  - {fileID: 5932926752780406850, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
+  demeritMods:
   - {fileID: 2359505624080743583, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: -4251824762703074534, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: 4068371382756587728, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: 1546395977102291692, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: -52551067727327220, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   - {fileID: -8897787485690775747, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
-  - {fileID: -6937652681300489007, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
-  - {fileID: -365413715191992728, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
+  - {fileID: 3578619511151619056, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
+  - {fileID: -2421191069452097549, guid: f987b212bca7b98428bd389fdc3be0cf, type: 3}
   blankMod: {fileID: -6937652681300489007, guid: f987b212bca7b98428bd389fdc3be0cf,
     type: 3}
 --- !u!4 &1229358403
@@ -11593,6 +11600,7 @@ MonoBehaviour:
   pEva: 0
   pDef: 0
   pLck: 0
+  pMvt: 0
   pImg: {fileID: 1722028720}
   pHPPips: []
   preloaded: 0
@@ -14761,7 +14769,8 @@ MonoBehaviour:
   pMaxDmg: 0
   pAcc: 0
   pRng: 0
-  pTempSpd: 0
+  pMvt: 0
+  pTempAcc: 0
   pTempDef: 0
   pTempEva: 0
   pTempLck: 0
@@ -14769,6 +14778,7 @@ MonoBehaviour:
   pTempRes: 0
   pTempMinDmg: 0
   pTempMaxDmg: 0
+  pTempMvt: 0
   pMod1Name: 
   pMod2Name: 
   pMod3Name: 
@@ -14796,7 +14806,8 @@ MonoBehaviour:
   eMaxDmg: 0
   eAcc: 0
   eRng: 0
-  eTempSpd: 0
+  eMvt: 0
+  eTempAcc: 0
   eTempDef: 0
   eTempEva: 0
   eTempLck: 0
@@ -14804,6 +14815,7 @@ MonoBehaviour:
   eTempRes: 0
   eTempMinDmg: 0
   eTempMaxDmg: 0
+  eTempMvt: 0
   eMod1Name: 
   eMod2Name: 
   eMod3Name: 
@@ -14843,10 +14855,13 @@ MonoBehaviour:
   itemList: []
   mapList:
   - {fileID: 4900000, guid: ea9291aa7f21bd1429aacaf9efa9743c, type: 3}
+  - {fileID: 4900000, guid: 5c3e2af1cdf0bc0448b92d9f596be0ff, type: 3}
   missionDataList:
   - {fileID: 4900000, guid: 52d0dd991b3127346a7b4074539acd9a, type: 3}
+  - {fileID: 4900000, guid: 218773ad42e660e40a86a95bb627a65c, type: 3}
   missionSelectList:
   - {fileID: 4900000, guid: 0734c6b719057e94a966effdb65e6bcb, type: 3}
+  - {fileID: 4900000, guid: c4f07664f8ada9b41b58dcd5a4b5639d, type: 3}
   namePrefixes: {fileID: 4900000, guid: 2e40ce83d988f1942b09d6ca058b3a62, type: 3}
   nameSuffixes: {fileID: 4900000, guid: 6481cad5a8c381b48b760054525e7a9c, type: 3}
 --- !u!4 &2109613781

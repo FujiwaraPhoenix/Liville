@@ -33,6 +33,7 @@ public class Tile : MonoBehaviour
             case 0:
             case 1:
             case 3:
+            case 19:
                 isPassable = true;
                 overlayItem.gameObject.SetActive(false);
                 sr.sprite = spriteList[tileType];

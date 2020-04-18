@@ -10,7 +10,7 @@ public class Map : MonoBehaviour
     public int[,] tileTypes;
     public bool loaded = false;
     public bool mapExists = false;
-    public Unit enemyBase;
+    public Unit[] enemyVariants;
 
     // Start is called before the first frame update
     void Start()
@@ -94,17 +94,17 @@ public class Map : MonoBehaviour
         for (int i = 4; i < TextFileParser.tfp.itemList.Length; i++)
         {
             int[] unitValues = TextFileParser.tfp.numbersToUnitValues(TextFileParser.tfp.itemList[i]);
-            //For now, we ignore value 0, as we only have one base at the moment.
-            Unit newEnemy = Instantiate(enemyBase, new Vector3(0, 0, 0), Quaternion.identity);
+            //Make a new enemy of whatever unitValues[0] refers to.
+            Unit newEnemy = Instantiate(enemyVariants[unitValues[0]], new Vector3(0, 0, 0), Quaternion.identity);
             //First, location.
             newEnemy.transform.position = new Vector3(unitValues[1], unitValues[2], -1);
             newEnemy.position[0] = unitValues[1];
             newEnemy.position[1] = unitValues[2];
             //Next, stats.
-            //Values 3 to 9.
-            newEnemy.setUnitStats(unitValues[3], unitValues[4], unitValues[5], unitValues[6], unitValues[7], unitValues[8], unitValues[9]);
-            //Now, weapon stats. 10 to 22.
-            newEnemy.setUnitWeaponStats(unitValues[10], unitValues[11], unitValues[12], unitValues[13], unitValues[14], unitValues[15], unitValues[16], unitValues[17], unitValues[18], unitValues[19], unitValues[20], unitValues[21], unitValues[22]);
+            //Values 3 to 8.
+            newEnemy.setUnitStats(unitValues[3], unitValues[4], unitValues[5], unitValues[6], unitValues[7], unitValues[8]);
+            //Now, weapon stats. 9 to 21.
+            newEnemy.setUnitWeaponStats(unitValues[9], unitValues[10], unitValues[11], unitValues[12], unitValues[13], unitValues[14], unitValues[15], unitValues[16], unitValues[17], unitValues[18], unitValues[19], unitValues[20], unitValues[21]);
             Controller.c.enemyUnits.Add(newEnemy);
         }
     }

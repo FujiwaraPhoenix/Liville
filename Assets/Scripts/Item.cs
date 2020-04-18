@@ -25,7 +25,7 @@ public class Item : MonoBehaviour
     public string itemType;
 
     //Does this thing have stat modifiers? If so, how big/small are they?
-    public int tempSpd, tempDef, tempEva, tempLck, tempRes, tempMinDmg, tempMaxDmg;
+    public int tempAcc, tempDef, tempEva, tempLck, tempRes, tempMinDmg, tempMaxDmg, tempMvt;
 
     void Start()
     {

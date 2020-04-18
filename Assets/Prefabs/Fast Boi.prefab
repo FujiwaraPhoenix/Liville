@@ -211,7 +211,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 5
   maxhp: 5
-  spd: 0
   eva: 0
   def: 0
   lck: 0
@@ -233,7 +232,7 @@ MonoBehaviour:
   availableOptions: 00000000
   spr: {fileID: 2105297442641927343}
   unitFace: {fileID: 21300000, guid: 0305e59d53c31ad489e99182aab2015c, type: 3}
-  unitName: Fast Boi
+  unitName: Xiphoid
   holder: {fileID: 6634211822516551687}
   holder2: {fileID: 1063255033917194735}
   modifierA: {fileID: 3540303300798868097}
@@ -297,15 +296,16 @@ MonoBehaviour:
   isMelee: 1
   rarity: 0
   healAmt: 0
-  itemName: ???
+  itemName: Xiphos
   itemType: 
-  tempSpd: 0
+  tempAcc: 0
   tempDef: 0
   tempEva: 0
   tempLck: 0
   tempRes: 0
   tempMinDmg: 0
   tempMaxDmg: 0
+  tempMvt: 0
 --- !u!1 &6225520990604569222
 GameObject:
   m_ObjectHideFlags: 0
