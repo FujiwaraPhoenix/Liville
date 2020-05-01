@@ -412,7 +412,7 @@ public class MapPointer : MonoBehaviour
                         string tempStr = "";
                         foreach (Item i in targetUnit.inventory)
                         {
-                            tempStr += i.name + "\n";
+                            tempStr += i.itemName + "\n";
                         }
                         InvManager.im.currInvShown.text = tempStr;
                     }

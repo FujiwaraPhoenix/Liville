@@ -156,6 +156,15 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 43d13550292a40d4aa82b96ae7671981, type: 3}
   - {fileID: 21300000, guid: 1103afebe1317874b902a564cda09941, type: 3}
   - {fileID: 21300000, guid: a097595c4d0d9cb4aa2636e24c387f32, type: 3}
+  - {fileID: 21300000, guid: 51230f579665f02428467948745163db, type: 3}
+  - {fileID: 21300000, guid: c1eda9759541a9449bfe86d2cc0760b7, type: 3}
+  - {fileID: 21300000, guid: 3527893126ef5274888ccdcd059198bb, type: 3}
+  - {fileID: 21300000, guid: 91f1c0bc87b70244a81adfb59d9ed2da, type: 3}
+  - {fileID: 21300000, guid: 9f6df1e33a4d6a247b870a2a741def94, type: 3}
+  - {fileID: 21300000, guid: 60b3c3492ed82354eb646c6244329358, type: 3}
+  - {fileID: 21300000, guid: 4f37c8efc1d535249a353e88cd4e08c6, type: 3}
+  - {fileID: 21300000, guid: 4c385e641ffb69c448930bb97d0ae286, type: 3}
+  - {fileID: 21300000, guid: e4cf9613588e2fe44a922e4287447449, type: 3}
   olSpriteList:
   - {fileID: 21300000, guid: a7c7ed64ed9082f4f96c90150f595e03, type: 3}
   indicOLSpriteList:

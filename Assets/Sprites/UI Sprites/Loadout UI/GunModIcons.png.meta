@@ -13,7 +13,7 @@ TextureImporter:
     second: FeebleIcon
   - first:
       213: 8075192843189577337
-    second: GunModIcons_3
+    second: ElecIcon
   - first:
       213: -7677189247841571312
     second: RegenIcon
@@ -25,7 +25,7 @@ TextureImporter:
     second: FlatfootIcon
   - first:
       213: -5188016931336925867
-    second: GunModIcons_7
+    second: FireIcon
   - first:
       213: -3207216406822134232
     second: ResistantIcon
@@ -37,7 +37,7 @@ TextureImporter:
     second: PapercladIcon
   - first:
       213: 7300879844186352161
-    second: GunModIcons_11
+    second: IceIcon
   - first:
       213: -7072805555903741572
     second: ScavengerIcon
@@ -49,7 +49,7 @@ TextureImporter:
     second: UnawareIcon
   - first:
       213: -5632442740760006630
-    second: GunModIcons_15
+    second: MarkIcon
   - first:
       213: -3429170224263652132
     second: DeterminedIcon
@@ -61,7 +61,7 @@ TextureImporter:
     second: UncalibratedIcon
   - first:
       213: -3389784723956615426
-    second: GunModIcons_19
+    second: PoisonIcon
   - first:
       213: 4160256591078358064
     second: BackloadedIcon
@@ -314,7 +314,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GunModIcons_3
+      name: ElecIcon
       rect:
         serializedVersion: 2
         x: 120
@@ -398,7 +398,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GunModIcons_7
+      name: FireIcon
       rect:
         serializedVersion: 2
         x: 120
@@ -482,7 +482,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GunModIcons_11
+      name: IceIcon
       rect:
         serializedVersion: 2
         x: 120
@@ -566,7 +566,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GunModIcons_15
+      name: MarkIcon
       rect:
         serializedVersion: 2
         x: 120
@@ -650,7 +650,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GunModIcons_19
+      name: PoisonIcon
       rect:
         serializedVersion: 2
         x: 120

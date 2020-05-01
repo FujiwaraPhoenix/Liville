@@ -60,11 +60,11 @@ public class GunInfo : MonoBehaviour
             if (isOdd == 0)
             {
                 //Even; formula is (-10(pip array size/2) + 10n -5)
-                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(ammoPips.Length % 2)) + (10 * i) - 5, 0, 0);
+                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(ammoPips.Length / 2)) + (10 * i) - 5, 0, 0);
             }
             else
             {
-                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(ammoPips.Length % 2)) + (10 * i), 0, 0);
+                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(ammoPips.Length / 2)) + (10 * i), 0, 0);
             }
         }
     }

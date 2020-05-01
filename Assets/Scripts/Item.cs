@@ -37,18 +37,26 @@ public class Item : MonoBehaviour
         //Uses the item. If used, true. Else, false.
         if (itemID == 1)
         {
+            int tempHeal = healAmt;
+            //Check fire.
+            if (user.negStatus[1] > 0)
+            {
+                healAmt = healAmt / 2;
+            }
             if (user.hp < user.maxhp)
             {
-                if (user.hp + healAmt < user.maxhp)
+                if (user.hp + tempHeal < user.maxhp)
                 {
-                    Debug.Log("Healed " + healAmt + " HP!");
-                    user.hp += healAmt;
+                    Debug.Log("Healed " + tempHeal + " HP!");
+                    user.hp += tempHeal;
                 }
                 else
                 {
                     Debug.Log("Healed " + (user.maxhp - user.hp) + " HP!");
                     user.hp = user.maxhp;
                 }
+                BattleMenuUI.bmui.updatePlayerValues(user);
+                BattleMenuUI.bmui.updatePlayerDisplay();
                 return true;
             }
             else

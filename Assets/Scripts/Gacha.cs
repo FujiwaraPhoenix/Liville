@@ -16,7 +16,7 @@ public class Gacha : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -142,7 +142,7 @@ public class Gacha : MonoBehaviour
     public void generateItem(int matA, int matB, int matC, int matD)
     {
         determinePools(matA, matB, matC, matD);
-        
+
         //What kind of gun are we making?
         int gunType = -1;
         bool validSet = false;
@@ -153,7 +153,8 @@ public class Gacha : MonoBehaviour
                 validSet = true;
             }
         }
-        if (validSet) {
+        if (validSet)
+        {
             gunType = Random.Range(0, 5);
             while (!activePools[gunType])
             {
@@ -166,17 +167,32 @@ public class Gacha : MonoBehaviour
             //Now the gunType is in hand; let's generate the ratios!
             if (rareChanceUpActive[gunType])
             {
+                /*
+                 * This is the default set of values (with uniques)
                 c = 20;
                 uc = 50;
                 r = 75;
-                sr = 87.5f;
+                sr = 87.5f;*/
+
+                c = 40;
+                uc = 70;
+                r = 90;
+                sr = 100;
+
             }
             else
             {
+                /*
+                 * This is the default set of values (with uniques)
                 c = 40;
                 uc = 65;
                 r = 85;
-                sr = 95;
+                sr = 95;*/
+
+                c = 20;
+                uc = 50;
+                r = 80;
+                sr = 100;
             }
             float gunRarityChk = Random.Range(0, 100);
             int gunRarity = 0;
@@ -199,18 +215,17 @@ public class Gacha : MonoBehaviour
             else
             {
                 //Unique time, baby!
+                //Temporarily not in the game.
                 gunRarity = 5;
             }
             generateGun(gunType, gunRarity);
         }
         else
         {
-            //Somehow you failed to get the recipe working. Good job. Spit out failure.
-            string output = "Gun creation failed.\nInsufficient resources.";
-            lastGeneratedGun = null;
-            basicGunData = output;
+            //Generate an item if the weapon gen fails.
+            generatePotion(matA, matB, matC, matD);
         }
-        
+
     }
 
     public void generateGun(int gunType, int gunRarity)
@@ -323,7 +338,7 @@ public class Gacha : MonoBehaviour
                     modCount = 1;
                 }
                 else
-                { 
+                {
                     modCount = 2;
                 }
                 break;
@@ -381,7 +396,7 @@ public class Gacha : MonoBehaviour
                 {
                     modCount = 2;
                 }
-                else 
+                else
                 {
                     modCount = 3;
                 }
@@ -495,7 +510,7 @@ public class Gacha : MonoBehaviour
                             }
                             break;
                         case 1:
-                            modIndex = Random.Range(1, 9);
+                            modIndex = Random.Range(1, 13);
                             if (!isMelee && modIndex != 8)
                             {
                                 foundMod = true;
@@ -826,7 +841,7 @@ public class Gacha : MonoBehaviour
                     }
                     break;
                 case 1:
-                    newMod = Random.Range(1, 9);
+                    newMod = Random.Range(1, 13);
                     if (!(isThisMelee) && newMod != 8 && newMod != comparison[1])
                     {
                         foundMod = true;
@@ -884,7 +899,7 @@ public class Gacha : MonoBehaviour
                     }
                     break;
                 case 1:
-                    newMod = Random.Range(1, 9);
+                    newMod = Random.Range(1, 13);
                     if (!(isThisMelee) && newMod != 8 && newMod != comparison[1])
                     {
                         //If modTier == sameTier, make sure it's not sameModVal.
@@ -950,7 +965,7 @@ public class Gacha : MonoBehaviour
             switch (generatedGun.mods[i, 0])
             {
                 case -1:
-                    switch(generatedGun.mods[i, 1])
+                    switch (generatedGun.mods[i, 1])
                     {
                         case 1:
                             //Feeble. Dmg down.
@@ -967,7 +982,7 @@ public class Gacha : MonoBehaviour
                             break;
                         case 4:
                             //Unaware. Eva down.
-                            generatedGun.tempEva-= 5;
+                            generatedGun.tempEva -= 5;
                             break;
                         case 5:
                             //Unlucky. Lck down.
@@ -989,7 +1004,7 @@ public class Gacha : MonoBehaviour
                             //Ammo--.
                             if (generatedGun.clipSize > 3)
                             {
-                                generatedGun.clipSize-=2;
+                                generatedGun.clipSize -= 2;
                                 generatedGun.currentClip = generatedGun.clipSize;
                             }
                             else
@@ -1040,7 +1055,7 @@ public class Gacha : MonoBehaviour
                             break;
                         case 6:
                             //Ammo++
-                            generatedGun.clipSize+=2;
+                            generatedGun.clipSize += 2;
                             generatedGun.currentClip = generatedGun.clipSize;
                             break;
                     }
@@ -1052,208 +1067,27 @@ public class Gacha : MonoBehaviour
         }
     }
 
-    /*public void generateGun()
+    void generatePotion(int matA, int matB, int matC, int matD)
     {
-        minDmg = Random.Range(2, 5);
-        maxDmg = Random.Range(minDmg, minDmg + 5);
-        //Maintain clip size for now
-        accuracy = Random.Range(75, 100);
-        range = Random.Range(2, 4);
-        //Mods are set up in a 2d array, 3x2. First number is the mod rarity, second is the mod ID of that given rarity.
-        mods[0,0] = Random.Range(1, 4);
-        switch (mods[0, 0])
+        int valSum = (matA + matB + matC + matD) / 2;
+        if (valSum > 0)
         {
-            case 1:
-                mods[0, 1] = Random.Range(1, 9);
-                switch (mods[0, 1])
-                {
-                    case 1:
-                        //Fleetfoot: Spd+
-                        tempSpd = 5;
-                        break;
-                    case 2:
-                        //Ironclad: Def+
-                        tempDef = 5;
-                        break;
-                    case 3:
-                        //Aware: Eva+
-                        tempEva = 5;
-                        break;
-                    case 4:
-                        //Lucky: Lck+
-                        tempLck = 5;
-                        break;
-                    case 5:
-                        //Resistant: Res+
-                        tempRes = 10;
-                        break;
-                    case 8:
-                        //Ammo Capacity+: 1.5x Cap
-                        clipSize = (int) (clipSize * 1.5f);
-                        currentClip = clipSize;
-                        break;
-                }
-                break;
-            case 2:
-                mods[0, 1] = Random.Range(1, 8);
-                switch (mods[0, 1])
-                {
-                    case 1:
-                        //Brutal: Dmg+
-                        tempMinDmg = 5;
-                        tempMaxDmg = 5;
-                        break;
-                    case 2:
-                        //Scope: Range+
-                        range += 1;
-                        break;
-                    case 6:
-                        //Ammo Capacity++: 2x Cap
-                        clipSize = (int)(clipSize * 2f);
-                        currentClip = clipSize;
-                        break;
-                    case 7:
-                        //Ammo Capacity-: .75x Cap
-                        clipSize = (int)(clipSize * .75f);
-                        currentClip = clipSize;
-                        break;
-                }
-                break;
-            case 3:
-                mods[0, 1] = Random.Range(1, 12);
-                switch (mods[0, 1])
-                {
-                    case 4:
-                        //Gentle: Dmg-
-                        tempMinDmg = -2;
-                        tempMaxDmg = -2;
-                        break;
-                    case 5:
-                        //Flatfoot: Spd-
-                        tempSpd = -2;
-                        break;
-                    case 6:
-                        //Paperclad: Def-
-                        tempDef = -2;
-                        break;
-                    case 7:
-                        //Unaware: Eva-
-                        tempEva = -2;
-                        break;
-                    case 8:
-                        //Unlucky: Lck-
-                        tempLck = -2;
-                        break;
-                    case 9:
-                        //Uncalibrated: Rng-
-                        range += -1;
-                        break;
-                    case 10:
-                        //Ammo Capacity--: .5x Cap
-                        clipSize = (int)(clipSize * .5f);
-                        currentClip = clipSize;
-                        break;
-                }
-                break;
+            //Make a potion.
+            Item newPotion = Instantiate(template, transform.position, Quaternion.identity);
+            newPotion.itemName = "Potion";
+            newPotion.itemID = 1;
+            newPotion.healAmt = valSum;
+            string output = "Potion created.\nHeals for "+ valSum +" HP.";
+            lastGeneratedGun = null;
+            basicGunData = output;
+            InvManager.im.convoy.Add(newPotion);
+            newPotion.transform.parent = InvManager.im.transform;
         }
-        if (Random.Range(0,100) < 5)
+        else
         {
-            mods[1, 0] = Random.Range(1, 4);
-            switch (mods[1, 0])
-            {
-                case 1:
-                    mods[1, 1] = Random.Range(1, 9);
-                    switch (mods[1, 1])
-                    {
-                        case 1:
-                            //Fleetfoot: Spd+
-                            tempSpd = 5;
-                            break;
-                        case 2:
-                            //Ironclad: Def+
-                            tempDef = 5;
-                            break;
-                        case 3:
-                            //Aware: Eva+
-                            tempEva = 5;
-                            break;
-                        case 4:
-                            //Lucky: Lck+
-                            tempLck = 5;
-                            break;
-                        case 5:
-                            //Resistant: Res+
-                            tempRes = 10;
-                            break;
-                        case 8:
-                            //Ammo Capacity+: 1.5x Cap
-                            clipSize = (int)(clipSize * 1.5f);
-                            currentClip = clipSize;
-                            break;
-                    }
-                    break;
-                case 2:
-                    mods[1, 1] = Random.Range(1, 8);
-                    switch (mods[1, 1])
-                    {
-                        case 1:
-                            //Brutal: Dmg+
-                            tempMinDmg = 5;
-                            tempMaxDmg = 5;
-                            break;
-                        case 2:
-                            //Scope: Range+
-                            range += 1;
-                            break;
-                        case 6:
-                            //Ammo Capacity++: 2x Cap
-                            clipSize = (int)(clipSize * 2f);
-                            currentClip = clipSize;
-                            break;
-                        case 7:
-                            //Ammo Capacity-: .75x Cap
-                            clipSize = (int)(clipSize * .75f);
-                            currentClip = clipSize;
-                            break;
-                    }
-                    break;
-                case 3:
-                    mods[1, 1] = Random.Range(1, 12);
-                    switch (mods[1, 1])
-                    {
-                        case 4:
-                            //Gentle: Dmg-
-                            tempMinDmg = -2;
-                            tempMaxDmg = -2;
-                            break;
-                        case 5:
-                            //Flatfoot: Spd-
-                            tempSpd = -2;
-                            break;
-                        case 6:
-                            //Paperclad: Def-
-                            tempDef = -2;
-                            break;
-                        case 7:
-                            //Unaware: Eva-
-                            tempEva = -2;
-                            break;
-                        case 8:
-                            //Unlucky: Lck-
-                            tempLck = -2;
-                            break;
-                        case 9:
-                            //Uncalibrated: Rng-
-                            range += -1;
-                            break;
-                        case 10:
-                            //Ammo Capacity--: .5x Cap
-                            clipSize = (int)(clipSize * .5f);
-                            currentClip = clipSize;
-                            break;
-                    }
-                    break;
-            }
+            string output = "Item creation failed.\nInsufficient resources.";
+            lastGeneratedGun = null;
+            basicGunData = output;
         }
-    }*/
+    }
 }

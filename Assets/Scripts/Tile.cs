@@ -54,6 +54,15 @@ public class Tile : MonoBehaviour
             case 16:
             case 17:
             case 18:
+            case 20:
+            case 21:
+            case 22:
+            case 23:
+            case 24:
+            case 25:
+            case 26:
+            case 27:
+            case 28:
                 isPassable = false;
                 overlayItem.gameObject.SetActive(false);
                 sr.sprite = spriteList[tileType];

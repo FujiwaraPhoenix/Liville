@@ -19,6 +19,8 @@ public class Unit : MonoBehaviour
     public SpriteRenderer spr;
     public Sprite unitFace;
     public string unitName = "temp";
+    //Statuses, in order: elec, burn, freeze, mark, poison
+    public int[] negStatus = new int[5];
 
     public GameObject holder, holder2;
     public SpriteRenderer modifierA, tens, tenOnes, modifierB, ones;
@@ -117,7 +119,14 @@ public class Unit : MonoBehaviour
         Path newPath = Instantiate(p, transform.position, Quaternion.identity);
         newPath.whoseSide = unitAllegiance;
         possibleTargets = new List<Unit>();
-        Pathfinder.pf.drawPath(this, position, mvt + currEquip.tempMvt, newPath, unitAllegiance);
+        if (negStatus[2] > 0)
+        {
+            Pathfinder.pf.drawPath(this, position, mvt + currEquip.tempMvt - 1, newPath, unitAllegiance);
+        }
+        else
+        {
+            Pathfinder.pf.drawPath(this, position, mvt + currEquip.tempMvt, newPath, unitAllegiance);
+        }
         newPath.currentTile = true;
         newPath.set = true;
         pathMap[position[0], position[1]] = newPath;
@@ -400,7 +409,7 @@ public class Unit : MonoBehaviour
         {
             //Frontloaded and Backloaded proc inside the damage window, as seen below.
             //We've hit. Check for a crit.
-            if (Random.Range(0, 100) <= (lck + currEquip.tempLck))
+            if (Random.Range(0, 100) <= (lck + currEquip.tempLck) || (target.negStatus[3] > 0 && Random.Range(0, 100) <= (lck + currEquip.tempLck + 10) ))
             {
                 Debug.Log("Crit target!");
                 dmgTaken = Random.Range(currEquip.minDmg + currEquip.tempMinDmg, currEquip.maxDmg + currEquip.tempMaxDmg);
@@ -414,12 +423,18 @@ public class Unit : MonoBehaviour
                     dmgTaken = (int)(dmgTaken * 1.5f);
                     Debug.Log("Backloaded activated!");
                 }
-                target.hp -= (dmgTaken - target.def);
+                if (target.negStatus[3] > 0)
+                {
+                    dmgTaken = (int) (dmgTaken * 1.25f);
+                }
+                dmgTaken -= (target.def + target.currEquip.tempDef);
+                target.hp -= dmgTaken;
                 Debug.Log(target.unitName + " took " + dmgTaken + " damage!");
             }
             else
             {
                 Debug.Log("Hit target!");
+                dmgTaken = Random.Range(currEquip.minDmg + currEquip.tempMinDmg, currEquip.maxDmg + currEquip.tempMaxDmg);
                 if (checkMod(2, 3) && currEquip.currentClip == currEquip.clipSize)
                 {
                     dmgTaken = (int)(dmgTaken * 1.3f);
@@ -430,11 +445,20 @@ public class Unit : MonoBehaviour
                     dmgTaken = (int)(dmgTaken * 1.5f);
                     Debug.Log("Backloaded activated!");
                 }
-                dmgTaken = Random.Range(currEquip.minDmg + currEquip.tempMinDmg, currEquip.maxDmg + currEquip.tempMaxDmg);
+                if (target.negStatus[3] > 0)
+                {
+                    dmgTaken = (int) (dmgTaken *1.25f);
+                }
                 int finalDmg = dmgTaken - (target.def + target.currEquip.tempDef);
                 target.showDamage(finalDmg);
                 target.hp -= finalDmg;
-                Debug.Log(target.unitName + " took " + dmgTaken + " damage!");
+                Debug.Log(target.unitName + " took " + finalDmg + " damage!");
+            }
+            //Elec proc.
+            if (negStatus[0] > 0 && Random.Range(0,100) < 25 - (statusResist + currEquip.tempRes))
+            {
+                target.stunned = true;
+                Debug.Log("Enemy was stunned!");
             }
             //This is where Stun procs.
             if (checkMod(2, 5))
@@ -452,6 +476,47 @@ public class Unit : MonoBehaviour
                 {
                     refundShot = true;
                     Debug.Log("Recycle activated!");
+                }
+            }
+            //Check, in order: elec, fire, ice, mark, poison.
+            if (checkMod(1, 9))
+            {
+                if (Random.Range(0, 100) < 20 || negStatus[0] > 0)
+                {
+                    negStatus[0] = 3;
+                    Debug.Log("Electric activated!");
+                }
+            }
+            if (checkMod(1, 10))
+            {
+                if (Random.Range(0, 100) < 20 || negStatus[1] > 0)
+                {
+                    negStatus[1] = 3;
+                    Debug.Log("Fire activated!");
+                }
+            }
+            if (checkMod(1, 11) || negStatus[2] > 0)
+            {
+                if (Random.Range(0, 100) < 20)
+                {
+                    negStatus[2] = 3;
+                    Debug.Log("Ice activated!");
+                }
+            }
+            if (checkMod(1, 12) || negStatus[3] > 0)
+            {
+                if (Random.Range(0, 100) < 20)
+                {
+                    negStatus[3] = 3;
+                    Debug.Log("Mark activated!");
+                }
+            }
+            if (checkMod(1, 13) || negStatus[4] > 0)
+            {
+                if (Random.Range(0, 100) < 20)
+                {
+                    negStatus[4] = 3;
+                    Debug.Log("Poison activated!");
                 }
             }
         }
@@ -724,6 +789,30 @@ public class Unit : MonoBehaviour
         }
         //Now that we have a path, let's cull it a bit.
         //They're out of range, so let's shave the list down a bit.
-        savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt);
+        if (negStatus[2] > 0)
+        {
+            savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt - 1);
+        }
+        else
+        {
+            savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt);
+        }
+    }
+
+    public void tickDownStatus()
+    {
+        //Statuses, in order: para, burn, freeze, mark, poison
+        for (int i = 0; i < negStatus.Length; i++)
+        {
+            if (negStatus[i] > 0)
+            {
+                if (i == 4)
+                {
+                    hp -= (int)(maxhp * .1f);
+                    die();
+                }
+                i--;
+            }
+        }
     }
 }

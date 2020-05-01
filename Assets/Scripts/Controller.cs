@@ -11,6 +11,7 @@ public class Controller : MonoBehaviour
 
     //This is all for the sake of managing battles. Controller's useful for other stuff too, though.
     public Tile tilePrefab;
+    //For reference: roster is ALL PLAYERS IN THE GAME. Units is active* players.
     public Unit[] playerRoster;
     public Unit[] playerUnits;
     public List<Unit> enemyUnits = new List<Unit>();
@@ -126,6 +127,7 @@ public class Controller : MonoBehaviour
                     {
                         u.hasMoved = false;
                         u.stunned = false;
+                        u.tickDownStatus();
                     }
                 }
                 if (enemyUnits.Count != 0)
@@ -173,6 +175,7 @@ public class Controller : MonoBehaviour
                                 Debug.Log(u.name + " healed for 1 HP!");
                             }
                         }
+                        u.tickDownStatus();
                     }
                 }
                 if (enemyUnits.Count != 0)
@@ -482,6 +485,16 @@ public class Controller : MonoBehaviour
                         return ("Scavenger");
                     case 8:
                         return ("Ammo Capacity+");
+                    case 9:
+                        return ("Electric");
+                    case 10:
+                        return ("Burn");
+                    case 11:
+                        return ("Ice");
+                    case 12:
+                        return ("Mark");
+                    case 13:
+                        return ("Poison");
                     default:
                         return ("--");
                 }

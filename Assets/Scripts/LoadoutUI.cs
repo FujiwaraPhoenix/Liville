@@ -59,6 +59,12 @@ public class LoadoutUI : MonoBehaviour
 
     bool gunSelectLoaded = false;
 
+    //The inventory menu is actually pretty minimal; what we need is simple.
+    //InvMenu should be active and have the following pieces of information:
+    public InventoryUI iUI;
+    public bool hoveringPInv, invSelected;
+    public int currentValue;
+
     void Awake()
     {
         if (lUI == null)
@@ -86,10 +92,51 @@ public class LoadoutUI : MonoBehaviour
             case 0:
                 navigateBaseMenu();
                 break;
+            case 1:
+                navigateInvUI();
+                break;
             case 2:
-                
                 navigateGunUI();
                 break;
+            case 3:
+                break;
+        }
+    }
+    //Initialization functions
+    //----------------------------------------------------------------------------------------------------------------------------
+    
+    public void loadoutLimitSetup()
+    {
+        switch (currentLoadoutMenu)
+        {
+            case 0:
+                //Default menu.
+                //The x cap is based on how many players there are; y is always 3.
+                xHardCap = Controller.c.playerUnits.Length;
+                yHardCap = 3;
+                break;
+            case 1:
+                //Character select.
+                //Nothing right now.
+                break;
+            case 2:
+                //Gun choice.
+                xHardCap = 3;
+                yHardCap = 5;
+                break;
+            case 3:
+                //Inventory.
+                //The only thing that matters is the inventory count of a player, so this is pretty irrelevant.
+
+                break;
+        }
+        if (Controller.c.missionSelected)
+        {
+            nextButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            nextButton.gameObject.SetActive(false);
         }
     }
 
@@ -194,10 +241,143 @@ public class LoadoutUI : MonoBehaviour
         }
         else
         {
-            xCap = 2;
+            xCap = 3;
             yCap = 4;
         }
         checkBorders();
+    }
+
+    //Navigation functions
+    //----------------------------------------------------------------------------------------------------------------------------
+
+
+    void navigateBaseMenu()
+    {
+        //Should only be run while currentLoadout == 0
+        bool hasChanged = false;
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            if (currentY == 0)
+            {
+                if (Controller.c.missionSelected)
+                {
+                    //The battle button is available.
+                    currentY = -1;
+                }
+                else
+                {
+                    currentY = 2;
+                }
+            }
+            else if (currentY == -1)
+            {
+                currentY = 2;
+            }
+            else
+            {
+                currentY--;
+            }
+            hasChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            if (currentY == 2)
+            {
+                if (Controller.c.missionSelected)
+                {
+                    //The battle button is available.
+                    currentY = -1;
+                }
+                else
+                {
+                    currentY = 0;
+                }
+            }
+            else
+            {
+                currentY++;
+            }
+            hasChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if (currentX == 0)
+            {
+                currentX = xHardCap - 1;
+            }
+            else
+            {
+                currentX--;
+            }
+            hasChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if (currentX == xHardCap - 1)
+            {
+                currentX = 0;
+            }
+            else
+            {
+                currentX++;
+            }
+            hasChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.Z))
+        {
+            switch (currentY)
+            {
+                case 0:
+                    //Goto char select.
+                    //For now, nothing.
+                    break;
+                case 1:
+                    //Goto inv select.
+                    currentLoadoutMenu = 1;
+                    baseMenu.gameObject.SetActive(false);
+                    invMenu.gameObject.SetActive(true);
+                    invSelected = false;
+                    hoveringPInv = true;
+                    iUI.currentHL = 0;
+                    iUI.updateCountTotals(currentPlayer);
+                    if (iUI.itemCountC > 15)
+                    {
+                        iUI.currentMax = 14;
+                    }
+                    else
+                    {
+                        iUI.currentMax = iUI.itemCountC;
+                    }
+                    iUI.updatePlayerInvText(currentPlayer);
+                    iUI.updateText();
+                    currentValue = 0;
+                    break;
+                case 2:
+                    //Goto gun select.
+                    currentLoadoutMenu = 2;
+                    gunPage = 1;
+                    currentPlayer = currentX;
+                    baseMenu.gameObject.SetActive(false);
+                    gunMenu.gameObject.SetActive(true);
+                    currentX = 0;
+                    currentY = 0;
+                    loadoutLimitSetup();
+                    if (!gunSelectLoaded)
+                    {
+                        initializeGunListing();
+                        loadGunSwap();
+                        gunSelectLoaded = true;
+                    }
+                    loadNextPage();
+                    break;
+                case 3:
+                    break;
+            }
+        }
+        if (hasChanged)
+        {
+            updateBaseLoadoutSpr();
+        }
     }
 
     public void navigateGunUI()
@@ -221,7 +401,7 @@ public class LoadoutUI : MonoBehaviour
                 {
                     //Because the cap's not at 0 and thus the entire row isn't filled... We need to fix it, too.
                     currentY = yCap;
-                    if (currentX >= xCap && xCap != 2)
+                    if (currentX >= xCap && xCap >= 2)
                     {
                         currentX = xCap - 1;
                     }
@@ -244,7 +424,7 @@ public class LoadoutUI : MonoBehaviour
             {
                 //Make sure that we aren't out of bounds somehow.
                 currentY++;
-                if (currentX >= xCap && xCap != 2)
+                if (currentX >= xCap && xCap >= 2 )
                 {
                     currentX = xCap - 1;
                 }
@@ -356,6 +536,310 @@ public class LoadoutUI : MonoBehaviour
         checkBorders();
     }
     
+    public void navigateInvUI()
+    {
+        //Honestly, most of this can be moved into inventory UI for convenience's sake. Now is not the time for that.
+        //Only run when currentLoadout = 1.
+        if ((Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)) && !invSelected)
+        {
+            hoveringPInv = !hoveringPInv;
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow) && invSelected)
+        {
+            if (currentValue > 0)
+            {
+                currentValue--;
+                //Highlight the current value
+                if (hoveringPInv)
+                {
+                    iUI.currentHL--;
+                    iUI.invIcons[iUI.currentHL + 1].sprite = iUI.basePotion;
+                    iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
+                    iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+                }
+                else
+                {
+                    //Figure out where the current HL is.
+                    if (iUI.currentHL > 0)
+                    {
+                        //Not at the top.
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.basePotion;
+                        iUI.currentHL--;
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
+                    }
+                    else
+                    {
+                        //If the list is smaller than the cap...
+                        if (iUI.currentMax < 14)
+                        {
+                            iUI.currentHL = iUI.currentMax - 1;
+                        }
+                        //Otherwise...
+                        else
+                        {
+                            if (iUI.currentMax > 14)
+                            {
+                                iUI.currentMax--;
+                                iUI.offset--;
+                                iUI.updateText();
+                            }
+                            else
+                            {
+                                iUI.currentHL = 14;
+                            }
+                        }
+                        iUI.convoyIcons[0].sprite = iUI.basePotion;
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
+                    }
+                }
+                iUI.updateData(InvManager.im.convoy[currentValue]);
+            }
+            else
+            {
+                //We're at the top here.
+                if (hoveringPInv)
+                {
+                    currentValue = iUI.itemCountI - 1;
+                    iUI.currentHL = iUI.itemCountI - 1;
+                    iUI.invIcons[0].sprite = iUI.basePotion;
+                    iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
+                    iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+                }
+                else
+                {
+                    currentValue = iUI.itemCountC - 1;
+                    iUI.offset = currentValue - iUI.currentMax;
+                    iUI.currentMax = currentValue;
+                    iUI.convoyIcons[0].sprite = iUI.basePotion;
+                    if (currentValue >= 15)
+                    {
+                        iUI.currentHL = 14;
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
+                    }
+                    else
+                    {
+                        iUI.currentHL = iUI.currentMax;
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
+                    }
+                    iUI.updateText();
+                    iUI.updateData(InvManager.im.convoy[currentValue]);
+                }
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow) && invSelected)
+        {
+            //First, check if we're in inventory or convoy.
+            if (hoveringPInv)
+            {
+                //Inv, thus limit is 5.
+                if (currentValue < iUI.itemCountI - 1)
+                {
+                    currentValue++;
+                    iUI.currentHL++;
+                    //Highlight the current value
+                    iUI.invIcons[iUI.currentHL - 1].sprite = iUI.basePotion;
+                    iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
+                }
+                else
+                {
+                    currentValue = 0;
+                    iUI.invIcons[iUI.currentHL].sprite = iUI.basePotion;
+                    iUI.currentHL = 0;
+                    iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
+                }
+                iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+            }
+            else
+            {
+                //Convoy, so we need to check for limits.
+                if (iUI.currentMax >= 14 && iUI.currentMax < iUI.itemCountC - 1)
+                {
+                    //For the weird intermediary area where we're between n and n+14, where n > 0.
+                    currentValue++;
+                    if (iUI.currentHL < 14)
+                    {
+                        iUI.currentHL++;
+                        iUI.convoyIcons[iUI.currentHL - 1].sprite = iUI.basePotion;
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
+                    }
+                    else
+                    {
+                        //We're at the bottom.
+                        iUI.currentMax++;
+                        iUI.offset++;
+                        iUI.updateText();
+                    }
+                    iUI.updateData(InvManager.im.convoy[currentValue]);
+                }
+                else if (iUI.currentMax == iUI.itemCountC - 1)
+                {
+                    if (iUI.currentHL == 14 || (iUI.currentHL == iUI.currentMax))
+                    {
+                        currentValue = 0;
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.basePotion;
+                        iUI.currentHL = 0;
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
+                        if (iUI.currentMax > 14)
+                        {
+                            iUI.currentMax = 14;
+                        }
+                        iUI.offset = 0;
+                        iUI.updateText();
+                    }
+                    else
+                    {
+                        currentValue++;
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.basePotion;
+                        iUI.currentHL++;
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
+                    }
+                }
+                else
+                {
+                    iUI.convoyIcons[iUI.currentHL].sprite = iUI.basePotion;
+                    iUI.currentHL++;
+                    iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
+                    currentValue++;
+                }
+                iUI.updateData(InvManager.im.convoy[currentValue]);
+            }
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            if (!invSelected)
+            {
+                if (hoveringPInv)
+                {
+                    if (Controller.c.playerUnits[currentPlayer].inventory.Count > 0)
+                    {
+                        invSelected = true;
+                        currentValue = 0;
+                        iUI.currentHL = 0;
+                        iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
+                        iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+
+                    }
+                }
+                else
+                {
+                    if (InvManager.im.convoy.Count > 0)
+                    {
+                        invSelected = true;
+                        currentValue = 0;
+                        iUI.currentHL = 0;
+                        if (iUI.itemCountC > 14)
+                        {
+                            iUI.currentMax = 14;
+                        }
+                        else
+                        {
+                            iUI.currentMax = iUI.itemCountC - 1;
+                        }
+                        iUI.updateCountTotals(currentPlayer);
+                        iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
+                        iUI.updateText();
+                        iUI.updateData(InvManager.im.convoy[currentValue]);
+                    }
+                }
+            }
+            else
+            {
+                if (hoveringPInv)
+                {
+                    //Adding from player inventory to convoy.
+                    Item temp = Controller.c.playerUnits[currentPlayer].inventory[currentValue];
+                    Controller.c.playerUnits[currentPlayer].inventory.Remove(temp);
+                    InvManager.im.convoy.Add(temp);
+                    temp.transform.parent = InvManager.im.transform;
+                    iUI.updateCountTotals(currentPlayer);
+                    if (currentValue > 0)
+                    {
+                        iUI.invIcons[iUI.currentHL].sprite = iUI.basePotion;
+                        iUI.currentHL--;
+                        iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
+                        currentValue--;
+                    }
+                    iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+                }
+                else
+                {
+                    if (iUI.itemCountI < 5)
+                    {
+                        //Adding from convoy to player inventory.
+                        Item temp = InvManager.im.convoy[currentValue];
+                        Controller.c.playerUnits[currentPlayer].inventory.Add(temp);
+                        InvManager.im.convoy.Remove(temp);
+                        temp.transform.parent = Controller.c.playerUnits[currentPlayer].transform;
+                        iUI.updateCountTotals(currentPlayer);
+                        if (currentValue > 0)
+                        {
+                            if (iUI.currentMax < 14)
+                            {
+                                iUI.invIcons[iUI.currentHL].sprite = iUI.basePotion;
+                                iUI.currentHL--;
+                                iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
+                                currentValue--;
+                            }
+                            else
+                            {
+                                //Maintain current HL.
+                                //CurrentVal remains constant unless it was removed at the end.
+                                if (currentValue > iUI.itemCountC - 1)
+                                {
+                                    //If it was removed at the end (in this case), reduce CV by 1 but keep 14 on the board.
+                                    currentValue--;
+                                    iUI.offset--;
+                                    iUI.currentMax--;
+                                }
+                            }
+                        }
+                    }
+                    iUI.updateData(InvManager.im.convoy[currentValue]);
+                }
+                iUI.updateText();
+                iUI.updatePlayerInvText(currentPlayer);
+                if (iUI.itemCountI == 0 || iUI.itemCountC == 0)
+                {
+                    Debug.Log("Nothing in this set.");
+                    iUI.invIcons[0].sprite = iUI.basePotion;
+                    iUI.convoyIcons[0].sprite = iUI.basePotion;
+                    currentValue = 0;
+                    iUI.currentHL = 0;
+                    invSelected = !invSelected;
+                }
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (invSelected)
+            {
+                invSelected = !invSelected;
+                if (!hoveringPInv)
+                {
+                    iUI.convoyIcons[iUI.currentHL].sprite = iUI.basePotion;
+                    iUI.offset = 0;
+                }
+                else
+                {
+                    iUI.invIcons[iUI.currentHL].sprite = iUI.basePotion;
+                }
+                iUI.updateData(null);
+            }
+            else
+            {
+                //Return to base loadout.
+                currentLoadoutMenu = 0;
+                baseMenu.gameObject.SetActive(true);
+                invMenu.gameObject.SetActive(false);
+                loadoutLimitSetup();
+                currentX = currentPlayer;
+                currentY = 1;
+            }
+        }
+    }
+
     public void swapGun(int gunIndex)
     {
         InvManager.im.armory.Add(Controller.c.playerUnits[currentPlayer].currEquip);
@@ -394,149 +878,7 @@ public class LoadoutUI : MonoBehaviour
         }
     }
 
-    public void loadoutLimitSetup()
-    {
-        switch (currentLoadoutMenu)
-        {
-            case 0:
-                //Default menu.
-                //The x cap is based on how many players there are; y is always 3.
-                xHardCap = Controller.c.playerUnits.Length;
-                yHardCap = 3;
-                break;
-            case 1:
-                //Character select.
-                //Nothing right now.
-                break;
-            case 2:
-                //Gun choice.
-                xHardCap = 3;
-                yHardCap = 5;
-                break;
-            case 3:
-                //Inventory.
-                //Nothing right now.
-                break;
-        }
-        if (Controller.c.missionSelected)
-        {
-            nextButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            nextButton.gameObject.SetActive(false);
-        }
-    }
 
-    void navigateBaseMenu()
-    {
-        //Should only be run while currentLoadout == 0
-        bool hasChanged = false;
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            if (currentY == 0)
-            {
-                if (Controller.c.missionSelected)
-                {
-                    //The battle button is available.
-                    currentY = -1;
-                }
-                else
-                {
-                    currentY = 2;
-                }
-            }
-            else if (currentY == -1)
-            {
-                currentY = 2;
-            }
-            else
-            {
-                currentY--;
-            }
-            hasChanged = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            if (currentY == 2)
-            {
-                if (Controller.c.missionSelected)
-                {
-                    //The battle button is available.
-                    currentY = -1;
-                }
-                else
-                {
-                    currentY = 0;
-                }
-            }
-            else
-            {
-                currentY++;
-            }
-            hasChanged = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if (currentX == 0)
-            {
-                currentX = xHardCap - 1;
-            }
-            else
-            {
-                currentX--;
-            }
-            hasChanged = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            if (currentX == xHardCap - 1)
-            {
-                currentX = 0;
-            }
-            else
-            {
-                currentX++;
-            }
-            hasChanged = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Z))
-        {
-            switch (currentY)
-            {
-                case 0:
-                    //Goto char select.
-                    //For now, nothing.
-                    break;
-                case 1:
-                    //Goto inv select.
-                    //For now, nothing.
-                    break;
-                case 2:
-                    //Goto gun select.
-                    currentLoadoutMenu = 2;
-                    gunPage = 1;
-                    currentPlayer = currentX;
-                    baseMenu.gameObject.SetActive(false);
-                    gunMenu.gameObject.SetActive(true);
-                    currentX = 0;
-                    currentY = 0;
-                    loadoutLimitSetup();
-                    if (!gunSelectLoaded)
-                    {
-                        initializeGunListing();
-                        loadGunSwap();
-                        gunSelectLoaded = true;
-                    }
-                    loadNextPage();
-                    break;
-            }
-        }
-        if (hasChanged)
-        {
-            updateBaseLoadoutSpr();
-        }
-    }
 
     public void updateBaseLoadoutSpr()
     {
@@ -564,4 +906,5 @@ public class LoadoutUI : MonoBehaviour
                 break;
         }
     }
+
 }
