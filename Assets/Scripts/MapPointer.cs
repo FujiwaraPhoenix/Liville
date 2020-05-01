@@ -266,7 +266,7 @@ public class MapPointer : MonoBehaviour
                 {
                     Item tempItem = targetUnit.inventory[currentInvChoice];
                     targetUnit.inventory.RemoveAt(currentInvChoice);
-                    Destroy(tempItem);
+                    Destroy(tempItem.gameObject);
                     targetUnit.hasMoved = true;
                     targetUnit.currUnit = false;
                     //Reset pathmap.
@@ -412,7 +412,7 @@ public class MapPointer : MonoBehaviour
                         string tempStr = "";
                         foreach (Item i in targetUnit.inventory)
                         {
-                            tempStr += i.itemName + "\n";
+                            tempStr += i.itemName + "\t\t\t+ " + i.healAmt + " HP\n";
                         }
                         InvManager.im.currInvShown.text = tempStr;
                     }

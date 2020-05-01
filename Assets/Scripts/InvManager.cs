@@ -10,9 +10,10 @@ public class InvManager : MonoBehaviour
     public List<Item> armory = new List<Item>();
 
     //For battle usage; show inventory details.
-    public Image menuPointer;
     public GameObject menuItems;
     public Text currInvShown;
+    public Image[] invIcons = new Image[5];
+    public Sprite[] potionSprites = new Sprite[2];
 
     //Gacha mats
     public int materialA, materialB, materialC, materialD;
@@ -61,24 +62,24 @@ public class InvManager : MonoBehaviour
         else
         {
             menuItems.gameObject.SetActive(true);
-            switch (Controller.c.mp.currentInvChoice)
+            for (int i = 0; i < 5; i++)
             {
-                case 0:
-                    menuPointer.transform.localPosition = new Vector3(-41.5f, 32, 0);
-                    break;
-                case 1:
-                    menuPointer.transform.localPosition = new Vector3(-41.5f, 16.5f, 0);
-                    break;
-                case 2:
-                    menuPointer.transform.localPosition = new Vector3(-41.5f, .5f, 0);
-                    break;
-                case 3:
-                    menuPointer.transform.localPosition = new Vector3(-41.5f, -15, 0);
-                    break;
-                case 4:
-                    menuPointer.transform.localPosition = new Vector3(-41.5f, -31.5f, 0);
-                    break;
-
+                if (i < BattleMenuUI.bmui.currentPlayer.inventory.Count)
+                {
+                    invIcons[i].gameObject.SetActive(true);
+                    if (Controller.c.mp.currentInvChoice == i)
+                    {
+                        invIcons[i].sprite = potionSprites[1];
+                    }
+                    else
+                    {
+                        invIcons[i].sprite = potionSprites[0];
+                    }
+                }
+                else
+                {
+                    invIcons[i].gameObject.SetActive(false);
+                }
             }
         }
     }
