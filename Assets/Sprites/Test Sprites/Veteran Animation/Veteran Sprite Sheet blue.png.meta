@@ -1,13 +1,21 @@
 fileFormatVersion: 2
-guid: ae32b4b7412f39f4584dbed50ddfcfb3
+guid: fbd0c4d64e54ea841a657d64111845c5
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: Veteran Sprite Sheet_0
-    21300002: Veteran Sprite Sheet_1
-    21300004: Veteran Sprite Sheet_2
-    21300006: Veteran Sprite Sheet_3
+  internalIDToNameTable:
+  - first:
+      213: -5317157529820730705
+    second: Veteran Sprite Sheet blue_0
+  - first:
+      213: 2438840698662764591
+    second: Veteran Sprite Sheet blue_1
+  - first:
+      213: -1513925697346614566
+    second: Veteran Sprite Sheet blue_2
+  - first:
+      213: 5558900583913773836
+    second: Veteran Sprite Sheet blue_3
   externalObjects: {}
-  serializedVersion: 7
+  serializedVersion: 10
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -62,7 +70,7 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - serializedVersion: 2
+  - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -73,7 +81,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - serializedVersion: 2
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -84,85 +93,90 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Veteran Sprite Sheet_0
+      name: Veteran Sprite Sheet blue_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 2
         y: 0
-        width: 68
+        width: 64
         height: 68
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3f691a6b6c972b341bea95213757f38c
+      spriteID: ec9810e6a1fa3b74484a5bf23ac91303
+      internalID: -5317157529820730705
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Veteran Sprite Sheet_1
+      name: Veteran Sprite Sheet blue_1
       rect:
         serializedVersion: 2
-        x: 68
+        x: 70
         y: 0
-        width: 68
+        width: 64
         height: 68
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: be7270dd56286e445ab5d474cf4cdeaa
+      spriteID: 0dae33bf6241bfa45b28903c9bcb29e5
+      internalID: 2438840698662764591
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Veteran Sprite Sheet_2
+      name: Veteran Sprite Sheet blue_2
       rect:
         serializedVersion: 2
-        x: 136
+        x: 138
         y: 0
-        width: 68
-        height: 68
+        width: 64
+        height: 67
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8a09b6235ba438047868ee2878b5799e
+      spriteID: dd408c749e981e645a799b754326f487
+      internalID: -1513925697346614566
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Veteran Sprite Sheet_3
+      name: Veteran Sprite Sheet blue_3
       rect:
         serializedVersion: 2
-        x: 204
+        x: 206
         y: 0
-        width: 68
-        height: 68
+        width: 64
+        height: 67
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8ca72611d8f1a06408205294f72b91b1
+      spriteID: 74fdd81200a215b4ca5de333ee5b3171
+      internalID: 5558900583913773836
       vertices: []
       indices: 
       edges: []
@@ -171,10 +185,12 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
+    secondaryTextures: []
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

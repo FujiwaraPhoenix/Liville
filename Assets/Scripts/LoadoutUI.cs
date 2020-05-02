@@ -905,11 +905,11 @@ public class LoadoutUI : MonoBehaviour
             baseLoadoutInvs[i].sprite = baseLoadoutSprList[2];
             baseLoadoutGuns[i].border.sprite = gunEquippedBorders[Controller.c.playerUnits[i].currEquip.rarity - 1];
         }
-        nextButton.sprite = baseLoadoutSprList[6];
+        nextButton.sprite = baseLoadoutSprList[4];
         switch (currentY)
         {
             case -1:
-                nextButton.sprite = baseLoadoutSprList[7];
+                nextButton.sprite = baseLoadoutSprList[5];
                 break;
             case 0:
                 //Highlight the char select.

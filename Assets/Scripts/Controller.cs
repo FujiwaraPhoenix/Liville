@@ -320,9 +320,7 @@ public class Controller : MonoBehaviour
                     mapSelectUI.gameObject.SetActive(false);
                     loadoutUI.gameObject.SetActive(true);
                     LoadoutUI.lUI.currentLoadoutMenu = 0;
-                    LoadoutUI.lUI.updateBaseLoadoutSpr();
-                    LoadoutUI.lUI.currentX = 0;
-                    LoadoutUI.lUI.currentY = 0;
+                    LoadoutUI.lUI.loadoutLimitSetup();
                     missionSelected = true;
                     LoadoutUI.lUI.loadoutLimitSetup();
                     LoadoutUI.lUI.updateBaseLoadoutSpr();

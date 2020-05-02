@@ -1,13 +1,21 @@
 fileFormatVersion: 2
-guid: ae32b4b7412f39f4584dbed50ddfcfb3
+guid: a6174ff061423414aaf63b4919c1c6e4
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: Veteran Sprite Sheet_0
-    21300002: Veteran Sprite Sheet_1
-    21300004: Veteran Sprite Sheet_2
-    21300006: Veteran Sprite Sheet_3
+  internalIDToNameTable:
+  - first:
+      213: 7900329097203176567
+    second: fast sprite sheet UD_0
+  - first:
+      213: -3560186388040008184
+    second: fast sprite sheet UD_1
+  - first:
+      213: -3700555252691246330
+    second: fast sprite sheet UD_2
+  - first:
+      213: -5300987678511609290
+    second: fast sprite sheet UD_3
   externalObjects: {}
-  serializedVersion: 7
+  serializedVersion: 10
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -62,7 +70,7 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - serializedVersion: 2
+  - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -73,7 +81,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - serializedVersion: 2
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -84,11 +93,12 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Veteran Sprite Sheet_0
+      name: fast sprite sheet UD_0
       rect:
         serializedVersion: 2
         x: 0
@@ -102,13 +112,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3f691a6b6c972b341bea95213757f38c
+      spriteID: 1fca2404b6bac88488c8123654964fd8
+      internalID: 7900329097203176567
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Veteran Sprite Sheet_1
+      name: fast sprite sheet UD_1
       rect:
         serializedVersion: 2
         x: 68
@@ -122,13 +133,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: be7270dd56286e445ab5d474cf4cdeaa
+      spriteID: 3f4d58c6483b4554ab3ebaaad0e14ed0
+      internalID: -3560186388040008184
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Veteran Sprite Sheet_2
+      name: fast sprite sheet UD_2
       rect:
         serializedVersion: 2
         x: 136
@@ -142,13 +154,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8a09b6235ba438047868ee2878b5799e
+      spriteID: b6071fb43558cb74ea3ded6d2a8a16d5
+      internalID: -3700555252691246330
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Veteran Sprite Sheet_3
+      name: fast sprite sheet UD_3
       rect:
         serializedVersion: 2
         x: 204
@@ -162,7 +175,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8ca72611d8f1a06408205294f72b91b1
+      spriteID: 67cf3be1ac649874dbf039090db8c425
+      internalID: -5300987678511609290
       vertices: []
       indices: 
       edges: []
@@ -171,10 +185,12 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
+    secondaryTextures: []
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
