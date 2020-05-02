@@ -89,8 +89,6 @@ public class TextFileParser : MonoBehaviour {
         //First is the variant type, then coordinates. 3 values.
         //These stats are, in order: HP, Evasion, Def, Luck, Mvt, Status Resist. 6 in all.
         //Weapon stats: min dmg, max dmg, clip size, accuracy, range, heal amount, temp mvt/def/eva/lck/res/min/max (if needed). 13 in total.
-
-
     }
 
     public void loadResources()

@@ -8243,7 +8243,7 @@ PrefabInstance:
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: itemName
-      value: Test Gun
+      value: Spare Shot
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
@@ -8723,7 +8723,7 @@ PrefabInstance:
     - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: unitName
-      value: Hunter
+      value: Jagerin
       objectReference: {fileID: 0}
     - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
@@ -9473,10 +9473,10 @@ MonoBehaviour:
   potionSprites:
   - {fileID: 21300000, guid: 85139ddfa524b9e46a3a4842e5c0680b, type: 3}
   - {fileID: 21300000, guid: 4ae64486cfcba3849a2e82ad894c29e8, type: 3}
-  materialA: 150
-  materialB: 150
-  materialC: 150
-  materialD: 150
+  materialA: 200
+  materialB: 200
+  materialC: 200
+  materialD: 200
 --- !u!4 &1211713533
 Transform:
   m_ObjectHideFlags: 0
@@ -9832,12 +9832,12 @@ PrefabInstance:
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: minDmg
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: maxDmg
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
@@ -9852,17 +9852,17 @@ PrefabInstance:
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: range
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: accuracy
-      value: 85
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: itemName
-      value: Trial Gun
+      value: Scrap Shot
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
@@ -12178,12 +12178,12 @@ PrefabInstance:
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: minDmg
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: maxDmg
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
@@ -12198,17 +12198,17 @@ PrefabInstance:
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: range
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: accuracy
-      value: 85
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}
       propertyPath: itemName
-      value: Trial Gun
+      value: Scrap Shot
       objectReference: {fileID: 0}
     - target: {fileID: 723354060698961501, guid: 7782961938242c640b829ef965e7dc62,
         type: 3}

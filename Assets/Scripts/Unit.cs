@@ -614,7 +614,14 @@ public class Unit : MonoBehaviour
             }
             else
             {
-
+                float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                if (distToTarget <= currEquip.range)
+                {
+                    attack();
+                }
+                hasMoved = true;
+                procPath = false;
+                savedPath = null;
             }
         }
         else
@@ -802,6 +809,10 @@ public class Unit : MonoBehaviour
         currUnit = false;
         target = null;
         spr.enabled = true;
+        showDamageTimer = 0;
+        holder.gameObject.SetActive(false);
+        holder2.gameObject.SetActive(false);
+        missed.gameObject.SetActive(false);
     }
 
     public void showDamage(int dmgTaken)
@@ -835,8 +846,8 @@ public class Unit : MonoBehaviour
     {
         //In this scenario, the player MUST be out of range.
         //Ergo, we move toward the player up to the amount of tiles we can move (aka mvt)
-        Pathfinder.pf.drawPath(this, position, 15, pathMap[position[0], position[1]], unitAllegiance);
-        //So let's say we have a theoretical max of 15 tiles to move. Next thing to do? Move towards the target.
+        Pathfinder.pf.drawPath(this, position, 10, pathMap[position[0], position[1]], unitAllegiance);
+        //So let's say we have a theoretical max of 10 tiles to move. Next thing to do? Move towards the target.
         Path chosenPath = null;
         for (int i = 0; i < Controller.c.currMap.xBound; i++)
         {
@@ -878,6 +889,16 @@ public class Unit : MonoBehaviour
             {
                 savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt);
             }
+        }
+        else
+        {
+            //Screw it, no dice. Just don't move.
+            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+            if (distToTarget <= currEquip.range)
+            {
+                attack();
+            }
+            hasMoved = true;
         }
     }
 

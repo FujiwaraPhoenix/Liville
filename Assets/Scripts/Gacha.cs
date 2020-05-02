@@ -553,8 +553,8 @@ public class Gacha : MonoBehaviour
                 //Common
                 moddedItem.minDmg = Random.Range(1, 3);
                 moddedItem.maxDmg = Random.Range(3, 5);
-                moddedItem.range = Random.Range(1, 4);
-                moddedItem.accuracy = Random.Range(50, 81);
+                moddedItem.range = Random.Range(2, 4);
+                moddedItem.accuracy = Random.Range(70, 86);
                 moddedItem.clipSize = Random.Range(2, 4);
                 break;
             case 2:
@@ -562,24 +562,24 @@ public class Gacha : MonoBehaviour
                 moddedItem.minDmg = Random.Range(1, 3);
                 moddedItem.maxDmg = Random.Range(3, 6);
                 moddedItem.range = Random.Range(2, 4);
-                moddedItem.accuracy = Random.Range(65, 86);
+                moddedItem.accuracy = Random.Range(70, 91);
                 moddedItem.clipSize = 3;
                 break;
             case 3:
                 //Rare
                 moddedItem.minDmg = Random.Range(2, 4);
                 moddedItem.maxDmg = Random.Range(3, 6);
-                moddedItem.range = Random.Range(2, 4);
-                moddedItem.accuracy = Random.Range(70, 91);
-                moddedItem.clipSize = 3;
+                moddedItem.range = Random.Range(2, 5);
+                moddedItem.accuracy = Random.Range(75, 96);
+                moddedItem.clipSize = Random.Range(3, 5);
                 break;
             case 4:
                 //Super Rare
                 moddedItem.minDmg = 3;
-                moddedItem.maxDmg = Random.Range(4, 6);
-                moddedItem.range = Random.Range(2, 5);
-                moddedItem.accuracy = Random.Range(75, 91);
-                moddedItem.clipSize = Random.Range(3, 5);
+                moddedItem.maxDmg = Random.Range(5, 9);
+                moddedItem.range = Random.Range(3, 6);
+                moddedItem.accuracy = Random.Range(85, 101);
+                moddedItem.clipSize = Random.Range(3, 6);
                 break;
         }
         moddedItem.currentClip = moddedItem.clipSize;
@@ -590,34 +590,34 @@ public class Gacha : MonoBehaviour
         {
             case 1:
                 //Common
-                moddedItem.minDmg = Random.Range(2, 3);
-                moddedItem.maxDmg = Random.Range(3, 6);
+                moddedItem.minDmg = Random.Range(3, 4);
+                moddedItem.maxDmg = Random.Range(4, 7);
                 moddedItem.range = 1;
-                moddedItem.accuracy = Random.Range(50, 71);
-                moddedItem.clipSize = Random.Range(2, 4);
+                moddedItem.accuracy = Random.Range(70, 81);
+                moddedItem.clipSize = 2;
                 break;
             case 2:
                 //Uncommon
-                moddedItem.minDmg = 2;
-                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.minDmg = 4;
+                moddedItem.maxDmg = Random.Range(5, 7);
                 moddedItem.range = Random.Range(1, 3);
-                moddedItem.accuracy = Random.Range(65, 76);
+                moddedItem.accuracy = Random.Range(75, 86);
                 moddedItem.clipSize = 3;
                 break;
             case 3:
                 //Rare
-                moddedItem.minDmg = 2;
-                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.minDmg = 4;
+                moddedItem.maxDmg = Random.Range(6, 9);
                 moddedItem.range = 2;
-                moddedItem.accuracy = Random.Range(70, 81);
+                moddedItem.accuracy = Random.Range(85, 96);
                 moddedItem.clipSize = 2;
                 break;
             case 4:
                 //Super Rare
-                moddedItem.minDmg = 3;
-                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.minDmg = 5;
+                moddedItem.maxDmg = Random.Range(7, 11);
                 moddedItem.range = Random.Range(2, 4);
-                moddedItem.accuracy = Random.Range(75, 86);
+                moddedItem.accuracy = Random.Range(90, 106);
                 moddedItem.clipSize = Random.Range(3, 5);
                 break;
         }
@@ -632,13 +632,13 @@ public class Gacha : MonoBehaviour
                 moddedItem.minDmg = Random.Range(1, 4);
                 moddedItem.maxDmg = Random.Range(2, 5);
                 moddedItem.range = Random.Range(1, 4);
-                moddedItem.accuracy = Random.Range(50, 81);
+                moddedItem.accuracy = Random.Range(60, 81);
                 moddedItem.clipSize = Random.Range(3, 5);
                 break;
             case 2:
                 //Uncommon
-                moddedItem.minDmg = Random.Range(1, 4);
-                moddedItem.maxDmg = Random.Range(2, 5);
+                moddedItem.minDmg = Random.Range(2, 4);
+                moddedItem.maxDmg = Random.Range(4, 6);
                 moddedItem.range = Random.Range(2, 4);
                 moddedItem.accuracy = Random.Range(65, 86);
                 moddedItem.clipSize = Random.Range(3, 5);
@@ -646,17 +646,17 @@ public class Gacha : MonoBehaviour
             case 3:
                 //Rare
                 moddedItem.minDmg = Random.Range(2, 4);
-                moddedItem.maxDmg = Random.Range(3, 5);
+                moddedItem.maxDmg = Random.Range(4, 7);
                 moddedItem.range = Random.Range(2, 4);
-                moddedItem.accuracy = Random.Range(70, 91);
+                moddedItem.accuracy = Random.Range(75, 91);
                 moddedItem.clipSize = 4;
                 break;
             case 4:
                 //Super Rare
-                moddedItem.minDmg = Random.Range(2, 4);
-                moddedItem.maxDmg = Random.Range(3, 6);
-                moddedItem.range = Random.Range(2, 5);
-                moddedItem.accuracy = Random.Range(75, 91);
+                moddedItem.minDmg = Random.Range(3, 6);
+                moddedItem.maxDmg = Random.Range(7, 9);
+                moddedItem.range = Random.Range(2, 4);
+                moddedItem.accuracy = Random.Range(85, 96);
                 moddedItem.clipSize = Random.Range(4, 6);
                 break;
         }
@@ -671,31 +671,31 @@ public class Gacha : MonoBehaviour
                 moddedItem.minDmg = Random.Range(2, 4);
                 moddedItem.maxDmg = Random.Range(4, 6);
                 moddedItem.range = 3;
-                moddedItem.accuracy = Random.Range(50, 81);
+                moddedItem.accuracy = Random.Range(80, 91);
                 moddedItem.clipSize = Random.Range(1, 3);
                 break;
             case 2:
                 //Uncommon
-                moddedItem.minDmg = Random.Range(2, 4);
-                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.minDmg = Random.Range(4, 7);
+                moddedItem.maxDmg = Random.Range(7, 10);
                 moddedItem.range = Random.Range(3, 5);
-                moddedItem.accuracy = Random.Range(65, 86);
+                moddedItem.accuracy = Random.Range(85, 91);
                 moddedItem.clipSize = Random.Range(1, 3);
                 break;
             case 3:
                 //Rare
-                moddedItem.minDmg = 3;
-                moddedItem.maxDmg = Random.Range(4, 7);
+                moddedItem.minDmg = Random.Range(7, 9);
+                moddedItem.maxDmg = Random.Range(9, 11);
                 moddedItem.range = Random.Range(3, 6);
-                moddedItem.accuracy = Random.Range(70, 91);
+                moddedItem.accuracy = Random.Range(85, 101);
                 moddedItem.clipSize = 2;
                 break;
             case 4:
                 //Super Rare
-                moddedItem.minDmg = 3;
-                moddedItem.maxDmg = Random.Range(5, 7);
+                moddedItem.minDmg = Random.Range(10, 12);
+                moddedItem.maxDmg = Random.Range(12, 15);
                 moddedItem.range = Random.Range(4, 6);
-                moddedItem.accuracy = Random.Range(75, 91);
+                moddedItem.accuracy = Random.Range(95, 106);
                 moddedItem.clipSize = 2;
                 break;
         }
@@ -707,31 +707,31 @@ public class Gacha : MonoBehaviour
         {
             case 1:
                 //Common
-                moddedItem.minDmg = Random.Range(2, 4);
-                moddedItem.maxDmg = Random.Range(3, 6);
+                moddedItem.minDmg = 4;
+                moddedItem.maxDmg = Random.Range(5, 7);
                 moddedItem.range = 1;
-                moddedItem.accuracy = Random.Range(50, 71);
+                moddedItem.accuracy = Random.Range(75, 86);
                 break;
             case 2:
                 //Uncommon
-                moddedItem.minDmg = 2;
-                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.minDmg = 4;
+                moddedItem.maxDmg = Random.Range(5, 8);
                 moddedItem.range = 1;
-                moddedItem.accuracy = Random.Range(65, 76);
+                moddedItem.accuracy = Random.Range(80, 96);
                 break;
             case 3:
                 //Rare
-                moddedItem.minDmg = 2;
-                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.minDmg = 5;
+                moddedItem.maxDmg = Random.Range(6, 10);
                 moddedItem.range = 1;
-                moddedItem.accuracy = Random.Range(70, 81);
+                moddedItem.accuracy = Random.Range(90, 101);
                 break;
             case 4:
                 //Super Rare
-                moddedItem.minDmg = 3;
-                moddedItem.maxDmg = Random.Range(4, 6);
+                moddedItem.minDmg = 6;
+                moddedItem.maxDmg = Random.Range(8, 16);
                 moddedItem.range = Random.Range(1, 3);
-                moddedItem.accuracy = Random.Range(75, 86);
+                moddedItem.accuracy = Random.Range(100, 121);
                 break;
         }
         moddedItem.currentClip = 1;

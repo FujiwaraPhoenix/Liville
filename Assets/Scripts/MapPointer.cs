@@ -390,6 +390,7 @@ public class MapPointer : MonoBehaviour
                                 Controller.c.currMap.grid[i, j].gameObject.SetActive(true);
                             }
                         }
+                        BattleMenuUI.bmui.updatePlayerValues(BattleMenuUI.bmui.currentPlayer);
                         targetUnit = null;
                         menuActive = false;
                         currentMenuChoice = 0;
