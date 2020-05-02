@@ -7,10 +7,9 @@ public class InventoryUI : MonoBehaviour
 {
     public int itemCountI, itemCountC, currentHL, currentMax, offset;
     public Text invListing, convoyListing, itemData;
-    public Image background;
-    public Sprite baseBG, litBG;
+    public Image invBG, convoyBG;
     public Image[] convoyIcons, invIcons;
-    public Sprite basePotion, litPotion;
+    public Sprite basePotion, litPotion, convoyBase, convoyHL, invBase, invHL;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,7 +40,7 @@ public class InventoryUI : MonoBehaviour
         }
         if (currentMax < 15)
         {
-            for (int i = 0; i < currentMax + 1; i++)
+            for (int i = 0; i < itemCountC; i++)
             {
                 output += InvManager.im.convoy[i].itemName + "\t\t\t\t\t\t\t\t+" + InvManager.im.convoy[i].healAmt + " HP\n";
             }
@@ -84,6 +83,7 @@ public class InventoryUI : MonoBehaviour
     {
         itemCountI = Controller.c.playerUnits[playerID].inventory.Count;
         itemCountC = InvManager.im.convoy.Count;
+        Debug.Log(itemCountC);
     }
 
     public void updateData(Item chosenItem)

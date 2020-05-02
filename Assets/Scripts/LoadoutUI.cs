@@ -155,7 +155,9 @@ public class LoadoutUI : MonoBehaviour
         }
         //First, let's load up our equipped char's gun.
         equipped.updateStats(Controller.c.playerUnits[currentPlayer].currEquip);
-        hovered.updateStats(InvManager.im.armory[0]);
+        equipped.updateMods(Controller.c.playerUnits[currentPlayer].currEquip);
+        hovered.updateMods(InvManager.im.armory[0]);
+        hovered.updateMods(InvManager.im.armory[0]);
     }
 
     public void loadGunSwap()
@@ -334,6 +336,7 @@ public class LoadoutUI : MonoBehaviour
                 case 1:
                     //Goto inv select.
                     currentLoadoutMenu = 1;
+                    currentPlayer = currentX;
                     baseMenu.gameObject.SetActive(false);
                     invMenu.gameObject.SetActive(true);
                     invSelected = false;
@@ -350,6 +353,7 @@ public class LoadoutUI : MonoBehaviour
                     }
                     iUI.updatePlayerInvText(currentPlayer);
                     iUI.updateText();
+                    iUI.invBG.sprite = iUI.invHL;
                     currentValue = 0;
                     break;
                 case 2:
@@ -518,6 +522,7 @@ public class LoadoutUI : MonoBehaviour
         if (wasPressed)
         {
             hovered.updateStats(InvManager.im.armory[currentGunIndex]);
+            hovered.updateMods(InvManager.im.armory[currentGunIndex]);
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
@@ -543,6 +548,16 @@ public class LoadoutUI : MonoBehaviour
         if ((Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)) && !invSelected)
         {
             hoveringPInv = !hoveringPInv;
+            if (hoveringPInv)
+            {
+                iUI.invBG.sprite = iUI.invHL;
+                iUI.convoyBG.sprite = iUI.convoyBase;
+            }
+            else
+            {
+                iUI.invBG.sprite = iUI.invBase;
+                iUI.convoyBG.sprite = iUI.convoyHL;
+            }
         }
         if (Input.GetKeyDown(KeyCode.UpArrow) && invSelected)
         {
@@ -849,7 +864,9 @@ public class LoadoutUI : MonoBehaviour
         InvManager.im.armory.RemoveAt(gunIndex);
         loadNextPage();
         equipped.updateStats(Controller.c.playerUnits[currentPlayer].currEquip);
+        equipped.updateMods(Controller.c.playerUnits[currentPlayer].currEquip);
         hovered.updateStats(InvManager.im.armory[15 * (gunPage - 1) + currentX + 3 * (currentY)]);
+        hovered.updateMods(InvManager.im.armory[15 * (gunPage - 1) + currentX + 3 * (currentY)]);
     }
 
     public void checkBorders()

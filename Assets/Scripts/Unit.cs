@@ -22,7 +22,7 @@ public class Unit : MonoBehaviour
     //Statuses, in order: elec, burn, freeze, mark, poison
     public int[] negStatus = new int[5];
 
-    public GameObject holder, holder2;
+    public GameObject holder, holder2, missed;
     public SpriteRenderer modifierA, tens, tenOnes, modifierB, ones;
 
     public int nextIndex = 0;
@@ -75,6 +75,7 @@ public class Unit : MonoBehaviour
             {
                 holder.gameObject.SetActive(false);
                 holder2.gameObject.SetActive(false);
+                missed.gameObject.SetActive(false);
             }
             showDamageTimer--;
         }
@@ -528,6 +529,7 @@ public class Unit : MonoBehaviour
                 determination = true;
                 Debug.Log("Determined activated! Move again!");
             }
+            target.showDamage(0);
         }
         if (!currEquip.isMelee && !refundShot)
         {
@@ -584,7 +586,7 @@ public class Unit : MonoBehaviour
                             Vector3 tempLoc = new Vector3(i, j, -1);
                             //Check distance; can the target be shot?
                             float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
-                            if (distToTarget <= currEquip.range)
+                            if (distToTarget <= currEquip.range && Controller.c.unitMap[i, j] == 0)
                             {
                                 chosenPath = pathMap[i, j];
                             }
@@ -594,7 +596,7 @@ public class Unit : MonoBehaviour
                             Vector3 tempLoc = new Vector3(i, j, -1);
                             //Check distance; can the target be shot?
                             float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
-                            if ((distToTarget <= currEquip.range) && pathMap[i,j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count)
+                            if ((distToTarget <= currEquip.range) && pathMap[i,j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count && Controller.c.unitMap[i, j] == 0)
                             {
                                 chosenPath = pathMap[i, j];
                             }
@@ -603,10 +605,17 @@ public class Unit : MonoBehaviour
                 }
             }
             //Kick off processPath
-            savedPath = chosenPath.path;
-            timer = 15;
-            procPath = true;
-            nextIndex = 0;
+            if (chosenPath != null)
+            {
+                savedPath = chosenPath.path;
+                timer = 15;
+                procPath = true;
+                nextIndex = 0;
+            }
+            else
+            {
+
+            }
         }
         else
         {
@@ -638,23 +647,87 @@ public class Unit : MonoBehaviour
                 {
                     case 0:
                         //Move up one
-                        position[1]++;
-                        transform.position += new Vector3(0, 1, 0);
+                        if (Controller.c.unitMap[position[0], position[1] + 1] == 0)
+                        {
+                            position[1]++;
+                            transform.position += new Vector3(0, 1, 0);
+                        }
+                        else
+                        {
+                            //End the chase.
+                            Controller.c.unitMap[position[0], position[1]] = 2;
+                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                            if (distToTarget <= currEquip.range)
+                            {
+                                attack();
+                            }
+                            hasMoved = true;
+                            procPath = false;
+                            savedPath = null;
+                        }
                         break;
                     case 1:
                         //Move right one
-                        position[0]++;
-                        transform.position += new Vector3(1, 0, 0);
+                        if (Controller.c.unitMap[position[0] + 1, position[1]] == 0)
+                        {
+                            position[0]++;
+                            transform.position += new Vector3(1, 0, 0);
+                        }
+                        else
+                        {
+                            //End the chase.
+                            Controller.c.unitMap[position[0], position[1]] = 2;
+                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                            if (distToTarget <= currEquip.range)
+                            {
+                                attack();
+                            }
+                            hasMoved = true;
+                            procPath = false;
+                            savedPath = null;
+                        }
                         break;
                     case 2:
                         //Move down one
-                        position[1]--;
-                        transform.position -= new Vector3(0, 1, 0);
+                        if (Controller.c.unitMap[position[0], position[1] - 1] == 0)
+                        {
+                            position[1]--;
+                            transform.position -= new Vector3(0, 1, 0);
+                        }
+                        else
+                        {
+                            //End the chase.
+                            Controller.c.unitMap[position[0], position[1]] = 2;
+                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                            if (distToTarget <= currEquip.range)
+                            {
+                                attack();
+                            }
+                            hasMoved = true;
+                            procPath = false;
+                            savedPath = null;
+                        }
                         break;
                     case 3:
                         //Move left one
-                        position[0]--;
-                        transform.position -= new Vector3(1, 0, 0);
+                        if (Controller.c.unitMap[position[0] - 1, position[1]] == 0)
+                        {
+                            position[0]--;
+                            transform.position -= new Vector3(1, 0, 0);
+                        }
+                        else
+                        {
+                            //End the chase.
+                            Controller.c.unitMap[position[0], position[1]] = 2;
+                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                            if (distToTarget <= currEquip.range)
+                            {
+                                attack();
+                            }
+                            hasMoved = true;
+                            procPath = false;
+                            savedPath = null;
+                        }
                         break;
                 }
                 timer = 15;
@@ -679,7 +752,7 @@ public class Unit : MonoBehaviour
 
     public bool checkMod(int modTier, int modID)
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < currEquip.mods.GetLength(0); i++)
         {
             if (currEquip.mods[i, 0] == modTier && currEquip.mods[i, 1] == modID)
             {
@@ -720,6 +793,7 @@ public class Unit : MonoBehaviour
 
     public void resetChar()
     {
+        this.gameObject.SetActive(true);
         isDead = false;
         hp = maxhp;
         currEquip.currentClip = currEquip.clipSize;
@@ -737,7 +811,7 @@ public class Unit : MonoBehaviour
             //Single digit only.
             holder2.gameObject.SetActive(true);
             ones.sprite = Controller.c.damageNumbers[dmgTaken];
-            showDamageTimer = 30;
+            showDamageTimer = 45;
         }
         else if (dmgTaken > 9)
         {
@@ -747,7 +821,13 @@ public class Unit : MonoBehaviour
             int tensValue = dmgTaken / 10;
             tenOnes.sprite = Controller.c.damageNumbers[onesValue];
             tens.sprite = Controller.c.damageNumbers[tensValue];
-            showDamageTimer = 30;
+            showDamageTimer = 45;
+        }
+        else
+        {
+            //Missed.
+            missed.gameObject.SetActive(true);
+            showDamageTimer = 45;
         }
     }
 
@@ -755,8 +835,8 @@ public class Unit : MonoBehaviour
     {
         //In this scenario, the player MUST be out of range.
         //Ergo, we move toward the player up to the amount of tiles we can move (aka mvt)
-        Pathfinder.pf.drawPath(this, position, 10, pathMap[position[0], position[1]], unitAllegiance);
-        //So let's say we have a theoretical max of 10 tiles to move. Next thing to do? Move towards the target.
+        Pathfinder.pf.drawPath(this, position, 15, pathMap[position[0], position[1]], unitAllegiance);
+        //So let's say we have a theoretical max of 15 tiles to move. Next thing to do? Move towards the target.
         Path chosenPath = null;
         for (int i = 0; i < Controller.c.currMap.xBound; i++)
         {
@@ -769,7 +849,7 @@ public class Unit : MonoBehaviour
                         Vector3 tempLoc = new Vector3(i, j, -1);
                         //Check distance; can the target be shot?
                         float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
-                        if (distToTarget <= currEquip.range)
+                        if (distToTarget <= currEquip.range && Controller.c.unitMap[i, j] == 0)
                         {
                             chosenPath = pathMap[i, j];
                         }
@@ -779,7 +859,7 @@ public class Unit : MonoBehaviour
                         Vector3 tempLoc = new Vector3(i, j, -1);
                         //Check distance; can the target be shot?
                         float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
-                        if ((distToTarget <= currEquip.range) && pathMap[i, j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count)
+                        if ((distToTarget <= currEquip.range) && pathMap[i, j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count && Controller.c.unitMap[i, j] == 0)
                         {
                             chosenPath = pathMap[i, j];
                         }
@@ -787,15 +867,17 @@ public class Unit : MonoBehaviour
                 }
             }
         }
-        //Now that we have a path, let's cull it a bit.
-        //They're out of range, so let's shave the list down a bit.
-        if (negStatus[2] > 0)
-        {
-            savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt - 1);
-        }
-        else
-        {
-            savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt);
+        if (chosenPath != null) {
+            //Now that we have a path, let's cull it a bit.
+            //They're out of range, so let's shave the list down a bit.
+            if (negStatus[2] > 0)
+            {
+                savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt - 1);
+            }
+            else
+            {
+                savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt);
+            }
         }
     }
 

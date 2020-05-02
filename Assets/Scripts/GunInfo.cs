@@ -27,6 +27,7 @@ public class GunInfo : MonoBehaviour
         if (LoadoutUI.lUI.currentLoadoutMenu == 0)
         {
             updateStats(Controller.c.playerUnits[character].currEquip);
+            updateMods(Controller.c.playerUnits[character].currEquip);
         }
     }
 
@@ -37,6 +38,16 @@ public class GunInfo : MonoBehaviour
         string statString = "DMG: " + shownGun.minDmg + "-" + shownGun.maxDmg + "\nACC: " + shownGun.accuracy + "\nRNG: " + shownGun.range;
         gunStats.text = statString;
         initializePips(shownGun);
+    }
+
+    public void updateMods(Item shownGun)
+    {
+        string output = "";
+        for (int i = 0; i < shownGun.mods.GetLength(0); i++)
+        {
+            output += "Mod " + (i + 1) + ": " + Controller.c.determineModName(shownGun.mods[i, 0], shownGun.mods[i, 1]) + "\n";
+        }
+        gunMods.text = output;
     }
 
     public void initializePips(Item selectedGun)
@@ -60,7 +71,7 @@ public class GunInfo : MonoBehaviour
             if (isOdd == 0)
             {
                 //Even; formula is (-10(pip array size/2) + 10n -5)
-                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(ammoPips.Length / 2)) + (10 * i) - 5, 0, 0);
+                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor((ammoPips.Length -1 ) / 2)) + (10 * i) - 5, 0, 0);
             }
             else
             {

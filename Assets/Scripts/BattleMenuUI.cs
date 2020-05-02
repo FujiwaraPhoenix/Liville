@@ -32,27 +32,26 @@ public class BattleMenuUI : MonoBehaviour
     public bool foundPlayer = false;
     public Text pUnitName, pGunName;
     public Image pImg;
-    public Text HPDisplay, statDisplay, gunStatDisplay, modDisplay;
+    public Text HPDisplay, statDisplay, gunStatDisplay;
     public int pHP, pMaxHP, pDef, pEva, pSpd, pLck;
     public int pClipSize, pCurrClip, pMinDmg, pMaxDmg, pAcc, pRng, pMvt;
     public int pTempAcc, pTempDef, pTempEva, pTempLck, pTempRng, pTempRes, pTempMinDmg, pTempMaxDmg, pTempMvt;
-    public int[,] pMods = new int[3,2];
-    public string pMod1Name, pMod2Name, pMod3Name;
+    public Image[] pMods = new Image[3];
     public bool pIsMelee = false;
     public Image[] pHPPips = new Image[40];
     public Image[] pAmmoPips = new Image[3];
+    
 
     //Enemy Stats
     public Unit currentEnemy;
     public bool foundEnemy = false;
     public Text eUnitName, eGunName;
     public Image eImg;
-    public Text eHPDisplay, estatDisplay, egunStatDisplay, emodDisplay;
+    public Text eHPDisplay, estatDisplay, egunStatDisplay;
     public int eHP, eMaxHP, eDef, eEva, eSpd, eLck;
     public int eClipSize, eCurrClip, eMinDmg, eMaxDmg, eAcc, eRng, eMvt;
     public int eTempAcc, eTempDef, eTempEva, eTempLck, eTempRng, eTempRes, eTempMinDmg, eTempMaxDmg, eTempMvt;
-    public int[,] eMods = new int[3, 2];
-    public string eMod1Name, eMod2Name, eMod3Name;
+    public Image[] eMods = new Image[3];
     public bool eIsMelee = false;
     public Image[] eHPPips = new Image[40];
     public Image[] eAmmoPips = new Image[3];
@@ -119,7 +118,14 @@ public class BattleMenuUI : MonoBehaviour
         if (Controller.c.mp.targetUnit != null)
         {
             updatePlayerValues(Controller.c.mp.targetUnit);
-            foundPlayer = true;
+            if (pHP > 0)
+            {
+                foundPlayer = true;
+            }
+            else
+            {
+                foundPlayer = false;
+            }
         }
         //Check if you're hovering over a player unit:
         else
@@ -150,7 +156,6 @@ public class BattleMenuUI : MonoBehaviour
         //Stats are returned in the corresponding fxn below.
         statDisplay.text = genPlayerStatDisplay();
         gunStatDisplay.text = "DMG: " + pMinDmg + "-" + pMaxDmg + "\nACC: " + pAcc + "\nRNG: " + pRng;
-        modDisplay.text = "Mod 1: " + pMod1Name + "\nMod 2: " + pMod2Name + "\nMod 3: " + pMod3Name;
         forceUpdatePips();
     }
 
@@ -193,7 +198,6 @@ public class BattleMenuUI : MonoBehaviour
         //Stats are returned in the corresponding fxn below.
         estatDisplay.text = genEnemyStatDisplay();
         egunStatDisplay.text = "DMG: " + eMinDmg + "-" + eMaxDmg + "\nACC: " + eAcc + "\nRNG: " + eRng;
-        emodDisplay.text = "Mod 1: " + eMod1Name + "\nMod 2: " + eMod2Name + "\nMod 3: " + eMod3Name;
         forceUpdateEPips();
     }
 
@@ -232,30 +236,16 @@ public class BattleMenuUI : MonoBehaviour
         pTempMvt = playerUnit.currEquip.tempMvt;
 
         //Mods
-        pMods = playerUnit.currEquip.mods;
-        if (pMods.GetLength(0) >= 3)
+        for (int i = 0; i < 3; i++)
         {
-            pMod3Name = Controller.c.determineModName(pMods[2, 0], pMods[2, 1]);
-        }
-        else
-        {
-            pMod3Name = null;
-        }
-        if (pMods.GetLength(0) >= 2)
-        {
-            pMod2Name = Controller.c.determineModName(pMods[1, 0], pMods[1, 1]);
-        }
-        else
-        {
-            pMod2Name = null;
-        }
-        if (pMods.GetLength(0) >= 1)
-        {
-            pMod1Name = Controller.c.determineModName(pMods[0, 0], pMods[0, 1]);
-        }
-        else
-        {
-            pMod1Name = null;
+            if (i < playerUnit.currEquip.mods.GetLength(0))
+            {
+                pMods[i].sprite = Controller.c.determineModIcon(playerUnit.currEquip.mods[i, 0], playerUnit.currEquip.mods[i, 1]);
+            }
+            else
+            {
+                pMods[i].sprite = Controller.c.blankMod;
+            }
         }
     }
 
@@ -292,12 +282,19 @@ public class BattleMenuUI : MonoBehaviour
         eTempMinDmg = enemyUnit.currEquip.tempMinDmg;
         eTempMaxDmg = enemyUnit.currEquip.tempMaxDmg;
         eTempMvt = enemyUnit.currEquip.tempMvt;
-        
+
         //Mods
-        eMods = enemyUnit.currEquip.mods;
-        eMod1Name = Controller.c.determineModName(eMods[0, 0], eMods[0, 1]);
-        eMod2Name = Controller.c.determineModName(eMods[0, 0], eMods[0, 1]);
-        eMod3Name = Controller.c.determineModName(eMods[0, 0], eMods[0, 1]);
+        for (int i = 0; i < 3; i++)
+        {
+            if (i < enemyUnit.currEquip.mods.GetLength(0))
+            {
+                eMods[i].sprite = Controller.c.determineModIcon(enemyUnit.currEquip.mods[i, 0], enemyUnit.currEquip.mods[i, 1]);
+            }
+            else
+            {
+                eMods[i].sprite = Controller.c.blankMod;
+            }
+        }
     }
 
     //The following function updates the HP and ammo pips of either a player or enemy unit.

@@ -547,15 +547,13 @@ public class Controller : MonoBehaviour
 
     public Sprite determineModIcon(int modTier, int modID)
     {
-        Debug.Log(modTier);
-        Debug.Log(modID);
-
         switch (modTier)
         {
             //From here, Demerits
             case -1:
                 switch (modID)
                 {
+                    case 0:
                     case 1:
                     case 2:
                     case 3:
@@ -563,7 +561,6 @@ public class Controller : MonoBehaviour
                     case 5:
                     case 6:
                     case 7:
-                    case 8:
                         return demeritMods[modID];
                     default:
                         return blankMod;
@@ -572,6 +569,7 @@ public class Controller : MonoBehaviour
             case 1:
                 switch (modID)
                 {
+                    case 0:
                     case 1:
                     case 2:
                     case 3:
@@ -580,6 +578,10 @@ public class Controller : MonoBehaviour
                     case 6:
                     case 7:
                     case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
                         return t1mods[modID];
                     default:
                         return blankMod;
@@ -588,12 +590,12 @@ public class Controller : MonoBehaviour
             case 2:
                 switch (modID)
                 {
+                    case 0:
                     case 1:
                     case 2:
                     case 3:
                     case 4:
                     case 5:
-                    case 6:
                         return t2mods[modID];
                     default:
                         return blankMod;
@@ -602,11 +604,10 @@ public class Controller : MonoBehaviour
             case 3:
                 switch (modID)
                 {
-
+                    case 0:
                     case 1:
                     case 2:
                     case 3:
-                    case 4:
                         return t3mods[modID];
                     default:
                         return blankMod;
