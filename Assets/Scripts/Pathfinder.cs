@@ -36,319 +36,153 @@ public class Pathfinder : MonoBehaviour
 
     //This function, when given a starting location, determines paths to all possible locations within distance.
     //0 = up, 1 = right, 2 = down, 3 = left
-    public void drawPath(Unit selectedUnit, int[] startLocation, int steps, Path currentPath, int unitAllegiance)
+    public void drawPath(Path[,] currentMap, int[] startLocation, int steps, Path currentPath, int unitAllegiance, int atkDistance)
     {
-        if (steps == 0)
-        {
-            //Check attack range for outlier targets.
-        }
-        else
+        int[] newStart = new int[2];
+        if (steps + atkDistance > 0)
         {
             //Check up
             //Out of bounds?
-            if (!(startLocation[1] + 1 >= Controller.c.currMap.yBound))
+            if (startLocation[1] + 1 < Controller.c.currMap.yBound)
             {
-                if (Controller.c.currMap.grid[startLocation[0], startLocation[1] + 1].isPassable)
-                {
-                    //A unit doesn't exist on this tile.
-                    if (Controller.c.unitMap[startLocation[0], startLocation[1] + 1] == 0)
-                    {
-                        
-                        //If I can move here:
-                        if (steps - Controller.c.currMap.grid[startLocation[0], startLocation[1] + 1].mvtPenalty >= 0)
-                        {
-                            currentPath.path.Add(0);
-                            if (Controller.c.currMap.grid[startLocation[0], startLocation[1] + 1].isHazardous)
-                            {
-                                currentPath.hazardCount++;
-                            }
-                            //Check the path map
-                            if (selectedUnit.pathMap[startLocation[0], startLocation[1] + 1] == null)
-                            {
-                                selectedUnit.pathMap[startLocation[0], startLocation[1] + 1] = currentPath.copyPath();
-                            }
-                            else
-                            {
-                                //Is the old path less hazardous?
-                                if (selectedUnit.pathMap[startLocation[0], startLocation[1] + 1].hazardCount > currentPath.hazardCount)
-                                {
-                                    selectedUnit.pathMap[startLocation[0], startLocation[1] + 1] = currentPath.copyPath();
-                                }
-                                //Is it longer?
-                                else if (selectedUnit.pathMap[startLocation[0], startLocation[1] + 1].hazardCount == currentPath.hazardCount)
-                                {
-                                    if (selectedUnit.pathMap[startLocation[0], startLocation[1] + 1].path.Count > currentPath.path.Count)
-                                    {
-                                        selectedUnit.pathMap[startLocation[0], startLocation[1] + 1] = currentPath.copyPath();
-                                    }
-                                }
-                            }
-                            int[] newStart = new int[2];
-                            newStart[0] = startLocation[0];
-                            newStart[1] = startLocation[1] + 1;
-
-                            drawPath(selectedUnit, newStart, steps - Controller.c.currMap.grid[newStart[0], newStart[1]].mvtPenalty, currentPath, unitAllegiance);
-                            currentPath.path.RemoveAt(currentPath.path.Count-1);
-                        }
-                        //If I can't:
-                        else
-                        {
-                            //Nothing.
-                        }
-                    }
-                    //'Ally' unit
-                    if (Controller.c.unitMap[startLocation[0], startLocation[1] + 1] == unitAllegiance)
-                    {
-                        //If I can move here:
-                        if (steps - Controller.c.currMap.grid[startLocation[0], startLocation[1] + 1].mvtPenalty >= 1)
-                        {
-                            currentPath.path.Add(0);
-                            if (Controller.c.currMap.grid[startLocation[0], startLocation[1] + 1].isHazardous)
-                            {
-                                currentPath.hazardCount++;
-                            }
-                            int[] newStart = new int[2];
-                            newStart[0] = startLocation[0];
-                            newStart[1] = startLocation[1] + 1;
-                            drawPath(selectedUnit, newStart, steps - Controller.c.currMap.grid[newStart[0], newStart[1]].mvtPenalty, currentPath, unitAllegiance);
-                            currentPath.path.RemoveAt(currentPath.path.Count - 1);
-                        }
-                    }
-                    //'Enemy' unit
-                    else
-                    {
-                        //Nope
-                    }
-                }
+                newStart[0] = startLocation[0];
+                newStart[1] = startLocation[1] + 1;
+                setToMvtHelper(currentMap, newStart, steps, currentPath, unitAllegiance, atkDistance, 0);
             }
 
             //Check right
             //Out of bounds?
-            if (!(startLocation[0] + 1 >= Controller.c.currMap.xBound))
+            if (startLocation[0] + 1 < Controller.c.currMap.xBound)
             {
-                if (Controller.c.currMap.grid[startLocation[0] + 1, startLocation[1]].isPassable)
-                {
-                    //A unit doesn't exist on this tile.
-                    if (Controller.c.unitMap[startLocation[0] + 1, startLocation[1]] == 0)
-                    {
-                        //If I can move here:
-                        if (steps - Controller.c.currMap.grid[startLocation[0] + 1, startLocation[1]].mvtPenalty >= 0)
-                        {
-                            currentPath.path.Add(1);
-                            if (Controller.c.currMap.grid[startLocation[0] + 1, startLocation[1]].isHazardous)
-                            {
-                                currentPath.hazardCount++;
-                            }
-                            //Check the path map
-                            if (selectedUnit.pathMap[startLocation[0] + 1, startLocation[1]] == null)
-                            {
-                                selectedUnit.pathMap[startLocation[0] + 1, startLocation[1]] = currentPath.copyPath();
-                            }
-                            else
-                            {
-                                //Is the old path less hazardous?
-                                if (selectedUnit.pathMap[startLocation[0] + 1, startLocation[1]].hazardCount > currentPath.hazardCount)
-                                {
-                                    selectedUnit.pathMap[startLocation[0] + 1, startLocation[1]] = currentPath.copyPath();
-                                }
-                                //Is it longer?
-                                else if (selectedUnit.pathMap[startLocation[0] + 1, startLocation[1]].hazardCount == currentPath.hazardCount)
-                                {
-                                    if (selectedUnit.pathMap[startLocation[0] + 1, startLocation[1]].path.Count > currentPath.path.Count)
-                                    {
-                                        selectedUnit.pathMap[startLocation[0] + 1, startLocation[1]] = currentPath.copyPath();
-                                    }
-                                }
-                            }
-                            int[] newStart = new int[2];
-                            newStart[0] = startLocation[0] + 1;
-                            newStart[1] = startLocation[1];
-                            drawPath(selectedUnit, newStart, steps - Controller.c.currMap.grid[newStart[0], newStart[1]].mvtPenalty, currentPath, unitAllegiance);
-                            currentPath.path.RemoveAt(currentPath.path.Count - 1);
-                        }
-                        //If I can't:
-                        else
-                        {
-                            //Nothing.
-                        }
-                    }
-                    //'Ally' unit
-                    if (Controller.c.unitMap[startLocation[0] + 1, startLocation[1]] == unitAllegiance)
-                    {
-                        //If I can move here:
-                        if (steps - Controller.c.currMap.grid[startLocation[0] + 1, startLocation[1]].mvtPenalty >= 0)
-                        {
-                            currentPath.path.Add(0);
-                            if (Controller.c.currMap.grid[startLocation[0] + 1, startLocation[1]].isHazardous)
-                            {
-                                currentPath.hazardCount++;
-                            }
-                            int[] newStart = new int[2];
-                            newStart[0] = startLocation[0] + 1;
-                            newStart[1] = startLocation[1];
-                            drawPath(selectedUnit, newStart, steps - Controller.c.currMap.grid[newStart[0], newStart[1]].mvtPenalty, currentPath, unitAllegiance);
-                            currentPath.path.RemoveAt(currentPath.path.Count - 1);
-                        }
-                    }
-                    //'Enemy' unit
-                    else
-                    {
-                        //Nope
-                    }
-                }
+                newStart[0] = startLocation[0] + 1;
+                newStart[1] = startLocation[1];
+                setToMvtHelper(currentMap, newStart, steps, currentPath, unitAllegiance, atkDistance, 1);
             }
 
             //Check down
             //Out of bounds?
-            if (!(startLocation[1] - 1 < 0))
+            if (startLocation[1] - 1 >= 0)
             {
-                if (Controller.c.currMap.grid[startLocation[0], startLocation[1] - 1].isPassable)
-                {
-                    //A unit doesn't exist on this tile.
-                    if (Controller.c.unitMap[startLocation[0], startLocation[1] - 1] == 0)
-                    {
-                        //If I can move here:
-                        if (steps - Controller.c.currMap.grid[startLocation[0], startLocation[1] - 1].mvtPenalty >= 0)
-                        {
-                            currentPath.path.Add(2);
-                            if (Controller.c.currMap.grid[startLocation[0], startLocation[1] - 1].isHazardous)
-                            {
-                                currentPath.hazardCount++;
-                            }
-                            //Check the path map
-                            if (selectedUnit.pathMap[startLocation[0], startLocation[1] - 1] == null)
-                            {
-                                selectedUnit.pathMap[startLocation[0], startLocation[1] - 1] = currentPath.copyPath();
-                            }
-                            else
-                            {
-                                //Is the old path less hazardous?
-                                if (selectedUnit.pathMap[startLocation[0], startLocation[1] - 1].hazardCount > currentPath.hazardCount)
-                                {
-                                    selectedUnit.pathMap[startLocation[0], startLocation[1] - 1] = currentPath.copyPath();
-                                }
-                                //Is it longer?
-                                else if (selectedUnit.pathMap[startLocation[0], startLocation[1] - 1].hazardCount == currentPath.hazardCount)
-                                {
-                                    if (selectedUnit.pathMap[startLocation[0], startLocation[1] - 1].path.Count > currentPath.path.Count)
-                                    {
-                                        selectedUnit.pathMap[startLocation[0], startLocation[1] - 1] = currentPath.copyPath();
-                                    }
-                                }
-                            }
-                            int[] newStart = new int[2];
-                            newStart[0] = startLocation[0];
-                            newStart[1] = startLocation[1] - 1;
-                            drawPath(selectedUnit, newStart, steps - Controller.c.currMap.grid[newStart[0], newStart[1]].mvtPenalty, currentPath, unitAllegiance);
-                            currentPath.path.RemoveAt(currentPath.path.Count - 1);
-                        }
-                        //If I can't:
-                        else
-                        {
-                            //Nothing.
-                        }
-                    }
-                    //'Ally' unit
-                    if (Controller.c.unitMap[startLocation[0], startLocation[1] - 1] == unitAllegiance)
-                    {
-                        //If I can move here:
-                        if (steps - Controller.c.currMap.grid[startLocation[0], startLocation[1] - 1].mvtPenalty >= 0)
-                        {
-                            currentPath.path.Add(2);
-                            if (Controller.c.currMap.grid[startLocation[0], startLocation[1] - 1].isHazardous)
-                            {
-                                currentPath.hazardCount++;
-                            }
-                            int[] newStart = new int[2];
-                            newStart[0] = startLocation[0];
-                            newStart[1] = startLocation[1] - 1;
-                            drawPath(selectedUnit, newStart, steps - Controller.c.currMap.grid[newStart[0], newStart[1]].mvtPenalty, currentPath, unitAllegiance);
-                            currentPath.path.RemoveAt(currentPath.path.Count - 1);
-                        }
-                    }
-                    //'Enemy' unit
-                    else
-                    {
-                        //Nope
-                    }
-                }
+                newStart[0] = startLocation[0];
+                newStart[1] = startLocation[1] - 1;
+                setToMvtHelper(currentMap, newStart, steps, currentPath, unitAllegiance, atkDistance, 2);
             }
 
             //Check left
             //Out of bounds?
-            if (!(startLocation[0] - 1 < 0))
+            if (startLocation[0] - 1 >= 0)
             {
-                if (Controller.c.currMap.grid[startLocation[0] - 1, startLocation[1]].isPassable)
+                newStart[0] = startLocation[0] - 1;
+                newStart[1] = startLocation[1];
+                setToMvtHelper(currentMap, newStart, steps, currentPath, unitAllegiance, atkDistance, 3);
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    void setToAtkHelper(Path[,] givenMap, int[] coordinates, Path givenPath, int allegiance, int atkDist)
+    {
+        if (givenMap[coordinates[0], coordinates[1]] == null || !(givenMap[coordinates[0], coordinates[1]].set) && atkDist != 0)
+        {
+            //Nothing here, which is necessary. If something WAS here, it'd be set.
+            givenMap[coordinates[0], coordinates[1]] = givenPath.copyPath();
+            givenMap[coordinates[0], coordinates[1]].set = false;
+            givenMap[coordinates[0], coordinates[1]].setAtk = true;
+        }
+        drawPath(givenMap, coordinates, 0, givenMap[coordinates[0], coordinates[1]], allegiance, atkDist - 1);
+    }
+
+    void setToMvtHelper(Path[,] givenMap, int[] coordinates, int movement, Path givenPath, int allegiance, int atkDist, int direction)
+    {
+        if (movement > 0)
+        {
+            if (Controller.c.currMap.grid[coordinates[0], coordinates[1]].isPassable)
+            {
+                bool wasHazardous = false;
+                if (Controller.c.unitMap[coordinates[0], coordinates[1]] == 0)
                 {
-                    //A unit doesn't exist on this tile.
-                    if (Controller.c.unitMap[startLocation[0] - 1, startLocation[1]] == 0)
+                    //If I can move here:
+                    if (movement - Controller.c.currMap.grid[coordinates[0], coordinates[1]].mvtPenalty >= 0)
                     {
-                        //If I can move here:
-                        if (steps - Controller.c.currMap.grid[startLocation[0] - 1, startLocation[1]].mvtPenalty >= 0)
+                        givenPath.path.Add(direction);
+                        if (Controller.c.currMap.grid[coordinates[0], coordinates[1]].isHazardous)
                         {
-                            currentPath.path.Add(3);
-                            if (Controller.c.currMap.grid[startLocation[0] - 1, startLocation[1]].isHazardous)
-                            {
-                                currentPath.hazardCount++;
-                            }
-                            //Check the path map
-                            if (selectedUnit.pathMap[startLocation[0] - 1, startLocation[1]] == null)
-                            {
-                                selectedUnit.pathMap[startLocation[0] - 1, startLocation[1]] = currentPath.copyPath();
-                            }
-                            else
-                            {
-                                //Is the old path less hazardous?
-                                if (selectedUnit.pathMap[startLocation[0] - 1, startLocation[1]].hazardCount > currentPath.hazardCount)
-                                {
-                                    selectedUnit.pathMap[startLocation[0] - 1, startLocation[1]] = currentPath.copyPath();
-                                }
-                                //Is it longer?
-                                else if (selectedUnit.pathMap[startLocation[0] - 1, startLocation[1]].hazardCount == currentPath.hazardCount)
-                                {
-                                    if (selectedUnit.pathMap[startLocation[0] - 1, startLocation[1]].path.Count > currentPath.path.Count)
-                                    {
-                                        selectedUnit.pathMap[startLocation[0] - 1, startLocation[1]] = currentPath.copyPath();
-                                    }
-                                }
-                            }
-                            int[] newStart = new int[2];
-                            newStart[0] = startLocation[0] - 1;
-                            newStart[1] = startLocation[1];
-                            drawPath(selectedUnit, newStart, steps - Controller.c.currMap.grid[newStart[0], newStart[1]].mvtPenalty, currentPath, unitAllegiance);
-                            currentPath.path.RemoveAt(currentPath.path.Count - 1);
+                            givenPath.hazardCount++;
                         }
-                        //If I can't:
+                        //Check the path map
+                        if (givenMap[coordinates[0], coordinates[1]] == null || givenMap[coordinates[0], coordinates[1]].setAtk)
+                        {
+                            givenMap[coordinates[0], coordinates[1]] = givenPath.copyPath();
+                        }
                         else
                         {
-                            //Nothing.
-                        }
-                    }
-                    //'Ally' unit
-                    if (Controller.c.unitMap[startLocation[0] - 1, startLocation[1]] == unitAllegiance)
-                    {
-                        //If I can move here:
-                        if (steps - Controller.c.currMap.grid[startLocation[0] - 1, startLocation[1]].mvtPenalty >= 0)
-                        {
-                            currentPath.path.Add(3);
-                            if (Controller.c.currMap.grid[startLocation[0] - 1, startLocation[1]].isHazardous)
+                            //Is the old path less hazardous?
+                            if (givenMap[coordinates[0], coordinates[1]].hazardCount > givenPath.hazardCount)
                             {
-                                currentPath.hazardCount++;
+                                givenMap[coordinates[0], coordinates[1]] = givenPath.copyPath();
                             }
-                            int[] newStart = new int[2];
-                            newStart[0] = startLocation[0] - 1;
-                            newStart[1] = startLocation[1];
-                            drawPath(selectedUnit, newStart, steps - Controller.c.currMap.grid[newStart[0], newStart[1]].mvtPenalty, currentPath, unitAllegiance);
-                            currentPath.path.RemoveAt(currentPath.path.Count - 1);
+                            //Is it longer?
+                            else if (givenMap[coordinates[0], coordinates[1]].hazardCount == givenPath.hazardCount)
+                            {
+                                if (givenMap[coordinates[0], coordinates[1]].path.Count > givenPath.path.Count)
+                                {
+                                    givenMap[coordinates[0], coordinates[1]] = givenPath.copyPath();
+                                }
+                            }
+                        }
+                        drawPath(givenMap, coordinates, movement - Controller.c.currMap.grid[coordinates[0], coordinates[1]].mvtPenalty, givenPath, allegiance, atkDist);
+                        givenPath.path.RemoveAt(givenPath.path.Count - 1);
+                        if (wasHazardous)
+                        {
+                            givenPath.hazardCount--;
                         }
                     }
-                    //'Enemy' unit
+                    //If I can't:
                     else
                     {
-                        //Nope
+                        //Set steps to 0.
+                        setToAtkHelper(givenMap, coordinates, givenPath, allegiance, atkDist);
                     }
                 }
+                //'Ally' unit
+                else if (Controller.c.unitMap[coordinates[0], coordinates[1]] == allegiance)
+                {
+                    //If I can move here:
+                    if (movement - Controller.c.currMap.grid[coordinates[0], coordinates[1]].mvtPenalty >= 1)
+                    {
+                        givenPath.path.Add(direction);
+                        if (Controller.c.currMap.grid[coordinates[0], coordinates[1]].isHazardous)
+                        {
+                            givenPath.hazardCount++;
+                        }
+                        drawPath(givenMap, coordinates, movement - Controller.c.currMap.grid[coordinates[0], coordinates[1]].mvtPenalty, givenPath, allegiance, atkDist);
+                        givenPath.path.RemoveAt(givenPath.path.Count - 1);
+                        if (wasHazardous)
+                        {
+                            givenPath.hazardCount--;
+                        }
+                    }
+                }
+                //'Enemy' unit
+                else
+                {
+                    //Steps at 0; attack distance not.
+                    setToAtkHelper(givenMap, coordinates, givenPath, allegiance, atkDist);
+                }
             }
+            else
+            {
+                //Steps at 0; attack distance not.
+                setToAtkHelper(givenMap, coordinates, givenPath, allegiance, atkDist);
+            }
+        }
+        else if (atkDist > 0)
+        {
+            //Steps at 0; attack distance not.
+            setToAtkHelper(givenMap, coordinates, givenPath, allegiance, atkDist);
         }
     }
 }

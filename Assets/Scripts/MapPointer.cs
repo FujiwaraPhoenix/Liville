@@ -243,7 +243,7 @@ public class MapPointer : MonoBehaviour
                 //Then, as usual, run the wait stuff.
                 targetUnit.currUnit = false;
                 //Reset pathmap.
-                targetUnit.clearPaths();
+                targetUnit.clearPaths(targetUnit.pathMap);
                 //Reset tiles
                 for (int i = 0; i < Controller.c.currMap.grid.GetLength(0); i++)
                 {
@@ -256,6 +256,7 @@ public class MapPointer : MonoBehaviour
                 choosingTarget = false;
                 menuActive = false;
                 currentMenuChoice = 0;
+                targetUnit.hideAtkRange();
                 Controller.c.checkTurn();
             }
             else if (selectingItem)
@@ -270,7 +271,7 @@ public class MapPointer : MonoBehaviour
                     targetUnit.hasMoved = true;
                     targetUnit.currUnit = false;
                     //Reset pathmap.
-                    targetUnit.clearPaths();
+                    targetUnit.clearPaths(targetUnit.pathMap);
                     //Reset tiles
                     for (int i = 0; i < Controller.c.currMap.grid.GetLength(0); i++)
                     {
@@ -284,6 +285,31 @@ public class MapPointer : MonoBehaviour
                     currentMenuChoice = 0;
                     selectingItem = false;
                     Controller.c.checkTurn();
+                }
+            }
+            //Turn enemy indicators on/off
+            Unit eCheck = null;
+            foreach (Unit u in Controller.c.enemyUnits)
+            {
+                if (u.position[0] == currX && u.position[1] == currY)
+                {
+                    eCheck = u;
+                }
+            }
+            if (eCheck != null)
+            {
+                if (!eCheck.hasMoved)
+                {
+                    //Reveal your secrets.
+                    if (eCheck.displayActive)
+                    {
+                        eCheck.hideMovement();
+                    }
+                    else
+                    {
+                        eCheck.showMovement();
+                    }
+                    eCheck.displayActive = !eCheck.displayActive;
                 }
             }
         }
@@ -310,13 +336,14 @@ public class MapPointer : MonoBehaviour
                     currY = targetUnit.position[1];
                     transform.position = new Vector3(targetUnit.position[0], targetUnit.position[1] + 0.5f, -3);
                     currentTargetIndex = 0;
+                    targetUnit.hideAtkRange();
                 }
                 else
                 {
                     //Reset tiles
                     targetUnit.hideMovement();
                     //Reset pathmap.
-                    targetUnit.clearPaths();
+                    targetUnit.clearPaths(targetUnit.pathMap);
                     //The rest.
                     targetUnit.currUnit = false;
                     targetUnit = null;
@@ -360,6 +387,7 @@ public class MapPointer : MonoBehaviour
                         }
                         if (targetsAvailable)
                         {
+                            targetUnit.showAtkRange();
                             targetUnitTargetList = new Unit[totalPossibleTargets];
                             for (int i = 0; i < totalPossibleTargets; i++)
                             {
@@ -381,7 +409,7 @@ public class MapPointer : MonoBehaviour
                         targetUnit.hasMoved = true;
                         targetUnit.currUnit = false;
                         //Reset pathmap.
-                        targetUnit.clearPaths();
+                        targetUnit.clearPaths(targetUnit.pathMap);
                         //Reset tiles
                         for (int i = 0; i < Controller.c.currMap.grid.GetLength(0); i++)
                         {
@@ -428,7 +456,7 @@ public class MapPointer : MonoBehaviour
                     targetUnit.hasMoved = true;
                     targetUnit.currUnit = false;
                     //Reset pathmap.
-                    targetUnit.clearPaths();
+                    targetUnit.clearPaths(targetUnit.pathMap);
                     //Reset tiles
                     for (int i = 0; i < Controller.c.currMap.grid.GetLength(0); i++)
                     {

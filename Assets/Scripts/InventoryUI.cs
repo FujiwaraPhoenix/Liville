@@ -42,14 +42,14 @@ public class InventoryUI : MonoBehaviour
         {
             for (int i = 0; i < itemCountC; i++)
             {
-                output += InvManager.im.convoy[i].itemName + "\t\t\t\t\t\t\t\t+" + InvManager.im.convoy[i].healAmt + " HP\n";
+                output += InvManager.im.convoy[i].itemName + "\t\t\t\t\t\t\t+" + InvManager.im.convoy[i].healAmt + " HP\n";
             }
         }
         else
         {
             for (int i = 0; i < 15; i++)
             {
-                output += InvManager.im.convoy[i + offset].itemName + "\t\t\t\t\t\t\t\t+" + InvManager.im.convoy[i + offset].healAmt + " HP\n";
+                output += InvManager.im.convoy[i + offset].itemName + "\t\t\t\t\t\t\t+" + InvManager.im.convoy[i + offset].healAmt + " HP\n";
             }
         }
         convoyListing.text = output;

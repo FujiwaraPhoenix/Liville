@@ -12,7 +12,7 @@ public class Unit : MonoBehaviour
     //Limit inv to 5.
     public Item currEquip;
     public Path p;
-    public Path[,] pathMap;
+    public Path[,] pathMap, pathMap2;
     public Unit target;
     public List<Unit> possibleTargets = new List<Unit>();
     public bool[] availableOptions = new bool[4];
@@ -30,20 +30,14 @@ public class Unit : MonoBehaviour
     public bool procPath = false;
     int timer = 15;
     int showDamageTimer = 0;
+
+    //For indicators; enemy only.
+    public bool displayActive = false;
     
     // Start is called before the first frame update
     void Start()
     {
-        /*pathMap = new Path[10, 10];
-        for (int i = 0; i < Controller.c.currMap.xBound; i++)
-        {
-            for (int j = 0; j < Controller.c.currMap.yBound; j++)
-            {
-                Path tempPath = Instantiate(p, transform.position, Quaternion.identity);
-                pathMap[i, j] = tempPath;
-                tempPath.fillPath(9);
-            }
-        }*/
+       
     }
 
     // Update is called once per frame
@@ -97,9 +91,9 @@ public class Unit : MonoBehaviour
         }
         Path newPath = Instantiate(p, transform.position, Quaternion.identity);
         newPath.whoseSide = unitAllegiance;
-        Pathfinder.pf.drawPath(this, position, mvt + currEquip.tempMvt, newPath, unitAllegiance);
-        newPath.currentTile = true;
         newPath.set = true;
+        Pathfinder.pf.drawPath(pathMap, position, mvt + currEquip.tempMvt, newPath, unitAllegiance, currEquip.range);
+        newPath.currentTile = true;
         pathMap[position[0], position[1]] = newPath;
         showMovement();
     }
@@ -119,34 +113,34 @@ public class Unit : MonoBehaviour
         }
         Path newPath = Instantiate(p, transform.position, Quaternion.identity);
         newPath.whoseSide = unitAllegiance;
+        newPath.set = true;
         possibleTargets = new List<Unit>();
         if (negStatus[2] > 0)
         {
-            Pathfinder.pf.drawPath(this, position, mvt + currEquip.tempMvt - 1, newPath, unitAllegiance);
+            Pathfinder.pf.drawPath(pathMap, position, mvt + currEquip.tempMvt - 1, newPath, unitAllegiance, 0);
         }
         else
         {
-            Pathfinder.pf.drawPath(this, position, mvt + currEquip.tempMvt, newPath, unitAllegiance);
+            Pathfinder.pf.drawPath(pathMap, position, mvt + currEquip.tempMvt, newPath, unitAllegiance, 0);
         }
         newPath.currentTile = true;
-        newPath.set = true;
         pathMap[position[0], position[1]] = newPath;
         //Now MOVE.
         findTargets();
-        clearPaths();
+        clearPaths(pathMap);
     }
 
 
-    public void clearPaths()
+    public void clearPaths(Path[,] givenPathMap)
     {
         //Removes all paths on a unit.
-        for (int i = 0; i < pathMap.GetLength(0); i++)
+        for (int i = 0; i < givenPathMap.GetLength(0); i++)
         {
-            for (int j = 0; j < pathMap.GetLength(1); j++)
+            for (int j = 0; j < givenPathMap.GetLength(1); j++)
             {
-                if (pathMap[i, j] != null)
+                if (givenPathMap[i, j] != null)
                 {
-                    pathMap[i, j].suicide();
+                    givenPathMap[i, j].suicide();
                 }
             }
         }
@@ -154,20 +148,58 @@ public class Unit : MonoBehaviour
 
     public void showMovement()
     {
-        //Disables all tiles that can be moved to. Will be changed to tint later.
+        //Shows all tiles that can be moved to. Will be changed to tint later.
         if (unitAllegiance == 1)
         {
             for (int i = 0; i < pathMap.GetLength(0); i++)
             {
                 for (int j = 0; j < pathMap.GetLength(1); j++)
                 {
-                    if (pathMap[i, j].set == true)
+                    if (pathMap[i, j].set)
                     {
                         if (pathMap[i, j].path.Count >= 0 || pathMap[i, j].currentTile)
                         {
                             Controller.c.currMap.grid[i, j].indicatorOL.gameObject.SetActive(true);
                             Controller.c.currMap.grid[i, j].iolsr.sprite = Controller.c.currMap.grid[i, j].indicOLSpriteList[0];
                         }
+                    }
+                    if (pathMap[i, j].setAtk)
+                    {
+                        Controller.c.currMap.grid[i, j].indicatorOL.gameObject.SetActive(true);
+                        Controller.c.currMap.grid[i, j].iolsr.sprite = Controller.c.currMap.grid[i, j].indicOLSpriteList[1];
+                    }
+                }
+            }
+        }
+        else
+        {
+            //Enemy unit. Thus:
+            pathMap2 = new Path[Controller.c.currMap.xBound, Controller.c.currMap.yBound];
+            for (int i = 0; i < Controller.c.currMap.xBound; i++)
+            {
+                for (int j = 0; j < Controller.c.currMap.yBound; j++)
+                {
+                    Path tempPath = Instantiate(p, transform.position, Quaternion.identity);
+                    pathMap2[i, j] = tempPath;
+                    tempPath.fillPath(9);
+                }
+            }
+            Path newPath = Instantiate(p, transform.position, Quaternion.identity);
+            newPath.whoseSide = unitAllegiance;
+            newPath.setAtk = true;
+            Pathfinder.pf.drawPath(pathMap2, position, mvt + currEquip.tempMvt, newPath, unitAllegiance, currEquip.range);
+            newPath.currentTile = true;
+            pathMap2[position[0], position[1]] = newPath;
+            //Reveal.
+            for (int i = 0; i < pathMap2.GetLength(0); i++)
+            {
+                for (int j = 0; j < pathMap2.GetLength(1); j++)
+                {
+                    if (pathMap2[i, j].setAtk)
+                    {
+                        pathMap2[i, j].tempImmune = true;
+                        Controller.c.currMap.grid[i, j].indicatorOL2.gameObject.SetActive(true);
+                        Controller.c.currMap.grid[i, j].iolsr2.sprite = Controller.c.currMap.grid[i, j].indicOLSpriteList[2];
                     }
                 }
             }
@@ -183,15 +215,105 @@ public class Unit : MonoBehaviour
             {
                 for (int j = 0; j < pathMap.GetLength(1); j++)
                 {
-                    if (pathMap[i, j].set == true)
+                    if (pathMap[i, j].set)
                     {
                         if (pathMap[i, j].path.Count >= 0)
                         {
                             Controller.c.currMap.grid[i, j].indicatorOL.gameObject.SetActive(false);
                         }
                     }
+                    if (pathMap[i, j].setAtk)
+                    {
+                        Controller.c.currMap.grid[i, j].indicatorOL.gameObject.SetActive(false);
+                    }
                 }
             }
+        }
+        else
+        {
+            //Check all active enemies.
+            bool[,] tempCheck = new bool[pathMap2.GetLength(0), pathMap2.GetLength(1)];
+            foreach (Unit u in Controller.c.enemyUnits)
+            {
+                if (u.displayActive && u != this)
+                {
+                    for (int i = 0; i < u.pathMap2.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < u.pathMap2.GetLength(1); j++)
+                        {
+                            if (u.pathMap2[i, j].setAtk)
+                            {
+                                tempCheck[i, j] = true;
+                            }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < pathMap2.GetLength(0); i++)
+            {
+                for (int j = 0; j < pathMap2.GetLength(1); j++)
+                {
+                    if (pathMap2[i, j].setAtk && !(tempCheck[i,j]))
+                    {
+                        Controller.c.currMap.grid[i, j].indicatorOL2.gameObject.SetActive(false);
+                    }
+                }
+            }
+            clearPaths(pathMap2);
+        }
+    }
+
+    public void showAtkRange()
+    {
+        //Generate the current attack position overlay.
+        if (unitAllegiance == 1)
+        {
+            pathMap2 = new Path[Controller.c.currMap.xBound, Controller.c.currMap.yBound];
+            for (int i = 0; i < Controller.c.currMap.xBound; i++)
+            {
+                for (int j = 0; j < Controller.c.currMap.yBound; j++)
+                {
+                    Path tempPath = Instantiate(p, transform.position, Quaternion.identity);
+                    pathMap2[i, j] = tempPath;
+                    tempPath.fillPath(9);
+                }
+            }
+            Path newPath = Instantiate(p, transform.position, Quaternion.identity);
+            newPath.whoseSide = unitAllegiance;
+            newPath.setAtk = true;
+            Pathfinder.pf.drawPath(pathMap2, position, 0, newPath, unitAllegiance, currEquip.range);
+            newPath.currentTile = true;
+            pathMap2[position[0], position[1]] = newPath;
+            //Reveal.
+            for (int i = 0; i < pathMap2.GetLength(0); i++)
+            {
+                for (int j = 0; j < pathMap2.GetLength(1); j++)
+                {
+                    if (pathMap2[i, j].setAtk)
+                    {
+                        Controller.c.currMap.grid[i, j].indicatorOL.gameObject.SetActive(true);
+                        Controller.c.currMap.grid[i, j].iolsr.sprite = Controller.c.currMap.grid[i, j].indicOLSpriteList[1];
+                    }
+                }
+            }
+        }
+    }
+
+    public void hideAtkRange()
+    {
+        if (unitAllegiance == 1)
+        {
+            for (int i = 0; i < pathMap2.GetLength(0); i++)
+            {
+                for (int j = 0; j < pathMap2.GetLength(1); j++)
+                {
+                    if (pathMap2[i, j].setAtk)
+                    {
+                        Controller.c.currMap.grid[i, j].indicatorOL.gameObject.SetActive(false);
+                    }
+                }
+            }
+            clearPaths(pathMap2);
         }
     }
 
@@ -277,7 +399,9 @@ public class Unit : MonoBehaviour
             {
                 if (u != null)
                 {
-                    float distToTarget = Vector2.Distance(transform.position, u.transform.position);
+                    int xToTarget = Mathf.Abs(position[0] - u.position[0]);
+                    int yToTarget = Mathf.Abs(position[1] - u.position[1]);
+                    int distToTarget = xToTarget + yToTarget;
                     if (distToTarget <= currEquip.range)
                     {
                         possibleTargets.Add(u);
@@ -300,7 +424,9 @@ public class Unit : MonoBehaviour
                         {
                             if (pathMap[i, j].set && pathMap[i, j] != null)
                             {
-                                float distToTarget = Vector2.Distance(new Vector2(i, j), u.transform.position);
+                                int xToTarget = Mathf.Abs(i - u.position[0]);
+                                int yToTarget = Mathf.Abs(j - u.position[1]);
+                                int distToTarget = xToTarget + yToTarget;
                                 if (distToTarget <= currEquip.range)
                                 {
                                     Debug.Log("Targeting from " + i + "," + j);
@@ -326,8 +452,12 @@ public class Unit : MonoBehaviour
                         }
                         else
                         {
-                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
-                            float distToPotential = Vector2.Distance(transform.position, u.transform.position);
+                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
+                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
+                            int distToTarget = xToTarget + yToTarget;
+                            int xToPotential = Mathf.Abs(position[0] - u.position[0]);
+                            int yToPotential = Mathf.Abs(position[1] - u.position[1]);
+                            int distToPotential = xToPotential + yToPotential;
                             if (distToTarget > distToPotential)
                             {
                                 target = u;
@@ -369,8 +499,12 @@ public class Unit : MonoBehaviour
                             int targetDef = target.def;
                             int pTargetDef = u.def;
                             //Target closest.
-                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
-                            float distToPotential = Vector2.Distance(transform.position, u.transform.position);
+                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
+                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
+                            int distToTarget = xToTarget + yToTarget;
+                            int xToPotential = Mathf.Abs(position[0] - u.position[0]);
+                            int yToPotential = Mathf.Abs(position[1] - u.position[1]);
+                            int distToPotential = xToPotential + yToPotential;
                             if (distToTarget > distToPotential)
                             {
                                 target = u;
@@ -583,9 +717,10 @@ public class Unit : MonoBehaviour
                     {
                         if (chosenPath == null)
                         {
-                            Vector3 tempLoc = new Vector3(i, j, -1);
                             //Check distance; can the target be shot?
-                            float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
+                            int xToTarget = Mathf.Abs(i - target.position[0]);
+                            int yToTarget = Mathf.Abs(j - target.position[1]);
+                            int distToTarget = xToTarget + yToTarget;
                             if (distToTarget <= currEquip.range && Controller.c.unitMap[i, j] == 0)
                             {
                                 chosenPath = pathMap[i, j];
@@ -593,9 +728,10 @@ public class Unit : MonoBehaviour
                         }
                         else
                         {
-                            Vector3 tempLoc = new Vector3(i, j, -1);
                             //Check distance; can the target be shot?
-                            float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
+                            int xToTarget = Mathf.Abs(i - target.position[0]);
+                            int yToTarget = Mathf.Abs(j - target.position[1]);
+                            int distToTarget = xToTarget + yToTarget;
                             if ((distToTarget <= currEquip.range) && pathMap[i,j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count && Controller.c.unitMap[i, j] == 0)
                             {
                                 chosenPath = pathMap[i, j];
@@ -614,7 +750,9 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                int xToTarget = Mathf.Abs(position[0] - target.position[0]);
+                int yToTarget = Mathf.Abs(position[1] - target.position[1]);
+                int distToTarget = xToTarget + yToTarget;
                 if (distToTarget <= currEquip.range)
                 {
                     attack();
@@ -663,7 +801,9 @@ public class Unit : MonoBehaviour
                         {
                             //End the chase.
                             Controller.c.unitMap[position[0], position[1]] = 2;
-                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
+                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
+                            int distToTarget = xToTarget + yToTarget;
                             if (distToTarget <= currEquip.range)
                             {
                                 attack();
@@ -684,7 +824,9 @@ public class Unit : MonoBehaviour
                         {
                             //End the chase.
                             Controller.c.unitMap[position[0], position[1]] = 2;
-                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
+                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
+                            int distToTarget = xToTarget + yToTarget;
                             if (distToTarget <= currEquip.range)
                             {
                                 attack();
@@ -705,7 +847,9 @@ public class Unit : MonoBehaviour
                         {
                             //End the chase.
                             Controller.c.unitMap[position[0], position[1]] = 2;
-                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
+                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
+                            int distToTarget = xToTarget + yToTarget;
                             if (distToTarget <= currEquip.range)
                             {
                                 attack();
@@ -726,7 +870,9 @@ public class Unit : MonoBehaviour
                         {
                             //End the chase.
                             Controller.c.unitMap[position[0], position[1]] = 2;
-                            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
+                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
+                            int distToTarget = xToTarget + yToTarget;
                             if (distToTarget <= currEquip.range)
                             {
                                 attack();
@@ -745,7 +891,9 @@ public class Unit : MonoBehaviour
                 //Count == 0
                 //In other words, we've reached our destination. Time to shoot.
                 Controller.c.unitMap[position[0], position[1]] = 2;
-                float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+                int xToTarget = Mathf.Abs(position[0] - target.position[0]);
+                int yToTarget = Mathf.Abs(position[1] - target.position[1]);
+                int distToTarget = xToTarget + yToTarget;
                 if (distToTarget <= currEquip.range)
                 {
                     attack();
@@ -846,7 +994,7 @@ public class Unit : MonoBehaviour
     {
         //In this scenario, the player MUST be out of range.
         //Ergo, we move toward the player up to the amount of tiles we can move (aka mvt)
-        Pathfinder.pf.drawPath(this, position, 10, pathMap[position[0], position[1]], unitAllegiance);
+        Pathfinder.pf.drawPath(pathMap, position, 10, pathMap[position[0], position[1]], unitAllegiance, 0);
         //So let's say we have a theoretical max of 10 tiles to move. Next thing to do? Move towards the target.
         Path chosenPath = null;
         for (int i = 0; i < Controller.c.currMap.xBound; i++)
@@ -857,9 +1005,10 @@ public class Unit : MonoBehaviour
                 {
                     if (chosenPath == null)
                     {
-                        Vector3 tempLoc = new Vector3(i, j, -1);
                         //Check distance; can the target be shot?
-                        float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
+                        int xToTarget = Mathf.Abs(i - target.position[0]);
+                        int yToTarget = Mathf.Abs(j - target.position[1]);
+                        int distToTarget = xToTarget + yToTarget;
                         if (distToTarget <= currEquip.range && Controller.c.unitMap[i, j] == 0)
                         {
                             chosenPath = pathMap[i, j];
@@ -867,9 +1016,10 @@ public class Unit : MonoBehaviour
                     }
                     else
                     {
-                        Vector3 tempLoc = new Vector3(i, j, -1);
                         //Check distance; can the target be shot?
-                        float distToTarget = Vector2.Distance(tempLoc, target.transform.position);
+                        int xToTarget = Mathf.Abs(i - target.position[0]);
+                        int yToTarget = Mathf.Abs(j - target.position[1]);
+                        int distToTarget = xToTarget + yToTarget;
                         if ((distToTarget <= currEquip.range) && pathMap[i, j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count && Controller.c.unitMap[i, j] == 0)
                         {
                             chosenPath = pathMap[i, j];
@@ -893,7 +1043,10 @@ public class Unit : MonoBehaviour
         else
         {
             //Screw it, no dice. Just don't move.
-            float distToTarget = Vector2.Distance(transform.position, target.transform.position);
+            //Check distance; can the target be shot?
+            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
+            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
+            int distToTarget = xToTarget + yToTarget;
             if (distToTarget <= currEquip.range)
             {
                 attack();

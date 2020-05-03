@@ -79,4 +79,9 @@ public class GunInfo : MonoBehaviour
             }
         }
     }
+
+    public void updateBorder(Item chosenGun)
+    {
+        border.sprite = LoadoutUI.lUI.gunEquippedBorders[chosenGun.rarity - 1];
+    }
 }

@@ -12,9 +12,9 @@ public class Tile : MonoBehaviour
     public bool isPassable, isHazardous;
     public int mvtPenalty;
 
-    public GameObject overlayItem, indicatorOL;  
+    public GameObject overlayItem, indicatorOL, indicatorOL2;  
 
-    public SpriteRenderer sr, olsr, iolsr;
+    public SpriteRenderer sr, olsr, iolsr, iolsr2;
     public Sprite[] spriteList;
     public Sprite[] olSpriteList;
     public Sprite[] indicOLSpriteList;

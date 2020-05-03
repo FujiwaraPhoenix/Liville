@@ -158,6 +158,8 @@ public class LoadoutUI : MonoBehaviour
         equipped.updateMods(Controller.c.playerUnits[currentPlayer].currEquip);
         hovered.updateMods(InvManager.im.armory[0]);
         hovered.updateMods(InvManager.im.armory[0]);
+        equipped.updateBorder(Controller.c.playerUnits[currentPlayer].currEquip);
+        hovered.updateBorder(InvManager.im.armory[0]);
     }
 
     public void loadGunSwap()
@@ -523,6 +525,7 @@ public class LoadoutUI : MonoBehaviour
         {
             hovered.updateStats(InvManager.im.armory[currentGunIndex]);
             hovered.updateMods(InvManager.im.armory[currentGunIndex]);
+            hovered.updateBorder(InvManager.im.armory[currentGunIndex]);
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
@@ -537,6 +540,8 @@ public class LoadoutUI : MonoBehaviour
             loadoutLimitSetup();
             currentX = currentPlayer;
             currentY = 2;
+            updateBaseLoadoutSpr();
+
         }
         checkBorders();
     }
@@ -867,6 +872,9 @@ public class LoadoutUI : MonoBehaviour
         equipped.updateMods(Controller.c.playerUnits[currentPlayer].currEquip);
         hovered.updateStats(InvManager.im.armory[15 * (gunPage - 1) + currentX + 3 * (currentY)]);
         hovered.updateMods(InvManager.im.armory[15 * (gunPage - 1) + currentX + 3 * (currentY)]);
+        equipped.updateBorder(Controller.c.playerUnits[currentPlayer].currEquip);
+        int currentGunIndex = 15 * (gunPage - 1) + currentX + 3 * (currentY);
+        hovered.updateBorder(InvManager.im.armory[currentGunIndex]);
     }
 
     public void checkBorders()

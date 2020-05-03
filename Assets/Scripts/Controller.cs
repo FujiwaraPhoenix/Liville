@@ -52,6 +52,9 @@ public class Controller : MonoBehaviour
     public Sprite[] t1mods, t2mods, t3mods, demeritMods;
     public Sprite blankMod;
 
+    //Background
+    public Background bg;
+
     void Awake()
     {
         if (c == null)
@@ -127,6 +130,11 @@ public class Controller : MonoBehaviour
                     {
                         u.hasMoved = false;
                         u.stunned = false;
+                        if (u.displayActive)
+                        {
+                            u.hideMovement();
+                            u.displayActive = !u.displayActive;
+                        }
                         u.tickDownStatus();
                     }
                 }
@@ -337,6 +345,7 @@ public class Controller : MonoBehaviour
                             loadoutUI.gameObject.SetActive(false);
                             battleObjs.gameObject.SetActive(true);
                             battleUI.gameObject.SetActive(true);
+                            Controller.c.bg.changeBG(chosenMission + 1);
                             playerTurn = true;
                             gameMode = 4;
                         }
@@ -374,6 +383,7 @@ public class Controller : MonoBehaviour
                                 Destroy(u.gameObject);
                             }
                         }
+                        bg.changeBG(0);
                     }
                     break;
             }

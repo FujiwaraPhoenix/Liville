@@ -8,7 +8,8 @@ public class Path : MonoBehaviour
     public int hazardCount = 0;
     public bool set = false;
     public int whoseSide = 0;
-
+    public bool setAtk = false;
+    public bool tempImmune = false;
     public bool currentTile = false;
 
     public void fillPath(int g)
@@ -27,7 +28,7 @@ public class Path : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if ((Controller.c.playerTurn && whoseSide == 2) || (!(Controller.c.playerTurn) && whoseSide == 1) || (Controller.c.gameMode != 4) || (!set && whoseSide == 0))
+        if ((Controller.c.playerTurn && whoseSide == 2) || (!(Controller.c.playerTurn) && whoseSide == 1) || (Controller.c.gameMode != 4) || !set || !tempImmune || whoseSide == 0)
         {
             suicide();
         }
@@ -49,7 +50,8 @@ public class Path : MonoBehaviour
         newPath.whoseSide = whoseSide;
         newPath.path = new List<int>(path);
         newPath.hazardCount = hazardCount;
-        newPath.set = true;
+        newPath.set = set;
+        newPath.setAtk = setAtk;
         return newPath;
     }
 
