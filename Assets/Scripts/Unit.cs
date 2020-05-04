@@ -17,7 +17,7 @@ public class Unit : MonoBehaviour
     public List<Unit> possibleTargets = new List<Unit>();
     public bool[] availableOptions = new bool[4];
     public SpriteRenderer spr;
-    public Sprite unitFace;
+    public Sprite unitFace, unitFace2;
     public string unitName = "temp";
     //Statuses, in order: elec, burn, freeze, mark, poison
     public int[] negStatus = new int[5];

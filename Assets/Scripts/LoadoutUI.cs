@@ -24,7 +24,7 @@ public class LoadoutUI : MonoBehaviour
     public int yHardCap = 5;
 
     //UI stuff holders.
-    public GameObject baseMenu, charMenu, invMenu, gunMenu;
+    public GameObject baseMenu, invMenu, gunMenu;
     //In order: playerBGs, invs, next.
     public Sprite[] baseLoadoutSprList = new Sprite[6];
     public Sprite[] gunEquippedBorders = new Sprite[5];
@@ -35,6 +35,7 @@ public class LoadoutUI : MonoBehaviour
     public Image[] baseLoadoutInvs = new Image[4];
     public GunInfo[] baseLoadoutGuns = new GunInfo[4];
     public Image nextButton;
+    public PlayerData[] pData = new PlayerData[4];
 
     //For gun select; need 2D array of guns
     public LoadoutGunMini template;
@@ -64,6 +65,8 @@ public class LoadoutUI : MonoBehaviour
     public InventoryUI iUI;
     public bool hoveringPInv, invSelected;
     public int currentValue;
+
+    public bool[] activePlayers = new bool[4];
 
     void Awake()
     {
@@ -112,7 +115,7 @@ public class LoadoutUI : MonoBehaviour
             case 0:
                 //Default menu.
                 //The x cap is based on how many players there are; y is always 3.
-                xHardCap = Controller.c.playerUnits.Length;
+                xHardCap = Controller.c.playerRoster.Length;
                 yHardCap = 3;
                 break;
             case 1:
@@ -154,11 +157,11 @@ public class LoadoutUI : MonoBehaviour
             }
         }
         //First, let's load up our equipped char's gun.
-        equipped.updateStats(Controller.c.playerUnits[currentPlayer].currEquip);
-        equipped.updateMods(Controller.c.playerUnits[currentPlayer].currEquip);
+        equipped.updateStats(Controller.c.playerRoster[currentPlayer].currEquip);
+        equipped.updateMods(Controller.c.playerRoster[currentPlayer].currEquip);
         hovered.updateMods(InvManager.im.armory[0]);
         hovered.updateMods(InvManager.im.armory[0]);
-        equipped.updateBorder(Controller.c.playerUnits[currentPlayer].currEquip);
+        equipped.updateBorder(Controller.c.playerRoster[currentPlayer].currEquip);
         hovered.updateBorder(InvManager.im.armory[0]);
     }
 
@@ -332,8 +335,8 @@ public class LoadoutUI : MonoBehaviour
             switch (currentY)
             {
                 case 0:
-                    //Goto char select.
-                    //For now, nothing.
+                    //Enable/disable character.
+                    deReActivateChar(currentX);
                     break;
                 case 1:
                     //Goto inv select.
@@ -575,7 +578,7 @@ public class LoadoutUI : MonoBehaviour
                     iUI.currentHL--;
                     iUI.invIcons[iUI.currentHL + 1].sprite = iUI.basePotion;
                     iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
-                    iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+                    iUI.updateData(Controller.c.playerRoster[currentPlayer].inventory[currentValue]);
                 }
                 else
                 {
@@ -623,7 +626,7 @@ public class LoadoutUI : MonoBehaviour
                     iUI.currentHL = iUI.itemCountI - 1;
                     iUI.invIcons[0].sprite = iUI.basePotion;
                     iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
-                    iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+                    iUI.updateData(Controller.c.playerRoster[currentPlayer].inventory[currentValue]);
                 }
                 else
                 {
@@ -667,7 +670,7 @@ public class LoadoutUI : MonoBehaviour
                     iUI.currentHL = 0;
                     iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
                 }
-                iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+                iUI.updateData(Controller.c.playerRoster[currentPlayer].inventory[currentValue]);
             }
             else
             {
@@ -732,13 +735,13 @@ public class LoadoutUI : MonoBehaviour
             {
                 if (hoveringPInv)
                 {
-                    if (Controller.c.playerUnits[currentPlayer].inventory.Count > 0)
+                    if (Controller.c.playerRoster[currentPlayer].inventory.Count > 0)
                     {
                         invSelected = true;
                         currentValue = 0;
                         iUI.currentHL = 0;
                         iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
-                        iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+                        iUI.updateData(Controller.c.playerRoster[currentPlayer].inventory[currentValue]);
 
                     }
                 }
@@ -769,8 +772,8 @@ public class LoadoutUI : MonoBehaviour
                 if (hoveringPInv)
                 {
                     //Adding from player inventory to convoy.
-                    Item temp = Controller.c.playerUnits[currentPlayer].inventory[currentValue];
-                    Controller.c.playerUnits[currentPlayer].inventory.Remove(temp);
+                    Item temp = Controller.c.playerRoster[currentPlayer].inventory[currentValue];
+                    Controller.c.playerRoster[currentPlayer].inventory.Remove(temp);
                     InvManager.im.convoy.Add(temp);
                     temp.transform.parent = InvManager.im.transform;
                     iUI.updateCountTotals(currentPlayer);
@@ -781,7 +784,7 @@ public class LoadoutUI : MonoBehaviour
                         iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
                         currentValue--;
                     }
-                    iUI.updateData(Controller.c.playerUnits[currentPlayer].inventory[currentValue]);
+                    iUI.updateData(Controller.c.playerRoster[currentPlayer].inventory[currentValue]);
                 }
                 else
                 {
@@ -789,9 +792,9 @@ public class LoadoutUI : MonoBehaviour
                     {
                         //Adding from convoy to player inventory.
                         Item temp = InvManager.im.convoy[currentValue];
-                        Controller.c.playerUnits[currentPlayer].inventory.Add(temp);
+                        Controller.c.playerRoster[currentPlayer].inventory.Add(temp);
                         InvManager.im.convoy.Remove(temp);
-                        temp.transform.parent = Controller.c.playerUnits[currentPlayer].transform;
+                        temp.transform.parent = Controller.c.playerRoster[currentPlayer].transform;
                         iUI.updateCountTotals(currentPlayer);
                         if (currentValue > 0)
                         {
@@ -862,17 +865,17 @@ public class LoadoutUI : MonoBehaviour
 
     public void swapGun(int gunIndex)
     {
-        InvManager.im.armory.Add(Controller.c.playerUnits[currentPlayer].currEquip);
-        Controller.c.playerUnits[currentPlayer].currEquip.transform.SetParent(InvManager.im.gameObject.transform, false);
-        Controller.c.playerUnits[currentPlayer].currEquip = InvManager.im.armory[gunIndex];
-        InvManager.im.armory[gunIndex].transform.SetParent(Controller.c.playerUnits[currentPlayer].transform, false);
+        InvManager.im.armory.Add(Controller.c.playerRoster[currentPlayer].currEquip);
+        Controller.c.playerRoster[currentPlayer].currEquip.transform.SetParent(InvManager.im.gameObject.transform, false);
+        Controller.c.playerRoster[currentPlayer].currEquip = InvManager.im.armory[gunIndex];
+        InvManager.im.armory[gunIndex].transform.SetParent(Controller.c.playerRoster[currentPlayer].transform, false);
         InvManager.im.armory.RemoveAt(gunIndex);
         loadNextPage();
-        equipped.updateStats(Controller.c.playerUnits[currentPlayer].currEquip);
-        equipped.updateMods(Controller.c.playerUnits[currentPlayer].currEquip);
+        equipped.updateStats(Controller.c.playerRoster[currentPlayer].currEquip);
+        equipped.updateMods(Controller.c.playerRoster[currentPlayer].currEquip);
         hovered.updateStats(InvManager.im.armory[15 * (gunPage - 1) + currentX + 3 * (currentY)]);
         hovered.updateMods(InvManager.im.armory[15 * (gunPage - 1) + currentX + 3 * (currentY)]);
-        equipped.updateBorder(Controller.c.playerUnits[currentPlayer].currEquip);
+        equipped.updateBorder(Controller.c.playerRoster[currentPlayer].currEquip);
         int currentGunIndex = 15 * (gunPage - 1) + currentX + 3 * (currentY);
         hovered.updateBorder(InvManager.im.armory[currentGunIndex]);
     }
@@ -907,11 +910,11 @@ public class LoadoutUI : MonoBehaviour
 
     public void updateBaseLoadoutSpr()
     {
-        for (int i = 0; i < Controller.c.playerUnits.Length; i++)
+        for (int i = 0; i < Controller.c.playerRoster.Length; i++)
         {
             baseLoadoutPlayers[i].sprite = baseLoadoutSprList[0];
             baseLoadoutInvs[i].sprite = baseLoadoutSprList[2];
-            baseLoadoutGuns[i].border.sprite = gunEquippedBorders[Controller.c.playerUnits[i].currEquip.rarity - 1];
+            baseLoadoutGuns[i].border.sprite = gunEquippedBorders[Controller.c.playerRoster[i].currEquip.rarity - 1];
         }
         nextButton.sprite = baseLoadoutSprList[4];
         switch (currentY)
@@ -927,9 +930,48 @@ public class LoadoutUI : MonoBehaviour
                 baseLoadoutInvs[currentX].sprite = baseLoadoutSprList[3];
                 break;
             case 2:
-                baseLoadoutGuns[currentX].border.sprite = gunEquippedBordersHL[Controller.c.playerUnits[currentX].currEquip.rarity - 1];
+                baseLoadoutGuns[currentX].border.sprite = gunEquippedBordersHL[Controller.c.playerRoster[currentX].currEquip.rarity - 1];
                 break;
         }
     }
 
+    public int activePlayerCount()
+    {
+        int active = 0;
+        foreach (bool b in activePlayers)
+        {
+            if (b)
+            {
+                active++;
+            }
+        }
+        return active;
+    }
+
+    public void deReActivateChar(int charID)
+    {
+        activePlayers[charID] = !activePlayers[charID];
+        pData[charID].isActive = !pData[charID].isActive;
+        pData[charID].updateValues();
+    }
+
+    public Unit[] currentPList()
+    {
+        Unit[] output = new Unit[activePlayerCount()];
+        int currentVal = 0;
+        for (int i = 0; i < Controller.c.playerRoster.Length; i++)
+        {
+            if (activePlayers[i])
+            {
+                Controller.c.playerRoster[i].gameObject.SetActive(true);
+                output[currentVal] = Controller.c.playerRoster[i];
+                currentVal++;
+            }
+            else
+            {
+                Controller.c.playerRoster[i].gameObject.SetActive(false);
+            }
+        }
+        return output;
+    }
 }

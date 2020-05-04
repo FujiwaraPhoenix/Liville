@@ -13,6 +13,8 @@ public class PlayerData : MonoBehaviour
     public bool preloaded = false;
     public Image hpPip;
     public GameObject pipHolder;
+    public bool isActive;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,9 +34,16 @@ public class PlayerData : MonoBehaviour
     public void updateValues()
     {
         //Name and face
-        Unit playerUnit = Controller.c.playerUnits[pID];
+        Unit playerUnit = Controller.c.playerRoster[pID];
         pName.text = playerUnit.unitName;
-        pImg.sprite = playerUnit.unitFace;
+        if (isActive)
+        {
+            pImg.sprite = playerUnit.unitFace;
+        }
+        else
+        {
+            pImg.sprite = playerUnit.unitFace2;
+        }
 
         //Player stats
         pHP = playerUnit.hp;

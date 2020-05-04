@@ -81,7 +81,7 @@ public class TextFileParser : MonoBehaviour {
         heldData = missionDataList[missionID].text;
         //heldData is now what we just read from the mission file. Let's split that.
         itemList = heldData.Split(new string[] { "\n", "\r\n" }, System.StringSplitOptions.None);
-        //So, in order; string 0 is the map ID.
+        //So, in order; string 0 is the map ID, followed by the max player count.
         //String 1 values are the possible starting locations of the player units.
         //String 2 are the values of the gacha resources to be obtained upon mission completion.
         //String 3 is the enemy count. Slightly useful.
@@ -129,5 +129,12 @@ public class TextFileParser : MonoBehaviour {
         }
         return valHolder;
     }
-    
+
+
+    public int playerCap()
+    {
+        string[] tempA = itemList[0].Split(new string[] { "," }, System.StringSplitOptions.None);
+        return int.Parse(tempA[1]);
+    }
+
 }

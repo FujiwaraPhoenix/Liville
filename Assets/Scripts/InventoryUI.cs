@@ -73,7 +73,7 @@ public class InventoryUI : MonoBehaviour
         {
             for (int i = 0; i < itemCountI; i++)
             {
-                output += Controller.c.playerUnits[playerID].inventory[i].itemName + "\t\t\t+" + Controller.c.playerUnits[playerID].inventory[i].healAmt + " HP\n";
+                output += Controller.c.playerRoster[playerID].inventory[i].itemName + "\t\t\t+" + Controller.c.playerRoster[playerID].inventory[i].healAmt + " HP\n";
             }
         }
         invListing.text = output;
@@ -81,9 +81,8 @@ public class InventoryUI : MonoBehaviour
 
     public void updateCountTotals(int playerID)
     {
-        itemCountI = Controller.c.playerUnits[playerID].inventory.Count;
+        itemCountI = Controller.c.playerRoster[playerID].inventory.Count;
         itemCountC = InvManager.im.convoy.Count;
-        Debug.Log(itemCountC);
     }
 
     public void updateData(Item chosenItem)

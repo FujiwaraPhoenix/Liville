@@ -42,7 +42,8 @@ public class Map : MonoBehaviour
             TextFileParser.tfp.loadResources();
             spawnEnemies();
             //As loadMap overrides heldData, it gets moved to the tail end of the function.
-            loadMap(int.Parse(TextFileParser.tfp.itemList[0]));
+            string[] tempA = TextFileParser.tfp.itemList[0].Split(new string[] { "," }, System.StringSplitOptions.None);
+            loadMap(int.Parse(tempA[0]));
             loaded = true;
         }
     }
@@ -62,15 +63,18 @@ public class Map : MonoBehaviour
     public void playersInPosition()
     {
         //Checks the controller's playerUnits array's size.
-        int playerCount = Controller.c.playerUnits.Length;
+        int playerCount = TextFileParser.tfp.playerCap();
         int[,] coordList = TextFileParser.tfp.availablePlayerCoords(playerCount);
         for (int i = 0; i < Controller.c.playerUnits.Length; i++)
         {
-            Controller.c.playerUnits[i].position[0] = coordList[i, 0];
-            Controller.c.playerUnits[i].position[1] = coordList[i, 1];
-            Controller.c.playerUnits[i].lastPosition[1] = coordList[i, 0];
-            Controller.c.playerUnits[i].lastPosition[1] = coordList[i, 1];
-            Controller.c.playerUnits[i].transform.position = new Vector3(coordList[i, 0], coordList[i, 1], -1);
+            if (Controller.c.playerUnits.Length <= coordList.GetLength(0))
+            {
+                Controller.c.playerUnits[i].position[0] = coordList[i, 0];
+                Controller.c.playerUnits[i].position[1] = coordList[i, 1];
+                Controller.c.playerUnits[i].lastPosition[1] = coordList[i, 0];
+                Controller.c.playerUnits[i].lastPosition[1] = coordList[i, 1];
+                Controller.c.playerUnits[i].transform.position = new Vector3(coordList[i, 0], coordList[i, 1], -1);
+            }
         }
         Controller.c.mp.currX = coordList[0, 0];
         Controller.c.mp.currY = coordList[0, 1];
@@ -134,4 +138,5 @@ public class Map : MonoBehaviour
         Controller.c.tileMap = new int[xBound, yBound];
         Controller.c.unitMap = new int[xBound, yBound];
     }
+
 }

@@ -23,6 +23,9 @@ public class Controller : MonoBehaviour
     public GameObject grid;
     public int currentMovingEnemy = 0;
     public bool allEnemiesMoved = false;
+    public Image foreground;
+    public Sprite[] helpList = new Sprite[2];
+    public int currentPicture = 0;
 
     //Some stuff to display Player/Enemy Phase
     public int timer;
@@ -295,6 +298,20 @@ public class Controller : MonoBehaviour
         {
             switch (gameMode)
             {
+                case -1:
+                case -2:
+                case -3:
+                    if (currentPicture < 2)
+                    {
+                        foreground.sprite = helpList[currentPicture];
+                        currentPicture++;
+                    }
+                    gameMode++;
+                    if (gameMode == 0)
+                    {
+                        foreground.gameObject.SetActive(false);
+                    }
+                    break;
                 case 0:
                     //Here, we can cycle to either the battle setup, loadout, or gacha. Let's work accordingly.
                     defaultMenu.gameObject.SetActive(false);
@@ -340,8 +357,9 @@ public class Controller : MonoBehaviour
                     //proceed to 4.
                     if (missionSelected)
                     {
-                        if (LoadoutUI.lUI.currentY == -1)
+                        if (LoadoutUI.lUI.currentY == -1 && (LoadoutUI.lUI.activePlayerCount() <= chosenMission + 2) && (LoadoutUI.lUI.activePlayerCount() > 0))
                         {
+                            playerUnits = LoadoutUI.lUI.currentPList();
                             loadoutUI.gameObject.SetActive(false);
                             battleObjs.gameObject.SetActive(true);
                             battleUI.gameObject.SetActive(true);
