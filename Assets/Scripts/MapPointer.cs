@@ -298,19 +298,17 @@ public class MapPointer : MonoBehaviour
             }
             if (eCheck != null)
             {
-                if (!eCheck.hasMoved)
+                //Reveal your secrets.
+                if (eCheck.displayActive)
                 {
-                    //Reveal your secrets.
-                    if (eCheck.displayActive)
-                    {
-                        eCheck.hideMovement();
-                    }
-                    else
-                    {
-                        eCheck.showMovement();
-                    }
-                    eCheck.displayActive = !eCheck.displayActive;
+                    eCheck.hideMovement();
                 }
+                else
+                {
+                    eCheck.showMovement();
+                }
+                eCheck.displayActive = !eCheck.displayActive;
+
             }
         }
         else if (Input.GetKeyDown(KeyCode.X))
