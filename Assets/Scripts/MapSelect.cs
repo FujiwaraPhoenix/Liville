@@ -8,7 +8,7 @@ public class MapSelect : MonoBehaviour
     public static MapSelect ms;
     public MissionInfo[] availableMissions = new MissionInfo[3];
     public int currentChoice = 0;
-    public Text missionDetails, missionForecast, missionName;
+    public Text missionDetails, missionForecast, missionName, missionCap;
     public Sprite def, hl;
 
     void Awake()
@@ -71,6 +71,7 @@ public class MapSelect : MonoBehaviour
         missionDetails.text = availableMissions[currentChoice].missionAbstract;
         missionName.text = availableMissions[currentChoice].missionName;
         missionForecast.text = availableMissions[currentChoice].missionForecast;
+        missionCap.text = availableMissions[currentChoice].playerCap;
         availableMissions[currentChoice].infoBG.sprite = hl;
     }
 }

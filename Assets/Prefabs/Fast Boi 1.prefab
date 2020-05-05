@@ -100,7 +100,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -6550541193192167603, guid: e12d09da491e192469fe9e45d9e95650,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -235,6 +235,7 @@ MonoBehaviour:
   availableOptions: 00000000
   spr: {fileID: 2052901126128550877}
   unitFace: {fileID: 21300000, guid: 0305e59d53c31ad489e99182aab2015c, type: 3}
+  unitFace2: {fileID: 0}
   unitName: Xiphoid
   negStatus: 0000000000000000000000000000000000000000
   holder: {fileID: 6727162801054965621}
@@ -245,9 +246,11 @@ MonoBehaviour:
   tenOnes: {fileID: 2775058120858157364}
   modifierB: {fileID: 7572302714080926024}
   ones: {fileID: 8315799026189081568}
+  missSpr: {fileID: 5532419857390230335}
   nextIndex: 0
   savedPath: 
   procPath: 0
+  displayActive: 0
 --- !u!95 &93126900555451662
 Animator:
   serializedVersion: 3
@@ -335,7 +338,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: c51691377f603fd4391d36f7e719202e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -478,7 +481,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -6550541193192167603, guid: e12d09da491e192469fe9e45d9e95650,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -559,7 +562,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -8421408295636846086, guid: e12d09da491e192469fe9e45d9e95650,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -673,7 +676,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -6550541193192167603, guid: e12d09da491e192469fe9e45d9e95650,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

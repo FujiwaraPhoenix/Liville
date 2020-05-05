@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class MissionInfo : MonoBehaviour
 {
     public int missionNo;
-    public string missionName, missionAbstract, missionForecast;
+    public string missionName, missionAbstract, missionForecast, playerCap;
     public Image infoBG;
     public Sprite bgDef, bgHL;
     public Text mNameDis;
@@ -39,6 +39,7 @@ public class MissionInfo : MonoBehaviour
         missionName = data[0];
         missionAbstract = data[1];
         missionForecast = data[2];
+        playerCap = data[3];
         mNameDis.text = missionName;
     }
 }

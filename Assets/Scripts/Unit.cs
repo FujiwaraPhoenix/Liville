@@ -23,7 +23,7 @@ public class Unit : MonoBehaviour
     public int[] negStatus = new int[5];
 
     public GameObject holder, holder2, missed;
-    public SpriteRenderer modifierA, tens, tenOnes, modifierB, ones;
+    public SpriteRenderer modifierA, tens, tenOnes, modifierB, ones, missSpr;
 
     public int nextIndex = 0;
     public List<int> savedPath = new List<int>();
@@ -65,11 +65,26 @@ public class Unit : MonoBehaviour
                 }
             }
             //Showing damage
-            if (showDamageTimer < 0)
+            if (showDamageTimer <= 0)
             {
                 holder.gameObject.SetActive(false);
                 holder2.gameObject.SetActive(false);
                 missed.gameObject.SetActive(false);
+            }
+            else
+            {
+                float moveDist = .25f / 45;
+                holder.gameObject.transform.localPosition += new Vector3(0, moveDist, 0);
+                holder2.gameObject.transform.localPosition += new Vector3(0, moveDist, 0);
+                missed.gameObject.transform.localPosition += new Vector3(0, moveDist, 0);
+                //Color transparency down.
+                float fadeLeft = 1 - ((1f/45f) * (45 - showDamageTimer));
+                ones.color = new Color(1f, 1f, 1f, fadeLeft);
+                tens.color = new Color(1f, 1f, 1f, fadeLeft);
+                tenOnes.color = new Color(1f, 1f, 1f, fadeLeft);
+                modifierA.color = new Color(1f, 1f, 1f, fadeLeft);
+                modifierB.color = new Color(1f, 1f, 1f, fadeLeft);
+                missSpr.color = new Color(1f, 1f, 1f, fadeLeft);
             }
             showDamageTimer--;
         }
@@ -968,26 +983,27 @@ public class Unit : MonoBehaviour
         if (dmgTaken < 10 && dmgTaken > 0)
         {
             //Single digit only.
+            holder2.gameObject.transform.localPosition = Vector3.zero;
             holder2.gameObject.SetActive(true);
             ones.sprite = Controller.c.damageNumbers[dmgTaken];
-            showDamageTimer = 45;
         }
         else if (dmgTaken > 9)
         {
             //Double digits.
+            holder.gameObject.transform.localPosition = Vector3.zero;
             holder.gameObject.SetActive(true);
             int onesValue = dmgTaken % 10;
             int tensValue = dmgTaken / 10;
             tenOnes.sprite = Controller.c.damageNumbers[onesValue];
             tens.sprite = Controller.c.damageNumbers[tensValue];
-            showDamageTimer = 45;
         }
         else
         {
             //Missed.
+            missed.gameObject.transform.localPosition = new Vector3(0, .48f, -1f);
             missed.gameObject.SetActive(true);
-            showDamageTimer = 45;
         }
+        showDamageTimer = 45;
     }
 
     public void onTheHunt(Unit targetUnit)

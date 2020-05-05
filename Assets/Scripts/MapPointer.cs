@@ -179,6 +179,31 @@ public class MapPointer : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Z))
         {
+            //Turn enemy indicators on/off
+            if (!choosingTarget)
+            {
+                Unit eCheck = null;
+                foreach (Unit u in Controller.c.enemyUnits)
+                {
+                    if (u.position[0] == currX && u.position[1] == currY)
+                    {
+                        eCheck = u;
+                    }
+                }
+                if (eCheck != null)
+                {
+                    //Reveal your secrets.
+                    if (eCheck.displayActive)
+                    {
+                        eCheck.hideMovement();
+                    }
+                    else
+                    {
+                        eCheck.showMovement();
+                    }
+                    eCheck.displayActive = !eCheck.displayActive;
+                }
+            }
             if (targetUnit == null)
             {
                 Unit tempCheck = null;
@@ -252,11 +277,11 @@ public class MapPointer : MonoBehaviour
                         Controller.c.currMap.grid[i, j].gameObject.SetActive(true);
                     }
                 }
+                targetUnit.hideAtkRange();
                 targetUnit = null;
                 choosingTarget = false;
                 menuActive = false;
                 currentMenuChoice = 0;
-                targetUnit.hideAtkRange();
                 Controller.c.checkTurn();
             }
             else if (selectingItem)
@@ -286,29 +311,6 @@ public class MapPointer : MonoBehaviour
                     selectingItem = false;
                     Controller.c.checkTurn();
                 }
-            }
-            //Turn enemy indicators on/off
-            Unit eCheck = null;
-            foreach (Unit u in Controller.c.enemyUnits)
-            {
-                if (u.position[0] == currX && u.position[1] == currY)
-                {
-                    eCheck = u;
-                }
-            }
-            if (eCheck != null)
-            {
-                //Reveal your secrets.
-                if (eCheck.displayActive)
-                {
-                    eCheck.hideMovement();
-                }
-                else
-                {
-                    eCheck.showMovement();
-                }
-                eCheck.displayActive = !eCheck.displayActive;
-
             }
         }
         else if (Input.GetKeyDown(KeyCode.X))

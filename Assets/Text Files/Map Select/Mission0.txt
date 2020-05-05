@@ -1,3 +1,4 @@
 Mission 1
 After investigating strange noises coming from the woods, the team was chased into a shed by monsters. Take arms and fight your way out!
 A basic, starter mission with limited, weak enemies and a simple battlefield. Use the bottlenecks to practice strategies and test new weapons in this low-stakes environment.
+Maximum Party Size: 2
