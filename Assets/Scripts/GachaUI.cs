@@ -21,6 +21,9 @@ public class GachaUI : MonoBehaviour
     public float delayTimer, frameCounter;
     public float stallSpeed = .5f;
     public int frameDelay = 5;
+    public Image goTime, helpMe;
+    public Sprite modInfo;
+    public Sprite[] buttonSelects = new Sprite[2];
     public Gacha gachaMachine;
 
     public Sprite[] inputIndicSprites = new Sprite[4];
@@ -72,16 +75,17 @@ public class GachaUI : MonoBehaviour
         {
             if (currentModdedValue == 0)
             {
-                currentModdedValue = 4;
+                currentModdedValue = 5;
             }
             else
             {
                 currentModdedValue--;
             }
+            Controller.c.playSound(Controller.c.sfx[0]);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            if (currentModdedValue == 4)
+            if (currentModdedValue == 5)
             {
                 currentModdedValue = 0;
             }
@@ -89,11 +93,13 @@ public class GachaUI : MonoBehaviour
             {
                 currentModdedValue++;
             }
+            Controller.c.playSound(Controller.c.sfx[0]);
         }
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
             modifyingValue = true;
+            Controller.c.playSound(Controller.c.sfx[1]);
         }
     }
 
@@ -120,6 +126,7 @@ public class GachaUI : MonoBehaviour
                 {
                     matAVal++;
                     delayTimer = 0;
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKey(KeyCode.UpArrow) && matAVal < InvManager.im.materialA && matAVal < 100)
                 {
@@ -139,11 +146,13 @@ public class GachaUI : MonoBehaviour
                             matAVal++;
                         }
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.DownArrow) && matAVal > 0)
                 {
                     matAVal--;
                     delayTimer = 0;
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKey(KeyCode.DownArrow) && matAVal > 0)
                 {
@@ -163,6 +172,7 @@ public class GachaUI : MonoBehaviour
                             matAVal--;
                         }
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
@@ -174,6 +184,7 @@ public class GachaUI : MonoBehaviour
                     {
                         matAVal -= 10;
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
@@ -189,6 +200,7 @@ public class GachaUI : MonoBehaviour
                     {
                         matAVal += 10;
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 break;
 
@@ -197,6 +209,7 @@ public class GachaUI : MonoBehaviour
                 {
                     matBVal++;
                     delayTimer = 0;
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKey(KeyCode.UpArrow) && matBVal < InvManager.im.materialB && matBVal < 100)
                 {
@@ -216,11 +229,13 @@ public class GachaUI : MonoBehaviour
                             matBVal++;
                         }
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.DownArrow) && matBVal > 0)
                 {
                     matBVal--;
                     delayTimer = 0;
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKey(KeyCode.DownArrow) && matBVal > 0)
                 {
@@ -240,6 +255,7 @@ public class GachaUI : MonoBehaviour
                             matBVal--;
                         }
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
@@ -251,6 +267,7 @@ public class GachaUI : MonoBehaviour
                     {
                         matBVal -= 10;
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
@@ -266,6 +283,7 @@ public class GachaUI : MonoBehaviour
                     {
                         matBVal += 10;
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 break;
 
@@ -274,6 +292,7 @@ public class GachaUI : MonoBehaviour
                 {
                     matCVal++;
                     delayTimer = 0;
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKey(KeyCode.UpArrow) && matCVal < InvManager.im.materialC && matCVal < 100)
                 {
@@ -293,11 +312,13 @@ public class GachaUI : MonoBehaviour
                             matCVal++;
                         }
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.DownArrow) && matCVal > 0)
                 {
                     matCVal--;
                     delayTimer = 0;
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKey(KeyCode.DownArrow) && matCVal > 0)
                 {
@@ -317,6 +338,7 @@ public class GachaUI : MonoBehaviour
                             matCVal--;
                         }
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
@@ -328,6 +350,7 @@ public class GachaUI : MonoBehaviour
                     {
                         matCVal -= 10;
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
@@ -343,6 +366,7 @@ public class GachaUI : MonoBehaviour
                     {
                         matCVal += 10;
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 break;
 
@@ -351,6 +375,7 @@ public class GachaUI : MonoBehaviour
                 {
                     matDVal++;
                     delayTimer = 0;
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKey(KeyCode.UpArrow) && matDVal < InvManager.im.materialD && matDVal < 100)
                 {
@@ -370,11 +395,13 @@ public class GachaUI : MonoBehaviour
                             matDVal++;
                         }
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.DownArrow) && matDVal > 0)
                 {
                     matDVal--;
                     delayTimer = 0;
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKey(KeyCode.DownArrow) && matDVal > 0)
                 {
@@ -394,6 +421,7 @@ public class GachaUI : MonoBehaviour
                             matDVal--;
                         }
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
@@ -405,6 +433,7 @@ public class GachaUI : MonoBehaviour
                     {
                         matDVal -= 10;
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
@@ -420,17 +449,18 @@ public class GachaUI : MonoBehaviour
                     {
                         matDVal += 10;
                     }
+                    Controller.c.playSound(Controller.c.sfx[0]);
                 }
                 break;
 
             case 4:
                 //Generate gacha gun. Uwee hee hee.
-                //Confirmation message here.
                 break;
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
             modifyingValue = false;
+            Controller.c.playSound(Controller.c.sfx[2]);
         }
     }
 
@@ -440,6 +470,9 @@ public class GachaUI : MonoBehaviour
         switch (currentModdedValue)
         {
             case 0:
+                helpMe.sprite = buttonSelects[0];
+                goTime.sprite = buttonSelects[0];
+                menuPointer.gameObject.SetActive(true);
                 menuPointer.transform.localPosition = new Vector3(-285, 100, 0);
                 break;
             case 1:
@@ -449,13 +482,23 @@ public class GachaUI : MonoBehaviour
                 menuPointer.transform.localPosition = new Vector3(-285, -10, 0);
                 break;
             case 3:
+                goTime.sprite = buttonSelects[0];
+                menuPointer.gameObject.SetActive(true);
                 menuPointer.transform.localPosition = new Vector3(-285, -65, 0);
                 break;
             case 4:
-                menuPointer.transform.localPosition = new Vector3(-125, -150, 0);
+                helpMe.sprite = buttonSelects[0];
+                goTime.sprite = buttonSelects[1];
+                menuPointer.gameObject.SetActive(false);
                 break;
+            case 5:
+                helpMe.sprite = buttonSelects[1];
+                goTime.sprite = buttonSelects[0];
+                menuPointer.gameObject.SetActive(false);
+                break;
+
         }
-        if (modifyingValue && currentModdedValue != 4)
+        if (modifyingValue && currentModdedValue < 4)
         {
             if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.RightArrow))
             {
@@ -470,7 +513,7 @@ public class GachaUI : MonoBehaviour
                 inputObjects[currentModdedValue].sprite = selectChosen;
             }
         }
-        if (Input.GetKeyDown(KeyCode.X) && currentModdedValue != 4)
+        if (Input.GetKeyDown(KeyCode.X) && currentModdedValue < 4)
         {
             inputObjects[currentModdedValue].sprite = selectDefault;
         }
@@ -483,30 +526,45 @@ public class GachaUI : MonoBehaviour
                 modifyingValue = false;
                 //Update the text.
                 itemOutput.text = gachaMachine.basicGunData;
-                if (gachaMachine.lastGeneratedGun != null)
+                InvManager.im.materialA -= matAVal;
+                InvManager.im.materialB -= matBVal;
+                InvManager.im.materialC -= matCVal;
+                InvManager.im.materialD -= matDVal;
+                if (InvManager.im.materialA < matAVal)
                 {
-                    InvManager.im.materialA -= matAVal;
-                    InvManager.im.materialB -= matBVal;
-                    InvManager.im.materialC -= matCVal;
-                    InvManager.im.materialD -= matDVal;
-                    if (InvManager.im.materialA < matAVal)
-                    {
-                        matAVal = InvManager.im.materialA;
-                    }
-                    if (InvManager.im.materialB < matBVal)
-                    {
-                        matBVal = InvManager.im.materialB;
-                    }
-                    if (InvManager.im.materialC < matCVal)
-                    {
-                        matCVal = InvManager.im.materialC;
-                    }
-                    if (InvManager.im.materialD < matDVal)
-                    {
-                        matDVal = InvManager.im.materialD;
-                    }
+                    matAVal = InvManager.im.materialA;
+                }
+                if (InvManager.im.materialB < matBVal)
+                {
+                    matBVal = InvManager.im.materialB;
+                }
+                if (InvManager.im.materialC < matCVal)
+                {
+                    matCVal = InvManager.im.materialC;
+                }
+                if (InvManager.im.materialD < matDVal)
+                {
+                    matDVal = InvManager.im.materialD;
+                }
+                if (gachaMachine.lastGeneratedGun.rarity == 4)
+                {
+                    Controller.c.playSound(Controller.c.sfx[4]);
+                }
+                else
+                {
+                    Controller.c.playSound(Controller.c.sfx[3]);
                 }
             }
+        }
+        if (Input.GetKeyDown(KeyCode.Z) && currentModdedValue == 5)
+        {
+            //Help screen.
+            Controller.c.foreground.sprite = modInfo;
+            Controller.c.foreground.gameObject.SetActive(true);
+        }
+        if (Input.GetKeyDown(KeyCode.X) && currentModdedValue == 5)
+        {
+            Controller.c.foreground.gameObject.SetActive(false);
         }
     }
 }

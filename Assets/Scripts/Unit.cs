@@ -29,11 +29,19 @@ public class Unit : MonoBehaviour
     public List<int> savedPath = new List<int>();
     public bool procPath = false;
     int timer = 15;
-    int showDamageTimer = 0;
+    public int showDamageTimer = 0;
+
+    public Color[] colorCycle;
+    public int currentStatus, currentStatusTimer;
+
+    bool isDying = false;
+    int dyingFade = 45;
 
     //For indicators; enemy only.
     public bool displayActive = false;
-    
+
+    public Animator myAnim;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -85,8 +93,26 @@ public class Unit : MonoBehaviour
                 modifierA.color = new Color(1f, 1f, 1f, fadeLeft);
                 modifierB.color = new Color(1f, 1f, 1f, fadeLeft);
                 missSpr.color = new Color(1f, 1f, 1f, fadeLeft);
+                showDamageTimer--;
             }
-            showDamageTimer--;
+            //Dying
+            if (isDying)
+            {
+                if (dyingFade > 0)
+                {
+                    float fadeLeft = 1 - ((1f / 45f) * (45 - dyingFade));
+                    spr.color = new Color(1f, 1f, 1f, fadeLeft);
+                }
+                else
+                {
+                    die();
+                }
+                dyingFade--;
+            }
+            else
+            {
+                cycleColors();
+            }
         }
     }
 
@@ -335,9 +361,10 @@ public class Unit : MonoBehaviour
     public void die()
     {
         //Self-explanatory.
-        if (hp <= 0)
+        if (hp <= 0 && !isDying)
         {
             hp = 0;
+            isDying = true;
             isDead = true;
             Controller.c.unitMap[position[0], position[1]] = 0;
             hasMoved = true;
@@ -372,7 +399,7 @@ public class Unit : MonoBehaviour
                 {
                     bool inXRange = (position[0] >= minExpX && position[0] <= maxExpX);
                     bool inYRange = (position[1] >= minExpY && position[1] <= maxExpY);
-                    if (inXRange && inYRange)
+                    if (inXRange && inYRange && u != this)
                     {
                         u.hp -= (hp - u.def);
                         Debug.Log(u.unitName + " took " + (u.def + u.currEquip.tempDef) + "damage!");
@@ -383,14 +410,19 @@ public class Unit : MonoBehaviour
                 {
                     bool inXRange = (position[0] >= minExpX && position[0] <= maxExpX);
                     bool inYRange = (position[1] >= minExpY && position[1] <= maxExpY);
-                    if (inXRange && inYRange)
+                    if (inXRange && inYRange && u != this)
                     {
-                        u.hp -= (hp - (u.def+ u.currEquip.tempDef));
+                        u.hp -= (hp - (u.def + u.currEquip.tempDef));
                         Debug.Log(u.unitName + " took " + (hp - u.def) + "damage!");
                         u.die();
                     }
                 }
             }
+            Controller.c.playSound(Controller.c.sfx[5]);
+            Controller.c.enemyUnits.Remove(this);
+        }
+        if (dyingFade <= 0)
+        {
             if (unitAllegiance == 2)
             {
                 Controller.c.enemyUnits.Remove(this);
@@ -398,7 +430,9 @@ public class Unit : MonoBehaviour
                 Destroy(this.gameObject);
             }
             spr.enabled = false;
+            spr.color = new Color(1f, 1f, 1f, 1f);
             this.gameObject.SetActive(false);
+
         }
     }
 
@@ -431,7 +465,7 @@ public class Unit : MonoBehaviour
             target = null;
             foreach (Unit u in Controller.c.playerUnits)
             {
-                if (u != null && !u.isDead)
+                if (u != null && !u.isDead && !u.isDying)
                 {
                     for (int i = 0; i < Controller.c.currMap.xBound; i++)
                     {
@@ -444,7 +478,7 @@ public class Unit : MonoBehaviour
                                 int distToTarget = xToTarget + yToTarget;
                                 if (distToTarget <= currEquip.range)
                                 {
-                                    Debug.Log("Targeting from " + i + "," + j);
+                                    //Debug.Log("Targeting from " + i + "," + j);
                                     possibleTargets.Add(u);
                                 }
                             }
@@ -461,11 +495,11 @@ public class Unit : MonoBehaviour
                 {
                     if (u != null)
                     {
-                        if (target == null)
+                        if (target == null && !u.isDead && !u.isDying)
                         {
                             target = u;
                         }
-                        else
+                        else if (!u.isDead && !u.isDying)
                         {
                             int xToTarget = Mathf.Abs(position[0] - target.position[0]);
                             int yToTarget = Mathf.Abs(position[1] - target.position[1]);
@@ -555,7 +589,7 @@ public class Unit : MonoBehaviour
         int randChance = Random.Range(0, 100);
         int dmgTaken = 0;
         bool refundShot = false;
-        if (randChance < hitChance)
+        if (randChance <= hitChance)
         {
             //Frontloaded and Backloaded proc inside the damage window, as seen below.
             //We've hit. Check for a crit.
@@ -578,6 +612,11 @@ public class Unit : MonoBehaviour
                     dmgTaken = (int) (dmgTaken * 1.25f);
                 }
                 dmgTaken -= (target.def + target.currEquip.tempDef);
+                if (dmgTaken < 0)
+                {
+                    dmgTaken = 0;
+                }
+                target.showDamage(dmgTaken);
                 target.hp -= dmgTaken;
                 Debug.Log(target.unitName + " took " + dmgTaken + " damage!");
             }
@@ -600,6 +639,10 @@ public class Unit : MonoBehaviour
                     dmgTaken = (int) (dmgTaken *1.25f);
                 }
                 int finalDmg = dmgTaken - (target.def + target.currEquip.tempDef);
+                if (finalDmg < 0)
+                {
+                    finalDmg = 0;
+                }
                 target.showDamage(finalDmg);
                 target.hp -= finalDmg;
                 Debug.Log(target.unitName + " took " + finalDmg + " damage!");
@@ -678,7 +721,7 @@ public class Unit : MonoBehaviour
                 determination = true;
                 Debug.Log("Determined activated! Move again!");
             }
-            target.showDamage(0);
+            target.showMiss();
         }
         if (!currEquip.isMelee && !refundShot)
         {
@@ -697,6 +740,8 @@ public class Unit : MonoBehaviour
         Controller.c.mp.currX = target.position[0];
         Controller.c.mp.currY = target.position[1];
         Controller.c.mp.transform.position = new Vector3(Controller.c.mp.currX, Controller.c.mp.currY + .5f, -3);
+        Controller.c.playSound(currEquip.useSound);
+        target.showStatus();
         target.die();
     }
 
@@ -724,32 +769,37 @@ public class Unit : MonoBehaviour
         {
             //Check every set location on the map
             Path chosenPath = null;
-            for (int i = 0; i < Controller.c.currMap.xBound; i++)
+            int xFromTarget = Mathf.Abs(position[0] - target.position[0]);
+            int yFromTarget = Mathf.Abs(position[1] - target.position[1]);
+            if (xFromTarget + yFromTarget > currEquip.range)
             {
-                for (int j = 0; j < Controller.c.currMap.yBound; j++)
+                for (int i = 0; i < Controller.c.currMap.xBound; i++)
                 {
-                    if (pathMap[i, j].set)
+                    for (int j = 0; j < Controller.c.currMap.yBound; j++)
                     {
-                        if (chosenPath == null)
+                        if (pathMap[i, j].set)
                         {
-                            //Check distance; can the target be shot?
-                            int xToTarget = Mathf.Abs(i - target.position[0]);
-                            int yToTarget = Mathf.Abs(j - target.position[1]);
-                            int distToTarget = xToTarget + yToTarget;
-                            if (distToTarget <= currEquip.range && Controller.c.unitMap[i, j] == 0)
+                            if (chosenPath == null)
                             {
-                                chosenPath = pathMap[i, j];
+                                //Check distance; can the target be shot?
+                                int xToTarget = Mathf.Abs(i - target.position[0]);
+                                int yToTarget = Mathf.Abs(j - target.position[1]);
+                                int distToTarget = xToTarget + yToTarget;
+                                if (distToTarget <= currEquip.range && Controller.c.unitMap[i, j] == 0)
+                                {
+                                    chosenPath = pathMap[i, j];
+                                }
                             }
-                        }
-                        else
-                        {
-                            //Check distance; can the target be shot?
-                            int xToTarget = Mathf.Abs(i - target.position[0]);
-                            int yToTarget = Mathf.Abs(j - target.position[1]);
-                            int distToTarget = xToTarget + yToTarget;
-                            if ((distToTarget <= currEquip.range) && pathMap[i,j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count && Controller.c.unitMap[i, j] == 0)
+                            else
                             {
-                                chosenPath = pathMap[i, j];
+                                //Check distance; can the target be shot?
+                                int xToTarget = Mathf.Abs(i - target.position[0]);
+                                int yToTarget = Mathf.Abs(j - target.position[1]);
+                                int distToTarget = xToTarget + yToTarget;
+                                if (distToTarget <= currEquip.range && pathMap[i, j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count && Controller.c.unitMap[i, j] == 0)
+                                {
+                                    chosenPath = pathMap[i, j];
+                                }
                             }
                         }
                     }
@@ -765,10 +815,7 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                int xToTarget = Mathf.Abs(position[0] - target.position[0]);
-                int yToTarget = Mathf.Abs(position[1] - target.position[1]);
-                int distToTarget = xToTarget + yToTarget;
-                if (distToTarget <= currEquip.range)
+                if (!target.isDead && !target.isDying)
                 {
                     attack();
                 }
@@ -819,7 +866,7 @@ public class Unit : MonoBehaviour
                             int xToTarget = Mathf.Abs(position[0] - target.position[0]);
                             int yToTarget = Mathf.Abs(position[1] - target.position[1]);
                             int distToTarget = xToTarget + yToTarget;
-                            if (distToTarget <= currEquip.range)
+                            if (distToTarget <= currEquip.range && !target.isDead)
                             {
                                 attack();
                             }
@@ -842,7 +889,7 @@ public class Unit : MonoBehaviour
                             int xToTarget = Mathf.Abs(position[0] - target.position[0]);
                             int yToTarget = Mathf.Abs(position[1] - target.position[1]);
                             int distToTarget = xToTarget + yToTarget;
-                            if (distToTarget <= currEquip.range)
+                            if (distToTarget <= currEquip.range && !target.isDead)
                             {
                                 attack();
                             }
@@ -865,7 +912,7 @@ public class Unit : MonoBehaviour
                             int xToTarget = Mathf.Abs(position[0] - target.position[0]);
                             int yToTarget = Mathf.Abs(position[1] - target.position[1]);
                             int distToTarget = xToTarget + yToTarget;
-                            if (distToTarget <= currEquip.range)
+                            if (distToTarget <= currEquip.range && !target.isDead)
                             {
                                 attack();
                             }
@@ -888,7 +935,7 @@ public class Unit : MonoBehaviour
                             int xToTarget = Mathf.Abs(position[0] - target.position[0]);
                             int yToTarget = Mathf.Abs(position[1] - target.position[1]);
                             int distToTarget = xToTarget + yToTarget;
-                            if (distToTarget <= currEquip.range)
+                            if (distToTarget <= currEquip.range && !target.isDead)
                             {
                                 attack();
                             }
@@ -909,7 +956,7 @@ public class Unit : MonoBehaviour
                 int xToTarget = Mathf.Abs(position[0] - target.position[0]);
                 int yToTarget = Mathf.Abs(position[1] - target.position[1]);
                 int distToTarget = xToTarget + yToTarget;
-                if (distToTarget <= currEquip.range)
+                if (distToTarget <= currEquip.range && !target.isDead)
                 {
                     attack();
                 }
@@ -965,6 +1012,8 @@ public class Unit : MonoBehaviour
     {
         this.gameObject.SetActive(true);
         isDead = false;
+        isDying = false;
+        dyingFade = 45;
         hp = maxhp;
         currEquip.currentClip = currEquip.clipSize;
         hasMoved = false;
@@ -976,34 +1025,73 @@ public class Unit : MonoBehaviour
         holder.gameObject.SetActive(false);
         holder2.gameObject.SetActive(false);
         missed.gameObject.SetActive(false);
+        for (int i = 0; i < negStatus.Length; i++)
+        {
+            negStatus[i] = 0;
+        }
     }
 
     public void showDamage(int dmgTaken)
     {
-        if (dmgTaken < 10 && dmgTaken > 0)
+        if (dmgTaken < 10)
         {
+            if (dmgTaken < 1)
+            {
+                dmgTaken = 0;
+            }
             //Single digit only.
             holder2.gameObject.transform.localPosition = Vector3.zero;
             holder2.gameObject.SetActive(true);
+            modifierB.sprite = Controller.c.damageNumbers[10];
             ones.sprite = Controller.c.damageNumbers[dmgTaken];
         }
-        else if (dmgTaken > 9)
+        else
         {
             //Double digits.
             holder.gameObject.transform.localPosition = Vector3.zero;
             holder.gameObject.SetActive(true);
             int onesValue = dmgTaken % 10;
             int tensValue = dmgTaken / 10;
+            modifierA.sprite = Controller.c.damageNumbers[10];
             tenOnes.sprite = Controller.c.damageNumbers[onesValue];
             tens.sprite = Controller.c.damageNumbers[tensValue];
         }
+        showDamageTimer = 45;
+        Controller.c.dmgDelayTimer = 45;
+    }
+
+    public void showMiss()
+    {
+        missed.gameObject.transform.localPosition = new Vector3(0, .48f, -1f);
+        missed.gameObject.SetActive(true);
+        showDamageTimer = 45;
+        Controller.c.dmgDelayTimer = 45;
+
+    }
+
+    public void showHealing(int amtHealed)
+    {
+        if (amtHealed < 10)
+        {
+            //Single digit only.
+            holder2.gameObject.transform.localPosition = Vector3.zero;
+            holder2.gameObject.SetActive(true);
+            modifierB.sprite = Controller.c.healNumbers[10];
+            ones.sprite = Controller.c.healNumbers[amtHealed];
+        }
         else
         {
-            //Missed.
-            missed.gameObject.transform.localPosition = new Vector3(0, .48f, -1f);
-            missed.gameObject.SetActive(true);
+            //Double digits.
+            holder.gameObject.transform.localPosition = Vector3.zero;
+            holder.gameObject.SetActive(true);
+            int onesValue = amtHealed % 10;
+            int tensValue = amtHealed / 10;
+            modifierA.sprite = Controller.c.healNumbers[10];
+            tenOnes.sprite = Controller.c.healNumbers[onesValue];
+            tens.sprite = Controller.c.healNumbers[tensValue];
         }
         showDamageTimer = 45;
+        Controller.c.dmgDelayTimer = 45;
     }
 
     public void onTheHunt(Unit targetUnit)
@@ -1013,6 +1101,8 @@ public class Unit : MonoBehaviour
         Pathfinder.pf.drawPath(pathMap, position, 10, pathMap[position[0], position[1]], unitAllegiance, 0);
         //So let's say we have a theoretical max of 10 tiles to move. Next thing to do? Move towards the target.
         Path chosenPath = null;
+        Path backupPath = null;
+        float backupPathDist = 3;
         for (int i = 0; i < Controller.c.currMap.xBound; i++)
         {
             for (int j = 0; j < Controller.c.currMap.yBound; j++)
@@ -1029,6 +1119,26 @@ public class Unit : MonoBehaviour
                         {
                             chosenPath = pathMap[i, j];
                         }
+                        else
+                        {
+                            if (backupPath == null)
+                            {
+                                backupPath = pathMap[i, j];
+                                Vector2 tempA = new Vector2(i, j);
+                                Vector2 tempB = new Vector2(target.position[0], target.position[1]);
+                                backupPathDist = Vector2.Distance(tempA, tempB);
+                            }
+                            else
+                            {
+                                Vector2 tempA = new Vector2(i, j);
+                                Vector2 tempB = new Vector2(target.position[0], target.position[1]);
+                                if (Vector2.Distance(tempA, tempB) < backupPathDist)
+                                {
+                                    backupPath = pathMap[i, j];
+                                    backupPathDist = Vector2.Distance(tempA, tempB);
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -1044,7 +1154,8 @@ public class Unit : MonoBehaviour
                 }
             }
         }
-        if (chosenPath != null) {
+        if (chosenPath != null)
+        {
             //Now that we have a path, let's cull it a bit.
             //They're out of range, so let's shave the list down a bit.
             if (negStatus[2] > 0)
@@ -1058,16 +1169,14 @@ public class Unit : MonoBehaviour
         }
         else
         {
-            //Screw it, no dice. Just don't move.
-            //Check distance; can the target be shot?
-            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
-            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
-            int distToTarget = xToTarget + yToTarget;
-            if (distToTarget <= currEquip.range)
+            if (negStatus[2] > 0)
             {
-                attack();
+                savedPath = backupPath.path.GetRange(0, mvt + currEquip.tempMvt - 1);
             }
-            hasMoved = true;
+            else
+            {
+                savedPath = backupPath.path.GetRange(0, mvt + currEquip.tempMvt);
+            }
         }
     }
 
@@ -1081,10 +1190,107 @@ public class Unit : MonoBehaviour
                 if (i == 4)
                 {
                     hp -= (int)(maxhp * .1f);
+                    showDamage(1);
                     die();
                 }
-                i--;
+                negStatus[i]--;
             }
         }
+        if (stunned)
+        {
+            stunned = !stunned;
+        }
+    }
+
+    public void showStatus()
+    {
+        int colorAmt = 0;
+        for (int i = 0; i < negStatus.Length; i++)
+        {
+            if (negStatus[i] > 0)
+            {
+                colorAmt++;
+            }
+        }
+        if (stunned)
+        {
+            colorAmt++;
+        }
+        if (colorAmt == 0)
+        {
+            //No statuses.
+            colorCycle = new Color[1];
+            colorCycle[0] = new Color(1f, 1f, 1f, 1f);
+            RuntimeAnimatorController temp = myAnim.runtimeAnimatorController;
+            myAnim.runtimeAnimatorController = null;
+            spr.color = colorCycle[0];
+            myAnim.runtimeAnimatorController = temp;
+        }
+        else
+        {
+            int currentIndex = 1;
+            colorCycle = new Color[colorAmt + 1];
+            colorCycle[0] = new Color(1f, 1f, 1f, 1f);
+            //In order, elec, burn, freeze, mark, poison, stun
+            if (negStatus[0] > 0)
+            {
+                colorCycle[currentIndex] = new Color(1f, 1f, 0f, 1f);
+                currentIndex++;
+            }
+            if (negStatus[1] > 0)
+            {
+                colorCycle[currentIndex] = new Color(1f, .6f, 0f, 1f);
+                currentIndex++;
+            }
+            if (negStatus[2] > 0)
+            {
+                colorCycle[currentIndex] = new Color(0.6352941f, 0.7607843f, 0.9568627f, 1f);
+                currentIndex++;
+            }
+            if (negStatus[3] > 0)
+            {
+                colorCycle[currentIndex] = new Color(1f, 0f, 0f, 1f);
+                currentIndex++;
+            }
+            if (negStatus[4] > 0)
+            {
+                colorCycle[currentIndex] = new Color(.6f, 0f, 1f, 1f);
+                currentIndex++;
+            }
+            if (stunned)
+            {
+                colorCycle[currentIndex] = new Color(.75f, .75f, .75f, 1f);
+            }
+        }
+        currentStatus = 0;
+        currentStatusTimer = 60;
+    }
+
+    void cycleColors()
+    {
+        if (colorCycle.Length > 1)
+        {
+            if (currentStatusTimer <= 0)
+            {
+                currentStatus++;
+                if (currentStatus > colorCycle.Length - 1)
+                {
+                    currentStatus = 0;
+                }
+                RuntimeAnimatorController temp = myAnim.runtimeAnimatorController;
+                myAnim.runtimeAnimatorController = null;
+                spr.color = colorCycle[currentStatus];
+                myAnim.runtimeAnimatorController = temp;
+                currentStatusTimer = 60;
+            }
+            currentStatusTimer--;
+        }
+        /*else
+        {
+            RuntimeAnimatorController temp = myAnim.runtimeAnimatorController;
+            myAnim.runtimeAnimatorController = null;
+            spr.color = colorCycle[0];
+            myAnim.runtimeAnimatorController = temp;
+        }*/
     }
 }

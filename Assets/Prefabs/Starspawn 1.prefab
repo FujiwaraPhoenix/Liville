@@ -214,8 +214,9 @@ MonoBehaviour:
   isMelee: 1
   rarity: 0
   healAmt: 0
-  itemName: ???
+  itemName: Phalange
   itemType: 
+  useSound: {fileID: 8300000, guid: cd72a797c3876874b9fc74a3b31ce88a, type: 3}
   tempAcc: 0
   tempDef: 0
   tempEva: 0
@@ -361,7 +362,12 @@ MonoBehaviour:
   nextIndex: 0
   savedPath: 
   procPath: 0
+  showDamageTimer: 0
+  colorCycle: []
+  currentStatus: 0
+  currentStatusTimer: 0
   displayActive: 0
+  myAnim: {fileID: 8167530758570032944}
 --- !u!95 &8167530758570032944
 Animator:
   serializedVersion: 3

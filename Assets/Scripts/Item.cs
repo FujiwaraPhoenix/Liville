@@ -23,6 +23,8 @@ public class Item : MonoBehaviour
     public string itemName;
     //What kind of thing is it?
     public string itemType;
+    
+    public AudioClip useSound;
 
     //Does this thing have stat modifiers? If so, how big/small are they?
     public int tempAcc, tempDef, tempEva, tempLck, tempRes, tempMinDmg, tempMaxDmg, tempMvt;
@@ -48,11 +50,14 @@ public class Item : MonoBehaviour
                 if (user.hp + tempHeal < user.maxhp)
                 {
                     Debug.Log("Healed " + tempHeal + " HP!");
+                    user.showHealing(tempHeal);
+                    Debug.Log(tempHeal);
                     user.hp += tempHeal;
                 }
                 else
                 {
                     Debug.Log("Healed " + (user.maxhp - user.hp) + " HP!");
+                    user.showHealing(user.maxhp - user.hp);
                     user.hp = user.maxhp;
                 }
                 BattleMenuUI.bmui.updatePlayerValues(user);

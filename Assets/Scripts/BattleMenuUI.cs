@@ -208,6 +208,10 @@ public class BattleMenuUI : MonoBehaviour
         pImg.sprite = playerUnit.unitFace;
 
         //Player stats
+        if (playerUnit.hp < 0)
+        {
+            playerUnit.hp = 0;
+        }
         pHP = playerUnit.hp;
         pMaxHP = playerUnit.maxhp;
         pEva = playerUnit.eva;
@@ -240,7 +244,7 @@ public class BattleMenuUI : MonoBehaviour
         {
             if (i < playerUnit.currEquip.mods.GetLength(0))
             {
-                pMods[i].sprite = Controller.c.determineModIcon(playerUnit.currEquip.mods[i, 0], playerUnit.currEquip.mods[i, 1]);
+                pMods[i].sprite = Controller.c.determineModIcon(playerUnit.currEquip.mods[i, 0], playerUnit.currEquip.mods[i, 1] - 1);
             }
             else
             {
@@ -256,6 +260,10 @@ public class BattleMenuUI : MonoBehaviour
         eImg.sprite = enemyUnit.unitFace;
 
         //Player stats
+        if (enemyUnit.hp < 0)
+        {
+            enemyUnit.hp = 0;
+        }
         eHP = enemyUnit.hp;
         eMaxHP = enemyUnit.maxhp;
         eEva = enemyUnit.eva;
@@ -375,7 +383,7 @@ public class BattleMenuUI : MonoBehaviour
             if (isOdd == 0)
             {
                 //Even; formula is (-10(pip array size/2) + 10n -5)
-                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(pAmmoPips.Length % 2)) + (10 * i) - 5, -30, 0);
+                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(pAmmoPips.Length - 1) / 2) + (10 * i), -30, 0);
             }
             else if (pAmmoPips.Length == 1)
             {
@@ -383,7 +391,7 @@ public class BattleMenuUI : MonoBehaviour
             }
             else
             {
-                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(pAmmoPips.Length % 2)) + (10 * i), -30, 0);
+                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(pAmmoPips.Length / 2)) + (10 * i), -30, 0);
             }
         }
     }
@@ -410,7 +418,7 @@ public class BattleMenuUI : MonoBehaviour
             if (isOdd == 0)
             {
                 //Even; formula is (-10(pip array size/2) + 10n -5)
-                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(eAmmoPips.Length % 2)) + (10 * i) - 5, -30, 0);
+                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(eAmmoPips.Length - 1) / 2) + (10 * i) - 5, -30, 0);
             }
             else if (eAmmoPips.Length == 1)
             {
@@ -418,7 +426,7 @@ public class BattleMenuUI : MonoBehaviour
             }
             else
             {
-                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(eAmmoPips.Length % 2)) + (10 * i), -30, 0);
+                temp.transform.localPosition = new Vector3((-10 * Mathf.Floor(eAmmoPips.Length / 2)) + (10 * i), -30, 0);
             }
         }
     }

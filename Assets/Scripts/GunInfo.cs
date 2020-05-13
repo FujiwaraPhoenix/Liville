@@ -26,8 +26,8 @@ public class GunInfo : MonoBehaviour
     {
         if (LoadoutUI.lUI.currentLoadoutMenu == 0)
         {
-            updateStats(Controller.c.playerUnits[character].currEquip);
-            updateMods(Controller.c.playerUnits[character].currEquip);
+            updateStats(Controller.c.playerRoster[character].currEquip);
+            updateMods(Controller.c.playerRoster[character].currEquip);
         }
     }
 
@@ -83,5 +83,10 @@ public class GunInfo : MonoBehaviour
     public void updateBorder(Item chosenGun)
     {
         border.sprite = LoadoutUI.lUI.gunEquippedBorders[chosenGun.rarity - 1];
+    }
+
+    public void updateBorderHL(Item chosenGun)
+    {
+        border.sprite = LoadoutUI.lUI.gunEquippedBordersHL[chosenGun.rarity - 1];
     }
 }

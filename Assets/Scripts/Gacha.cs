@@ -9,9 +9,11 @@ public class Gacha : MonoBehaviour
     public bool[] rareChanceUpActive = new bool[5];
     public Item template;
     public float c, uc, r, sr;
-    public int testA, testB, testC, testD;
     public Item lastGeneratedGun;
     public string basicGunData;
+    //In order: AR, HG, SG, RF, SWD.
+    public AudioClip[] wepSounds = new AudioClip[5];
+    public AudioClip potionSound;
 
     // Start is called before the first frame update
     void Start()
@@ -249,26 +251,31 @@ public class Gacha : MonoBehaviour
                 outputType = "Assault Rifle\n";
                 generateAR(gunRarity, newItem);
                 newItem.itemType = "Assault Rifle";
+                newItem.useSound = wepSounds[0];
                 break;
             case 1:
                 outputType = "Shotgun\n";
                 generateSG(gunRarity, newItem);
                 newItem.itemType = "Shotgun";
+                newItem.useSound = wepSounds[2];
                 break;
             case 2:
                 outputType = "Handgun\n";
                 generateHG(gunRarity, newItem);
                 newItem.itemType = "Handgun";
+                newItem.useSound = wepSounds[1];
                 break;
             case 3:
                 outputType = "Sniper Rifle\n";
                 generateRF(gunRarity, newItem);
                 newItem.itemType = "Sniper Rifle";
+                newItem.useSound = wepSounds[3];
                 break;
             case 4:
                 outputType = "Sword\n";
                 generateSWD(gunRarity, newItem);
                 newItem.itemType = "Sword";
+                newItem.useSound = wepSounds[4];
                 break;
         }
         //TODO: Add mod output into... Well, the output. Again.
@@ -728,8 +735,8 @@ public class Gacha : MonoBehaviour
                 break;
             case 4:
                 //Super Rare
-                moddedItem.minDmg = 6;
-                moddedItem.maxDmg = Random.Range(8, 16);
+                moddedItem.minDmg = 8;
+                moddedItem.maxDmg = Random.Range(10, 18);
                 moddedItem.range = Random.Range(1, 3);
                 moddedItem.accuracy = Random.Range(100, 121);
                 break;
@@ -1082,12 +1089,14 @@ public class Gacha : MonoBehaviour
             basicGunData = output;
             InvManager.im.convoy.Add(newPotion);
             newPotion.transform.parent = InvManager.im.transform;
+            newPotion.useSound = potionSound;
         }
         else
         {
             string output = "Item creation failed.\nInsufficient resources.";
             lastGeneratedGun = null;
             basicGunData = output;
+            //TODO: Play failure sound
         }
     }
 }

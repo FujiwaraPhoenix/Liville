@@ -248,8 +248,9 @@ MonoBehaviour:
   isMelee: 1
   rarity: 0
   healAmt: 0
-  itemName: ???
+  itemName: Maxilla
   itemType: 
+  useSound: {fileID: 8300000, guid: 26e9c9a1efcb20d468136d13f7dac76b, type: 3}
   tempAcc: 0
   tempDef: 0
   tempEva: 0
@@ -426,7 +427,12 @@ MonoBehaviour:
   nextIndex: 0
   savedPath: 
   procPath: 0
+  showDamageTimer: 0
+  colorCycle: []
+  currentStatus: 0
+  currentStatusTimer: 0
   displayActive: 0
+  myAnim: {fileID: 7426485754414977927}
 --- !u!95 &7426485754414977927
 Animator:
   serializedVersion: 3

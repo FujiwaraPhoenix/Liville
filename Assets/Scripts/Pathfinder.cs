@@ -85,7 +85,7 @@ public class Pathfinder : MonoBehaviour
 
     void setToAtkHelper(Path[,] givenMap, int[] coordinates, Path givenPath, int allegiance, int atkDist)
     {
-        if (givenMap[coordinates[0], coordinates[1]] == null || !(givenMap[coordinates[0], coordinates[1]].set) && atkDist != 0)
+        if (givenMap[coordinates[0], coordinates[1]] == null || ((!(givenMap[coordinates[0], coordinates[1]].setAtk)) && !(givenMap[coordinates[0], coordinates[1]].set)) && atkDist != 0)
         {
             //Nothing here, which is necessary. If something WAS here, it'd be set.
             givenMap[coordinates[0], coordinates[1]] = givenPath.copyPath();

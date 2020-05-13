@@ -159,9 +159,9 @@ public class LoadoutUI : MonoBehaviour
         //First, let's load up our equipped char's gun.
         equipped.updateStats(Controller.c.playerRoster[currentPlayer].currEquip);
         equipped.updateMods(Controller.c.playerRoster[currentPlayer].currEquip);
-        hovered.updateMods(InvManager.im.armory[0]);
-        hovered.updateMods(InvManager.im.armory[0]);
         equipped.updateBorder(Controller.c.playerRoster[currentPlayer].currEquip);
+        hovered.updateMods(InvManager.im.armory[0]);
+        hovered.updateMods(InvManager.im.armory[0]);
         hovered.updateBorder(InvManager.im.armory[0]);
     }
 
@@ -359,6 +359,7 @@ public class LoadoutUI : MonoBehaviour
                     iUI.updatePlayerInvText(currentPlayer);
                     iUI.updateText();
                     iUI.invBG.sprite = iUI.invHL;
+                    Controller.c.playSound(Controller.c.sfx[1]);
                     currentValue = 0;
                     break;
                 case 2:
@@ -377,15 +378,24 @@ public class LoadoutUI : MonoBehaviour
                         loadGunSwap();
                         gunSelectLoaded = true;
                     }
+                    else
+                    {
+                        equipped.updateStats(Controller.c.playerRoster[currentPlayer].currEquip);
+                        equipped.updateMods(Controller.c.playerRoster[currentPlayer].currEquip);
+                        equipped.updateBorder(Controller.c.playerRoster[currentPlayer].currEquip);
+                        hovered.updateMods(InvManager.im.armory[0]);
+                        hovered.updateMods(InvManager.im.armory[0]);
+                        hovered.updateBorder(InvManager.im.armory[0]);
+                    }
                     loadNextPage();
-                    break;
-                case 3:
+                    Controller.c.playSound(Controller.c.sfx[1]);
                     break;
             }
         }
         if (hasChanged)
         {
             updateBaseLoadoutSpr();
+            Controller.c.playSound(Controller.c.sfx[0]);
         }
     }
 
@@ -529,6 +539,7 @@ public class LoadoutUI : MonoBehaviour
             hovered.updateStats(InvManager.im.armory[currentGunIndex]);
             hovered.updateMods(InvManager.im.armory[currentGunIndex]);
             hovered.updateBorder(InvManager.im.armory[currentGunIndex]);
+            Controller.c.playSound(Controller.c.sfx[0]);
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
@@ -544,7 +555,7 @@ public class LoadoutUI : MonoBehaviour
             currentX = currentPlayer;
             currentY = 2;
             updateBaseLoadoutSpr();
-
+            Controller.c.playSound(Controller.c.sfx[2]);
         }
         checkBorders();
     }
@@ -566,6 +577,7 @@ public class LoadoutUI : MonoBehaviour
                 iUI.invBG.sprite = iUI.invBase;
                 iUI.convoyBG.sprite = iUI.convoyHL;
             }
+            Controller.c.playSound(Controller.c.sfx[0]);
         }
         if (Input.GetKeyDown(KeyCode.UpArrow) && invSelected)
         {
@@ -614,8 +626,8 @@ public class LoadoutUI : MonoBehaviour
                         iUI.convoyIcons[0].sprite = iUI.basePotion;
                         iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
                     }
+                    iUI.updateData(InvManager.im.convoy[currentValue]);
                 }
-                iUI.updateData(InvManager.im.convoy[currentValue]);
             }
             else
             {
@@ -648,6 +660,7 @@ public class LoadoutUI : MonoBehaviour
                     iUI.updateData(InvManager.im.convoy[currentValue]);
                 }
             }
+            Controller.c.playSound(Controller.c.sfx[0]);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow) && invSelected)
         {
@@ -726,7 +739,7 @@ public class LoadoutUI : MonoBehaviour
                 }
                 iUI.updateData(InvManager.im.convoy[currentValue]);
             }
-
+            Controller.c.playSound(Controller.c.sfx[0]);
         }
 
         if (Input.GetKeyDown(KeyCode.Z))
@@ -800,9 +813,9 @@ public class LoadoutUI : MonoBehaviour
                         {
                             if (iUI.currentMax < 14)
                             {
-                                iUI.invIcons[iUI.currentHL].sprite = iUI.basePotion;
+                                iUI.convoyIcons[iUI.currentHL].sprite = iUI.basePotion;
                                 iUI.currentHL--;
-                                iUI.invIcons[iUI.currentHL].sprite = iUI.litPotion;
+                                iUI.convoyIcons[iUI.currentHL].sprite = iUI.litPotion;
                                 currentValue--;
                             }
                             else
@@ -819,7 +832,14 @@ public class LoadoutUI : MonoBehaviour
                             }
                         }
                     }
-                    iUI.updateData(InvManager.im.convoy[currentValue]);
+                    if (InvManager.im.convoy.Count > 0)
+                    {
+                        iUI.updateData(InvManager.im.convoy[currentValue]);
+                    }
+                    else
+                    {
+                        iUI.itemData.text = "";
+                    }
                 }
                 iUI.updateText();
                 iUI.updatePlayerInvText(currentPlayer);
@@ -833,6 +853,7 @@ public class LoadoutUI : MonoBehaviour
                     invSelected = !invSelected;
                 }
             }
+            Controller.c.playSound(Controller.c.sfx[1]);
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
@@ -860,6 +881,7 @@ public class LoadoutUI : MonoBehaviour
                 currentX = currentPlayer;
                 currentY = 1;
             }
+            Controller.c.playSound(Controller.c.sfx[2]);
         }
     }
 
@@ -878,6 +900,7 @@ public class LoadoutUI : MonoBehaviour
         equipped.updateBorder(Controller.c.playerRoster[currentPlayer].currEquip);
         int currentGunIndex = 15 * (gunPage - 1) + currentX + 3 * (currentY);
         hovered.updateBorder(InvManager.im.armory[currentGunIndex]);
+        Controller.c.playSound(Controller.c.sfx[1]);
     }
 
     public void checkBorders()
@@ -914,7 +937,9 @@ public class LoadoutUI : MonoBehaviour
         {
             baseLoadoutPlayers[i].sprite = baseLoadoutSprList[0];
             baseLoadoutInvs[i].sprite = baseLoadoutSprList[2];
-            baseLoadoutGuns[i].border.sprite = gunEquippedBorders[Controller.c.playerRoster[i].currEquip.rarity - 1];
+            baseLoadoutGuns[i].updateBorder(Controller.c.playerRoster[i].currEquip);
+            baseLoadoutGuns[i].updateStats(Controller.c.playerRoster[i].currEquip);
+            baseLoadoutGuns[i].updateMods(Controller.c.playerRoster[i].currEquip);
         }
         nextButton.sprite = baseLoadoutSprList[4];
         switch (currentY)
@@ -930,7 +955,7 @@ public class LoadoutUI : MonoBehaviour
                 baseLoadoutInvs[currentX].sprite = baseLoadoutSprList[3];
                 break;
             case 2:
-                baseLoadoutGuns[currentX].border.sprite = gunEquippedBordersHL[Controller.c.playerRoster[currentX].currEquip.rarity - 1];
+                baseLoadoutGuns[currentX].updateBorderHL(Controller.c.playerRoster[currentX].currEquip);
                 break;
         }
     }
@@ -952,6 +977,7 @@ public class LoadoutUI : MonoBehaviour
     {
         activePlayers[charID] = !activePlayers[charID];
         pData[charID].isActive = !pData[charID].isActive;
+        Controller.c.playSound(Controller.c.sfx[1]);
         pData[charID].updateValues();
     }
 

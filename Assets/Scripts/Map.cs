@@ -74,6 +74,7 @@ public class Map : MonoBehaviour
                 Controller.c.playerUnits[i].lastPosition[1] = coordList[i, 0];
                 Controller.c.playerUnits[i].lastPosition[1] = coordList[i, 1];
                 Controller.c.playerUnits[i].transform.position = new Vector3(coordList[i, 0], coordList[i, 1], -1);
+                Controller.c.playerUnits[i].showStatus();
             }
         }
         Controller.c.mp.currX = coordList[0, 0];
@@ -109,6 +110,7 @@ public class Map : MonoBehaviour
             newEnemy.setUnitStats(unitValues[3], unitValues[4], unitValues[5], unitValues[6], unitValues[7], unitValues[8]);
             //Now, weapon stats. 9 to 21.
             newEnemy.setUnitWeaponStats(unitValues[9], unitValues[10], unitValues[11], unitValues[12], unitValues[13], unitValues[14], unitValues[15], unitValues[16], unitValues[17], unitValues[18], unitValues[19], unitValues[20], unitValues[21]);
+            newEnemy.showStatus();
             Controller.c.enemyUnits.Add(newEnemy);
         }
     }

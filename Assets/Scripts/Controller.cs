@@ -29,6 +29,7 @@ public class Controller : MonoBehaviour
 
     //Some stuff to display Player/Enemy Phase
     public int timer;
+    public bool delaying = false;
 
     //0 is overworld menu; 1 is map select; 2 is party select; 3 is gacha; 4 is battle screen.
     public int gameMode = 0;
@@ -50,6 +51,7 @@ public class Controller : MonoBehaviour
 
     //Stuffing these here because it's a giant pain to have to stash these in every unit.
     public Sprite[] damageNumbers;
+    public Sprite[] healNumbers;
 
     //Might as well.
     public Sprite[] t1mods, t2mods, t3mods, demeritMods;
@@ -57,6 +59,22 @@ public class Controller : MonoBehaviour
 
     //Background
     public Background bg;
+
+    //Minor thing to keep consistency.
+    public int dmgDelayTimer;
+
+    //Audio stuff
+    //0 - BGM
+    //Everything else can be allocated as needed
+    public AudioSource[] soundPlayers = new AudioSource[10];
+    public AudioSource template;
+    //BGM list.
+    //0 is title, 1 is menus, 2 is battle
+    public AudioClip[] bgm = new AudioClip[3];
+    //For buttons, menus, and W/L. Also death. And phase transitions.
+    public AudioClip[] sfx = new AudioClip[8];
+
+    
 
     void Awake()
     {
@@ -75,7 +93,15 @@ public class Controller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        for (int i = 0; i < soundPlayers.Length; i++)
+        {
+            soundPlayers[i] = Instantiate(template, bg.transform.position, Quaternion.identity);
+            soundPlayers[i].transform.parent = transform;
+            soundPlayers[i].volume = .5f;
+        }
+        soundPlayers[0].clip = bgm[0];
+        soundPlayers[0].loop = true;
+        soundPlayers[0].Play();
     }
 
     // Update is called once per frame
@@ -84,9 +110,21 @@ public class Controller : MonoBehaviour
         //Run EP.
         if (gameMode == 4)
         {
-            if (timer > 0)
+            if (delaying)
             {
-                BattleMenuUI.bmui.phaseChange.gameObject.SetActive(true);
+                if (timer > 0)
+                {
+                    BattleMenuUI.bmui.phaseChange.gameObject.SetActive(true);
+                    float remainingTransparency = (timer / 120f);
+                    BattleMenuUI.bmui.phaseChange.color = new Color(1f, 1f, 1f, remainingTransparency);
+                }
+                else
+                {
+                    BattleMenuUI.bmui.phaseChange.gameObject.SetActive(false);
+                    delaying = !delaying;
+                    playerTurn = !playerTurn;
+                    mp.flipSpriteActive(playerTurn);
+                }
                 timer--;
             }
             else
@@ -103,6 +141,7 @@ public class Controller : MonoBehaviour
             }
         }
         switchGameState();
+
     }
 
     public void checkTurn()
@@ -126,7 +165,6 @@ public class Controller : MonoBehaviour
             }
             if (allUnitsMoved)
             {
-                playerTurn = !playerTurn;
                 foreach (Unit u in enemyUnits)
                 {
                     if (u != null && !u.isDead)
@@ -139,17 +177,20 @@ public class Controller : MonoBehaviour
                             u.displayActive = !u.displayActive;
                         }
                         u.tickDownStatus();
+                        u.showStatus();
                     }
                 }
                 if (enemyUnits.Count != 0)
                 {
+                    delaying = true;
                     allEnemiesMoved = false;
-                    timer = 60;
+                    timer = 120;
                     BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.ePhase;
+                    BattleMenuUI.bmui.phaseChange.color = new Color(1f, 1f, 1f, 1f);
+                    Controller.c.playSound(Controller.c.sfx[7]);
                     Debug.Log("Player Turn: Over. Enemy Phase Begins.");
                 }
             }
-
         }
         else
         {
@@ -170,7 +211,6 @@ public class Controller : MonoBehaviour
             }*/
             if (allEnemiesMoved)
             {
-                playerTurn = !playerTurn;
                 foreach (Unit u in playerUnits)
                 {
                     if (u != null && !u.isDead)
@@ -183,22 +223,28 @@ public class Controller : MonoBehaviour
                             if (u.hp < u.maxhp)
                             {
                                 u.hp++;
+                                u.showHealing(1);
                                 Debug.Log(u.name + " healed for 1 HP!");
                             }
                         }
                         u.tickDownStatus();
+                        u.showStatus();
                     }
                 }
                 if (enemyUnits.Count != 0)
                 {
-                    timer = 60;
+                    delaying = true;
+                    timer = 120;
                     BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.pPhase;
+                    BattleMenuUI.bmui.phaseChange.color = new Color(1f, 1f, 1f, 1f);
+                    Controller.c.playSound(Controller.c.sfx[6]);
                     Debug.Log("Enemy Turn: Over. Player Phase Begins.");
                 }
             }
         }
     }
     
+
 
     public void winMap()
     {
@@ -267,24 +313,28 @@ public class Controller : MonoBehaviour
     {
         if (!allEnemiesMoved)
         {
-            if (currentMovingEnemy < enemyUnits.Count)
+            if (dmgDelayTimer <= 0)
             {
-                Unit temp = enemyUnits[currentMovingEnemy];
-                if (!(temp.procPath) && !(temp.hasMoved))
+                if (currentMovingEnemy < enemyUnits.Count)
                 {
-                    temp.huntPlayers();
+                    Unit temp = enemyUnits[currentMovingEnemy];
+                    if (!(temp.procPath) && !(temp.hasMoved))
+                    {
+                        temp.huntPlayers();
+                    }
+                    else if (temp.hasMoved)
+                    {
+                        currentMovingEnemy++;
+                    }
                 }
-                else if (temp.hasMoved)
+                else
                 {
-                    currentMovingEnemy++;
+                    allEnemiesMoved = true;
+                    currentMovingEnemy = 0;
+                    checkTurn();
                 }
             }
-            else
-            {
-                allEnemiesMoved = true;
-                currentMovingEnemy = 0;
-                checkTurn();
-            }
+            dmgDelayTimer--;
         }
         else
         {
@@ -310,6 +360,8 @@ public class Controller : MonoBehaviour
                     if (gameMode == 0)
                     {
                         foreground.gameObject.SetActive(false);
+                        soundPlayers[0].clip = bgm[1];
+                        soundPlayers[0].Play();
                     }
                     break;
                 case 0:
@@ -332,8 +384,16 @@ public class Controller : MonoBehaviour
                             break;
                         case 2:
                             gachaUI.gameObject.SetActive(true);
+                            GachaUI.gaUI.currentModdedValue = 0;
+                            GachaUI.gaUI.matAVal = 0;
+                            GachaUI.gaUI.matBVal = 0;
+                            GachaUI.gaUI.matCVal = 0;
+                            GachaUI.gaUI.matDVal = 0;
+                            GachaUI.gaUI.gachaMachine.basicGunData = null;
+                            GachaUI.gaUI.itemOutput.text = "";
                             break;
                     }
+                    playSound(sfx[1]);
                     gameMode = currentHover + 1;
                     lastMenu = 0;
                     break;
@@ -345,12 +405,14 @@ public class Controller : MonoBehaviour
                     mapSelectUI.gameObject.SetActive(false);
                     loadoutUI.gameObject.SetActive(true);
                     LoadoutUI.lUI.currentLoadoutMenu = 0;
-                    LoadoutUI.lUI.loadoutLimitSetup();
+                    LoadoutUI.lUI.currentX = 0;
+                    LoadoutUI.lUI.currentY = 0;
                     missionSelected = true;
                     LoadoutUI.lUI.loadoutLimitSetup();
                     LoadoutUI.lUI.updateBaseLoadoutSpr();
                     lastMenu = 1;
                     gameMode = 2;
+                    playSound(sfx[1]);
                     break;
                 case 2:
                     //Loadout. If the last menu was 1 (goToBattle) and the loadout UI's on 0 AND it's on the button that only appears when you came from the battle select menu,
@@ -364,7 +426,14 @@ public class Controller : MonoBehaviour
                             battleObjs.gameObject.SetActive(true);
                             battleUI.gameObject.SetActive(true);
                             Controller.c.bg.changeBG(chosenMission + 1);
-                            playerTurn = true;
+                            playerTurn = false;
+                            timer = 120;
+                            delaying = true;
+                            BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.pPhase;
+                            BattleMenuUI.bmui.phaseChange.color = new Color(1f, 1f, 1f, 1f);
+                            playSound(sfx[3]);
+                            soundPlayers[0].clip = bgm[2];
+                            soundPlayers[0].Play();
                             gameMode = 4;
                         }
                     }
@@ -402,6 +471,8 @@ public class Controller : MonoBehaviour
                             }
                         }
                         bg.changeBG(0);
+                        soundPlayers[0].clip = bgm[1];
+                        soundPlayers[0].Play();
                     }
                     break;
             }
@@ -422,6 +493,7 @@ public class Controller : MonoBehaviour
                     mapSelectUI.gameObject.SetActive(false);
                     lastMenu = 0;
                     MainMenu.mm.highlighted = 0;
+                    playSound(sfx[2]);
                     gameMode = 0;
                     break;
                 case 2:
@@ -443,6 +515,7 @@ public class Controller : MonoBehaviour
                                 gameMode = 1;
                                 break;
                         }
+                        playSound(sfx[2]);
                         lastMenu = 0;
                     }
                     break;
@@ -456,6 +529,7 @@ public class Controller : MonoBehaviour
                         lastMenu = 0;
                         gameMode = 0;
                     }
+                    playSound(sfx[2]);
                     break;
                 case 4:
                     //In battle. Doesn't work.
@@ -648,6 +722,23 @@ public class Controller : MonoBehaviour
             //Default case.
             default:
                 return blankMod;
+        }
+    }
+
+    public void playSound(AudioClip ac)
+    {
+        bool foundOpen = false;
+        for (int i = 1; i < soundPlayers.Length; i++)
+        {
+            if (!foundOpen)
+            {
+                if (!(soundPlayers[i].isPlaying))
+                {
+                    soundPlayers[i].clip = ac;
+                    soundPlayers[i].Play();
+                    foundOpen = true;
+                }
+            }
         }
     }
 }

@@ -95,5 +95,9 @@ public class MainMenu : MonoBehaviour
                 gacha.sprite = gHighlight;
                 break;
         }
+        if (Controller.c.gameMode == 0)
+        {
+            Controller.c.playSound(Controller.c.sfx[0]);
+        }
     }
 }
