@@ -1680,6 +1680,11 @@ PrefabInstance:
       propertyPath: myAnim
       value: 
       objectReference: {fileID: 145546142}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: hitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8734293e05c042d49815d16191fc0cd1, type: 3}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3866,6 +3871,11 @@ PrefabInstance:
       propertyPath: negStatus.Array.data[4]
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: hitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8734293e05c042d49815d16191fc0cd1, type: 3}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7278,6 +7288,11 @@ PrefabInstance:
       propertyPath: myAnim
       value: 
       objectReference: {fileID: 888428118}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: hitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8734293e05c042d49815d16191fc0cd1, type: 3}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -9731,6 +9746,11 @@ PrefabInstance:
       propertyPath: myAnim
       value: 
       objectReference: {fileID: 1009342520}
+    - target: {fileID: 476610909338839027, guid: f075290d62ed2574c87de12342cca70b,
+        type: 3}
+      propertyPath: hitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8734293e05c042d49815d16191fc0cd1, type: 3}
     - target: {fileID: 5357607185979830121, guid: f075290d62ed2574c87de12342cca70b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10837,6 +10857,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3c93a3f8453473d4981fadf30974e684, type: 3}
   - {fileID: 8300000, guid: c47f4db31760d194a9a7e146cee843e3, type: 3}
   - {fileID: 8300000, guid: c583ebbe69693274a8aac99614dfab59, type: 3}
+  - {fileID: 8300000, guid: eb2450973cb2e1b4383c924aed4e2b3f, type: 3}
+  - {fileID: 8300000, guid: 692bd4c22d7c23c419a084547da83c50, type: 3}
+  - {fileID: 8300000, guid: 6abf9e7b7dd3f684792ca357e31e32c2, type: 3}
+  - {fileID: 8300000, guid: 05a492d46294d8248ad41e2d5801cd88, type: 3}
+  - {fileID: 8300000, guid: 6abf9e7b7dd3f684792ca357e31e32c2, type: 3}
+  - {fileID: 8300000, guid: f8d337b871897f543b4083274dacc0c3, type: 3}
 --- !u!4 &1229358403
 Transform:
   m_ObjectHideFlags: 0
@@ -16110,7 +16136,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: cb8ba441d27056249984981146739fa2, type: 3}
   - {fileID: 8300000, guid: c5c396309f84ded439e8197a5361e996, type: 3}
   - {fileID: 8300000, guid: 492aad86d7713be4781d3bfa564ebac9, type: 3}
-  potionSound: {fileID: 0}
+  potionSound: {fileID: 8300000, guid: 67b700a3af5b7ee4c91dba63274815b4, type: 3}
 --- !u!4 &1802141468
 Transform:
   m_ObjectHideFlags: 0

@@ -1096,7 +1096,7 @@ public class Gacha : MonoBehaviour
             string output = "Item creation failed.\nInsufficient resources.";
             lastGeneratedGun = null;
             basicGunData = output;
-            //TODO: Play failure sound
+            Controller.c.playSound(Controller.c.sfx[10]);
         }
     }
 }

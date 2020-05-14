@@ -68,6 +68,7 @@ public class Item : MonoBehaviour
             {
                 //Well, you goofed. Return false.
                 Debug.Log("HP full! No point in using this.");
+                Controller.c.playSound(Controller.c.sfx[10]);
                 return false;
             }
         }

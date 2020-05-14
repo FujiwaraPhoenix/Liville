@@ -238,6 +238,10 @@ public class Controller : MonoBehaviour
                     BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.pPhase;
                     BattleMenuUI.bmui.phaseChange.color = new Color(1f, 1f, 1f, 1f);
                     Controller.c.playSound(Controller.c.sfx[6]);
+                    BattleMenuUI.bmui.currentEnemy = null;
+                    BattleMenuUI.bmui.foundEnemy = false;
+                    BattleMenuUI.bmui.updateEnemyDisplay();
+
                     Debug.Log("Enemy Turn: Over. Player Phase Begins.");
                 }
             }
@@ -280,6 +284,9 @@ public class Controller : MonoBehaviour
             materialBGain = 0;
             materialCGain = 0;
             materialDGain = 0;
+            soundPlayers[0].clip = sfx[8];
+            soundPlayers[0].loop = false;
+            soundPlayers[0].Play();
             saidWL = true;
         }
     }
@@ -299,6 +306,9 @@ public class Controller : MonoBehaviour
             BattleMenuUI.bmui.winLoss.sprite = BattleMenuUI.bmui.defeat;
             BattleMenuUI.bmui.winLoss.gameObject.SetActive(true);
             //Debug.Log("Defeat!");
+            soundPlayers[0].clip = sfx[9];
+            soundPlayers[0].loop = false;
+            soundPlayers[0].Play();
             saidWL = true;
         }
     }
@@ -471,6 +481,7 @@ public class Controller : MonoBehaviour
                             }
                         }
                         bg.changeBG(0);
+                        soundPlayers[0].loop = true;
                         soundPlayers[0].clip = bgm[1];
                         soundPlayers[0].Play();
                     }

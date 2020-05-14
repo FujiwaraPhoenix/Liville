@@ -438,7 +438,7 @@ public class MapPointer : MonoBehaviour
                     }
                     else
                     {
-                        //TODO: Add 'failure' sound
+                        Controller.c.playSound(Controller.c.sfx[10]);
                     }
                     break;
                 case 1:
@@ -465,13 +465,14 @@ public class MapPointer : MonoBehaviour
                         BattleMenuUI.bmui.updatePlayerValues(BattleMenuUI.bmui.currentPlayer);
                         targetUnit = null;
                         menuActive = false;
+                        Controller.c.playSound(Controller.c.sfx[11]);
                         currentMenuChoice = 0;
                         Controller.c.checkTurn();
                     }
                     else
                     {
                         Debug.Log("Ammo full; no reloading needed!");
-                        //TODO: Add 'failure' sound
+                        Controller.c.playSound(Controller.c.sfx[10]);
                     }
                     break;
                 case 2:
@@ -494,7 +495,7 @@ public class MapPointer : MonoBehaviour
                     else
                     {
                         Debug.Log("Inventory empty!");
-                        //TODO: Add 'failure' sound.
+                        Controller.c.playSound(Controller.c.sfx[10]);
                     }
                     break;
                 case 3:

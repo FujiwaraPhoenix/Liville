@@ -42,6 +42,8 @@ public class Unit : MonoBehaviour
 
     public Animator myAnim;
 
+    public AudioClip hitSound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -619,6 +621,10 @@ public class Unit : MonoBehaviour
                 target.showDamage(dmgTaken);
                 target.hp -= dmgTaken;
                 Debug.Log(target.unitName + " took " + dmgTaken + " damage!");
+                if (dmgTaken > 0)
+                {
+                    Controller.c.playSound(target.hitSound);
+                }
             }
             else
             {
@@ -645,6 +651,10 @@ public class Unit : MonoBehaviour
                 }
                 target.showDamage(finalDmg);
                 target.hp -= finalDmg;
+                if (finalDmg > 0)
+                {
+                    Controller.c.playSound(target.hitSound);
+                }
                 Debug.Log(target.unitName + " took " + finalDmg + " damage!");
             }
             //Elec proc.
@@ -870,6 +880,7 @@ public class Unit : MonoBehaviour
                             {
                                 attack();
                             }
+                            Controller.c.playSound(Controller.c.sfx[13]);
                             hasMoved = true;
                             procPath = false;
                             savedPath = null;

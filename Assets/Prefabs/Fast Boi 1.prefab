@@ -256,6 +256,7 @@ MonoBehaviour:
   currentStatusTimer: 0
   displayActive: 0
   myAnim: {fileID: 93126900555451662}
+  hitSound: {fileID: 8300000, guid: 05f6e1f39b0dff3488727918f768e591, type: 3}
 --- !u!95 &93126900555451662
 Animator:
   serializedVersion: 3
