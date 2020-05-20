@@ -795,7 +795,7 @@ public class Unit : MonoBehaviour
                                 int xToTarget = Mathf.Abs(i - target.position[0]);
                                 int yToTarget = Mathf.Abs(j - target.position[1]);
                                 int distToTarget = xToTarget + yToTarget;
-                                if (distToTarget <= currEquip.range && Controller.c.unitMap[i, j] == 0)
+                                if (distToTarget <= currEquip.range)
                                 {
                                     chosenPath = pathMap[i, j];
                                 }
@@ -806,7 +806,7 @@ public class Unit : MonoBehaviour
                                 int xToTarget = Mathf.Abs(i - target.position[0]);
                                 int yToTarget = Mathf.Abs(j - target.position[1]);
                                 int distToTarget = xToTarget + yToTarget;
-                                if (distToTarget <= currEquip.range && pathMap[i, j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count && Controller.c.unitMap[i, j] == 0)
+                                if (distToTarget <= currEquip.range && pathMap[i, j].hazardCount < chosenPath.hazardCount && chosenPath.path.Count > savedPath.Count)
                                 {
                                     chosenPath = pathMap[i, j];
                                 }
@@ -814,6 +814,16 @@ public class Unit : MonoBehaviour
                         }
                     }
                 }
+            }
+            else
+            {
+                if (!target.isDead && !target.isDying)
+                {
+                    attack();
+                }
+                hasMoved = true;
+                procPath = false;
+                savedPath = null;
             }
             //Kick off processPath
             if (chosenPath != null)
@@ -853,7 +863,6 @@ public class Unit : MonoBehaviour
         //Reminder:
         //0 = up, 1 = right, 2 = down, 3 = left
         //Test for enemies
-        //Current problem: the function recurses. 
         if (unitAllegiance == 2)
         {
             if (savedPath.Count > nextIndex)
@@ -864,96 +873,23 @@ public class Unit : MonoBehaviour
                 {
                     case 0:
                         //Move up one
-                        if (Controller.c.unitMap[position[0], position[1] + 1] == 0)
-                        {
                             position[1]++;
                             transform.position += new Vector3(0, 1, 0);
-                        }
-                        else
-                        {
-                            //End the chase.
-                            Controller.c.unitMap[position[0], position[1]] = 2;
-                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
-                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
-                            int distToTarget = xToTarget + yToTarget;
-                            if (distToTarget <= currEquip.range && !target.isDead)
-                            {
-                                attack();
-                            }
-                            Controller.c.playSound(Controller.c.sfx[13]);
-                            hasMoved = true;
-                            procPath = false;
-                            savedPath = null;
-                        }
                         break;
                     case 1:
                         //Move right one
-                        if (Controller.c.unitMap[position[0] + 1, position[1]] == 0)
-                        {
                             position[0]++;
                             transform.position += new Vector3(1, 0, 0);
-                        }
-                        else
-                        {
-                            //End the chase.
-                            Controller.c.unitMap[position[0], position[1]] = 2;
-                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
-                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
-                            int distToTarget = xToTarget + yToTarget;
-                            if (distToTarget <= currEquip.range && !target.isDead)
-                            {
-                                attack();
-                            }
-                            hasMoved = true;
-                            procPath = false;
-                            savedPath = null;
-                        }
                         break;
                     case 2:
                         //Move down one
-                        if (Controller.c.unitMap[position[0], position[1] - 1] == 0)
-                        {
                             position[1]--;
                             transform.position -= new Vector3(0, 1, 0);
-                        }
-                        else
-                        {
-                            //End the chase.
-                            Controller.c.unitMap[position[0], position[1]] = 2;
-                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
-                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
-                            int distToTarget = xToTarget + yToTarget;
-                            if (distToTarget <= currEquip.range && !target.isDead)
-                            {
-                                attack();
-                            }
-                            hasMoved = true;
-                            procPath = false;
-                            savedPath = null;
-                        }
                         break;
                     case 3:
                         //Move left one
-                        if (Controller.c.unitMap[position[0] - 1, position[1]] == 0)
-                        {
                             position[0]--;
                             transform.position -= new Vector3(1, 0, 0);
-                        }
-                        else
-                        {
-                            //End the chase.
-                            Controller.c.unitMap[position[0], position[1]] = 2;
-                            int xToTarget = Mathf.Abs(position[0] - target.position[0]);
-                            int yToTarget = Mathf.Abs(position[1] - target.position[1]);
-                            int distToTarget = xToTarget + yToTarget;
-                            if (distToTarget <= currEquip.range && !target.isDead)
-                            {
-                                attack();
-                            }
-                            hasMoved = true;
-                            procPath = false;
-                            savedPath = null;
-                        }
                         break;
                 }
                 timer = 15;
@@ -1118,7 +1054,7 @@ public class Unit : MonoBehaviour
         {
             for (int j = 0; j < Controller.c.currMap.yBound; j++)
             {
-                if (pathMap[i, j].set)
+                if (pathMap[i, j].set && Controller.c.unitMap[i,j] == 0)
                 {
                     if (chosenPath == null)
                     {
@@ -1167,26 +1103,38 @@ public class Unit : MonoBehaviour
         }
         if (chosenPath != null)
         {
+            Debug.Log(backupPath.toString());
             //Now that we have a path, let's cull it a bit.
             //They're out of range, so let's shave the list down a bit.
             if (negStatus[2] > 0)
             {
-                savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt - 1);
+                List<int> tempList = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt - 1);
+                savedPath = cullList(tempList);
             }
             else
             {
-                savedPath = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt);
+                List<int> tempList = chosenPath.path.GetRange(0, mvt + currEquip.tempMvt);
+                savedPath = cullList(tempList);
             }
         }
         else
         {
             if (negStatus[2] > 0)
             {
-                savedPath = backupPath.path.GetRange(0, mvt + currEquip.tempMvt - 1);
+                List<int> tempList = backupPath.path.GetRange(0, mvt + currEquip.tempMvt - 1);
+                savedPath = cullList(tempList);
             }
             else
             {
-                savedPath = backupPath.path.GetRange(0, mvt + currEquip.tempMvt);
+                if (backupPathDist > mvt + currEquip.tempMvt)
+                {
+                    List<int> tempList = backupPath.path.GetRange(0, mvt + currEquip.tempMvt);
+                    savedPath = cullList(tempList);
+                }
+                else
+                {
+                    savedPath = backupPath.path;
+                }
             }
         }
     }
@@ -1303,5 +1251,42 @@ public class Unit : MonoBehaviour
             spr.color = colorCycle[0];
             myAnim.runtimeAnimatorController = temp;
         }*/
+    }
+
+    public List<int> cullList(List<int> l)
+    {
+        List<int> output = new List<int>();
+        int currX = position[0];
+        int currY = position[1];
+        int finalGoodIndex = 0;
+        for (int i = 0; i < l.Count; i++)
+        {
+            switch (l[i])
+            {
+                case 0:
+                    currY++;
+                    break;
+                case 1:
+                    currX++;
+                    break;
+                case 2:
+                    currY--;
+                    break;
+                case 3:
+                    currX--;
+                    break;
+            }
+            Debug.Log(Controller.c.unitMap[currX, currY]);
+            if (Controller.c.unitMap[currX, currY] == 0)
+            {
+                finalGoodIndex = i;
+            }
+        }
+        output = l.GetRange(0, finalGoodIndex + 1);
+        for (int i = 0; i < output.Count; i++)
+        {
+            Debug.Log(output[i]);
+        }
+        return output;
     }
 }
