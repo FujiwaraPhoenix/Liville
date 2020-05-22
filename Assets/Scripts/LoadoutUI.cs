@@ -359,7 +359,7 @@ public class LoadoutUI : MonoBehaviour
                     iUI.updatePlayerInvText(currentPlayer);
                     iUI.updateText();
                     iUI.invBG.sprite = iUI.invHL;
-                    Controller.c.playSound(Controller.c.sfx[1]);
+                    Controller.c.playSound(Controller.c.sfx[1], .25f);
                     currentValue = 0;
                     break;
                 case 2:
@@ -388,14 +388,14 @@ public class LoadoutUI : MonoBehaviour
                         hovered.updateBorder(InvManager.im.armory[0]);
                     }
                     loadNextPage();
-                    Controller.c.playSound(Controller.c.sfx[1]);
+                    Controller.c.playSound(Controller.c.sfx[1], .25f);
                     break;
             }
         }
         if (hasChanged)
         {
             updateBaseLoadoutSpr();
-            Controller.c.playSound(Controller.c.sfx[0]);
+            Controller.c.playSound(Controller.c.sfx[0], .25f);
         }
     }
 
@@ -539,7 +539,7 @@ public class LoadoutUI : MonoBehaviour
             hovered.updateStats(InvManager.im.armory[currentGunIndex]);
             hovered.updateMods(InvManager.im.armory[currentGunIndex]);
             hovered.updateBorder(InvManager.im.armory[currentGunIndex]);
-            Controller.c.playSound(Controller.c.sfx[0]);
+            Controller.c.playSound(Controller.c.sfx[0], .25f);
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
@@ -555,7 +555,7 @@ public class LoadoutUI : MonoBehaviour
             currentX = currentPlayer;
             currentY = 2;
             updateBaseLoadoutSpr();
-            Controller.c.playSound(Controller.c.sfx[2]);
+            Controller.c.playSound(Controller.c.sfx[2], .25f);
         }
         checkBorders();
     }
@@ -577,7 +577,7 @@ public class LoadoutUI : MonoBehaviour
                 iUI.invBG.sprite = iUI.invBase;
                 iUI.convoyBG.sprite = iUI.convoyHL;
             }
-            Controller.c.playSound(Controller.c.sfx[0]);
+            Controller.c.playSound(Controller.c.sfx[0], .25f);
         }
         if (Input.GetKeyDown(KeyCode.UpArrow) && invSelected)
         {
@@ -660,7 +660,7 @@ public class LoadoutUI : MonoBehaviour
                     iUI.updateData(InvManager.im.convoy[currentValue]);
                 }
             }
-            Controller.c.playSound(Controller.c.sfx[0]);
+            Controller.c.playSound(Controller.c.sfx[0], .25f);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow) && invSelected)
         {
@@ -739,7 +739,7 @@ public class LoadoutUI : MonoBehaviour
                 }
                 iUI.updateData(InvManager.im.convoy[currentValue]);
             }
-            Controller.c.playSound(Controller.c.sfx[0]);
+            Controller.c.playSound(Controller.c.sfx[0], .25f);
         }
 
         if (Input.GetKeyDown(KeyCode.Z))
@@ -853,7 +853,7 @@ public class LoadoutUI : MonoBehaviour
                     invSelected = !invSelected;
                 }
             }
-            Controller.c.playSound(Controller.c.sfx[1]);
+            Controller.c.playSound(Controller.c.sfx[1], .25f);
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
@@ -881,7 +881,7 @@ public class LoadoutUI : MonoBehaviour
                 currentX = currentPlayer;
                 currentY = 1;
             }
-            Controller.c.playSound(Controller.c.sfx[2]);
+            Controller.c.playSound(Controller.c.sfx[2], .25f);
         }
     }
 
@@ -900,7 +900,7 @@ public class LoadoutUI : MonoBehaviour
         equipped.updateBorder(Controller.c.playerRoster[currentPlayer].currEquip);
         int currentGunIndex = 15 * (gunPage - 1) + currentX + 3 * (currentY);
         hovered.updateBorder(InvManager.im.armory[currentGunIndex]);
-        Controller.c.playSound(Controller.c.sfx[1]);
+        Controller.c.playSound(Controller.c.sfx[1], .25f);
     }
 
     public void checkBorders()
@@ -977,7 +977,7 @@ public class LoadoutUI : MonoBehaviour
     {
         activePlayers[charID] = !activePlayers[charID];
         pData[charID].isActive = !pData[charID].isActive;
-        Controller.c.playSound(Controller.c.sfx[1]);
+        Controller.c.playSound(Controller.c.sfx[1], .25f);
         pData[charID].updateValues();
     }
 

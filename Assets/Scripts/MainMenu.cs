@@ -97,7 +97,7 @@ public class MainMenu : MonoBehaviour
         }
         if (Controller.c.gameMode == 0)
         {
-            Controller.c.playSound(Controller.c.sfx[0]);
+            Controller.c.playSound(Controller.c.sfx[0], .25f);
         }
     }
 }

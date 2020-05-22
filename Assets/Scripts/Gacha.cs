@@ -64,7 +64,7 @@ public class Gacha : MonoBehaviour
         {
             activePools[1] = false;
         }
-        else if (matA >= 35 && matB >= 20 && matC >= 15 && matD >= 30)
+        else if (matA >= 30 && matB >= 20 && matC >= 10 && matD >= 30)
         {
             activePools[1] = true;
             if (matA >= 75 && matB >= 42 && matC >= 25 && matD >= 60)
@@ -1096,7 +1096,7 @@ public class Gacha : MonoBehaviour
             string output = "Item creation failed.\nInsufficient resources.";
             lastGeneratedGun = null;
             basicGunData = output;
-            Controller.c.playSound(Controller.c.sfx[10]);
+            Controller.c.playSound(Controller.c.sfx[10], .25f);
         }
     }
 }

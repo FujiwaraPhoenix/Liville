@@ -50,7 +50,7 @@ public class MapSelect : MonoBehaviour
                 {
                     currentChoice--;
                 }
-                Controller.c.playSound(Controller.c.sfx[0]);
+                Controller.c.playSound(Controller.c.sfx[0], .25f);
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow)) {
                 availableMissions[currentChoice].infoBG.sprite = def;
@@ -62,7 +62,7 @@ public class MapSelect : MonoBehaviour
                 {
                     currentChoice++;
                 }
-                Controller.c.playSound(Controller.c.sfx[0]);
+                Controller.c.playSound(Controller.c.sfx[0], .25f);
             }
             updateDetails();
         }

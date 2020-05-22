@@ -97,7 +97,7 @@ public class Controller : MonoBehaviour
         {
             soundPlayers[i] = Instantiate(template, bg.transform.position, Quaternion.identity);
             soundPlayers[i].transform.parent = transform;
-            soundPlayers[i].volume = .5f;
+            soundPlayers[i].volume = .25f;
         }
         soundPlayers[0].clip = bgm[0];
         soundPlayers[0].loop = true;
@@ -187,7 +187,7 @@ public class Controller : MonoBehaviour
                     timer = 120;
                     BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.ePhase;
                     BattleMenuUI.bmui.phaseChange.color = new Color(1f, 1f, 1f, 1f);
-                    Controller.c.playSound(Controller.c.sfx[7]);
+                    Controller.c.playSound(Controller.c.sfx[7], .25f);
                     Debug.Log("Player Turn: Over. Enemy Phase Begins.");
                 }
             }
@@ -217,6 +217,7 @@ public class Controller : MonoBehaviour
                     {
                         u.hasMoved = false;
                         u.stunned = false;
+                        u.inPosition = false;
                         //Regeneration procs at the start of turn.
                         if (u.checkMod(2, 4))
                         {
@@ -237,7 +238,7 @@ public class Controller : MonoBehaviour
                     timer = 120;
                     BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.pPhase;
                     BattleMenuUI.bmui.phaseChange.color = new Color(1f, 1f, 1f, 1f);
-                    Controller.c.playSound(Controller.c.sfx[6]);
+                    Controller.c.playSound(Controller.c.sfx[6], .25f);
                     BattleMenuUI.bmui.currentEnemy = null;
                     BattleMenuUI.bmui.foundEnemy = false;
                     BattleMenuUI.bmui.updateEnemyDisplay();
@@ -403,7 +404,7 @@ public class Controller : MonoBehaviour
                             GachaUI.gaUI.itemOutput.text = "";
                             break;
                     }
-                    playSound(sfx[1]);
+                    playSound(sfx[1], .25f);
                     gameMode = currentHover + 1;
                     lastMenu = 0;
                     break;
@@ -422,7 +423,7 @@ public class Controller : MonoBehaviour
                     LoadoutUI.lUI.updateBaseLoadoutSpr();
                     lastMenu = 1;
                     gameMode = 2;
-                    playSound(sfx[1]);
+                    playSound(sfx[1], .25f);
                     break;
                 case 2:
                     //Loadout. If the last menu was 1 (goToBattle) and the loadout UI's on 0 AND it's on the button that only appears when you came from the battle select menu,
@@ -441,7 +442,7 @@ public class Controller : MonoBehaviour
                             delaying = true;
                             BattleMenuUI.bmui.phaseChange.sprite = BattleMenuUI.bmui.pPhase;
                             BattleMenuUI.bmui.phaseChange.color = new Color(1f, 1f, 1f, 1f);
-                            playSound(sfx[3]);
+                            playSound(sfx[3], .25f);
                             soundPlayers[0].clip = bgm[2];
                             soundPlayers[0].Play();
                             gameMode = 4;
@@ -504,7 +505,7 @@ public class Controller : MonoBehaviour
                     mapSelectUI.gameObject.SetActive(false);
                     lastMenu = 0;
                     MainMenu.mm.highlighted = 0;
-                    playSound(sfx[2]);
+                    playSound(sfx[2], .25f);
                     gameMode = 0;
                     break;
                 case 2:
@@ -526,7 +527,7 @@ public class Controller : MonoBehaviour
                                 gameMode = 1;
                                 break;
                         }
-                        playSound(sfx[2]);
+                        playSound(sfx[2], .25f);
                         lastMenu = 0;
                     }
                     break;
@@ -540,7 +541,7 @@ public class Controller : MonoBehaviour
                         lastMenu = 0;
                         gameMode = 0;
                     }
-                    playSound(sfx[2]);
+                    playSound(sfx[2], .25f);
                     break;
                 case 4:
                     //In battle. Doesn't work.
@@ -736,7 +737,7 @@ public class Controller : MonoBehaviour
         }
     }
 
-    public void playSound(AudioClip ac)
+    public void playSound(AudioClip ac, float vol)
     {
         bool foundOpen = false;
         for (int i = 1; i < soundPlayers.Length; i++)
@@ -745,6 +746,7 @@ public class Controller : MonoBehaviour
             {
                 if (!(soundPlayers[i].isPlaying))
                 {
+                    soundPlayers[i].volume = vol;
                     soundPlayers[i].clip = ac;
                     soundPlayers[i].Play();
                     foundOpen = true;

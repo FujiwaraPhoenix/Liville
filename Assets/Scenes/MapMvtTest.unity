@@ -1026,7 +1026,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 20dc6f3e13ba93541b0a4b308ae8000e, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -8178,10 +8178,12 @@ MonoBehaviour:
   goTime: {fileID: 1894780014}
   helpMe: {fileID: 1672255140}
   modInfo: {fileID: 21300000, guid: 7fa3d30d74798ef4a985c0625acecd5e, type: 3}
+  gunGenInfo: {fileID: 21300000, guid: a7b6f0675a5107d41a44fedb5f9fa086, type: 3}
   buttonSelects:
   - {fileID: 21300000, guid: 407a7ac727d5c9d49bf327ad1bf066f9, type: 3}
   - {fileID: 21300000, guid: 55f1f2c03263038498ec84b7a416e598, type: 3}
   gachaMachine: {fileID: 1802141467}
+  showingMods: 0
   inputIndicSprites:
   - {fileID: 21300000, guid: 8316d7f5dcdfb2245bb1788d717735a4, type: 3}
   - {fileID: 21300000, guid: 4a82cf9ecd4945d4b9ce29e3f10f4dba, type: 3}
@@ -10106,7 +10108,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 20dc6f3e13ba93541b0a4b308ae8000e, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -10863,6 +10865,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 05a492d46294d8248ad41e2d5801cd88, type: 3}
   - {fileID: 8300000, guid: 6abf9e7b7dd3f684792ca357e31e32c2, type: 3}
   - {fileID: 8300000, guid: f8d337b871897f543b4083274dacc0c3, type: 3}
+  - {fileID: 8300000, guid: 92838936eeeec334e97c62262382299d, type: 3}
+  - {fileID: 8300000, guid: be3ae67aeafcb0244b8740e21ed555f9, type: 3}
 --- !u!4 &1229358403
 Transform:
   m_ObjectHideFlags: 0
@@ -16853,7 +16857,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 20dc6f3e13ba93541b0a4b308ae8000e, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -16930,7 +16934,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 20dc6f3e13ba93541b0a4b308ae8000e, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0

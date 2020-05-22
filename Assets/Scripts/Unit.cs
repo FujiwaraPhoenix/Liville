@@ -44,6 +44,8 @@ public class Unit : MonoBehaviour
 
     public AudioClip hitSound;
 
+    //I'm being inefficient as hell right now, but whatever.
+    public bool inPosition;
     // Start is called before the first frame update
     void Start()
     {
@@ -63,6 +65,20 @@ public class Unit : MonoBehaviour
             if (procPath && savedPath != null && Controller.c.currentMovingEnemy < Controller.c.enemyUnits.Count)
             {
                 if (Controller.c.enemyUnits[Controller.c.currentMovingEnemy] == this)
+                {
+                    if (timer <= 0)
+                    {
+                        processPath();
+                    }
+                    else
+                    {
+                        timer--;
+                    }
+                }
+            }
+            if (unitAllegiance == 1 && !inPosition)
+            {
+                if (procPath)
                 {
                     if (timer <= 0)
                     {
@@ -420,7 +436,7 @@ public class Unit : MonoBehaviour
                     }
                 }
             }
-            Controller.c.playSound(Controller.c.sfx[5]);
+            Controller.c.playSound(Controller.c.sfx[5], .25f);
             Controller.c.enemyUnits.Remove(this);
         }
         if (dyingFade <= 0)
@@ -623,7 +639,7 @@ public class Unit : MonoBehaviour
                 Debug.Log(target.unitName + " took " + dmgTaken + " damage!");
                 if (dmgTaken > 0)
                 {
-                    Controller.c.playSound(target.hitSound);
+                    Controller.c.playSound(target.hitSound, .25f);
                 }
             }
             else
@@ -653,7 +669,7 @@ public class Unit : MonoBehaviour
                 target.hp -= finalDmg;
                 if (finalDmg > 0)
                 {
-                    Controller.c.playSound(target.hitSound);
+                    Controller.c.playSound(target.hitSound, .25f);
                 }
                 Debug.Log(target.unitName + " took " + finalDmg + " damage!");
             }
@@ -686,7 +702,7 @@ public class Unit : MonoBehaviour
             {
                 if (Random.Range(0, 100) < 20 || negStatus[0] > 0)
                 {
-                    negStatus[0] = 3;
+                    target.negStatus[0] = 3;
                     Debug.Log("Electric activated!");
                 }
             }
@@ -694,7 +710,7 @@ public class Unit : MonoBehaviour
             {
                 if (Random.Range(0, 100) < 20 || negStatus[1] > 0)
                 {
-                    negStatus[1] = 3;
+                    target.negStatus[1] = 3;
                     Debug.Log("Fire activated!");
                 }
             }
@@ -702,7 +718,7 @@ public class Unit : MonoBehaviour
             {
                 if (Random.Range(0, 100) < 20)
                 {
-                    negStatus[2] = 3;
+                    target.negStatus[2] = 3;
                     Debug.Log("Ice activated!");
                 }
             }
@@ -710,7 +726,7 @@ public class Unit : MonoBehaviour
             {
                 if (Random.Range(0, 100) < 20)
                 {
-                    negStatus[3] = 3;
+                    target.negStatus[3] = 3;
                     Debug.Log("Mark activated!");
                 }
             }
@@ -718,7 +734,7 @@ public class Unit : MonoBehaviour
             {
                 if (Random.Range(0, 100) < 20)
                 {
-                    negStatus[4] = 3;
+                    target.negStatus[4] = 3;
                     Debug.Log("Poison activated!");
                 }
             }
@@ -750,7 +766,7 @@ public class Unit : MonoBehaviour
         Controller.c.mp.currX = target.position[0];
         Controller.c.mp.currY = target.position[1];
         Controller.c.mp.transform.position = new Vector3(Controller.c.mp.currX, Controller.c.mp.currY + .5f, -3);
-        Controller.c.playSound(currEquip.useSound);
+        Controller.c.playSound(currEquip.useSound, .25f);
         target.showStatus();
         target.die();
     }
@@ -817,7 +833,7 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                if (!target.isDead && !target.isDying)
+                if (!target.isDead && !target.isDying && !hasMoved)
                 {
                     attack();
                 }
@@ -835,7 +851,7 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                if (!target.isDead && !target.isDying)
+                if (!target.isDead && !target.isDying && !hasMoved)
                 {
                     attack();
                 }
@@ -863,39 +879,51 @@ public class Unit : MonoBehaviour
         //Reminder:
         //0 = up, 1 = right, 2 = down, 3 = left
         //Test for enemies
-        if (unitAllegiance == 2)
+        if (savedPath.Count > nextIndex)
         {
-            if (savedPath.Count > nextIndex)
+            int randFootstep = Random.Range(13, 16);
+            Controller.c.playSound(Controller.c.sfx[randFootstep], .15f);
+            Controller.c.unitMap[position[0], position[1]] = 0;
+            //TODO: Process tiles individually for effects.
+            switch (savedPath[nextIndex])
             {
-                Controller.c.unitMap[position[0], position[1]] = 0;
-                //TODO: Process tiles individually for effects.
-                switch (savedPath[nextIndex])
-                {
-                    case 0:
-                        //Move up one
-                            position[1]++;
-                            transform.position += new Vector3(0, 1, 0);
-                        break;
-                    case 1:
-                        //Move right one
-                            position[0]++;
-                            transform.position += new Vector3(1, 0, 0);
-                        break;
-                    case 2:
-                        //Move down one
-                            position[1]--;
-                            transform.position -= new Vector3(0, 1, 0);
-                        break;
-                    case 3:
-                        //Move left one
-                            position[0]--;
-                            transform.position -= new Vector3(1, 0, 0);
-                        break;
-                }
-                timer = 15;
-                nextIndex++;
+                case 0:
+                    //Move up one
+                    position[1]++;
+                    transform.position += new Vector3(0, 1, 0);
+                    break;
+                case 1:
+                    //Move right one
+                    position[0]++;
+                    transform.position += new Vector3(1, 0, 0);
+                    break;
+                case 2:
+                    //Move down one
+                    position[1]--;
+                    transform.position -= new Vector3(0, 1, 0);
+                    break;
+                case 3:
+                    //Move left one
+                    position[0]--;
+                    transform.position -= new Vector3(1, 0, 0);
+                    break;
             }
-            else
+            timer = 15;
+            nextIndex++;
+        }
+        else
+        {
+            if (unitAllegiance == 1)
+            {
+                //Count == 0
+                //In other words, we've reached our destination.
+                Controller.c.unitMap[position[0], position[1]] = 1;
+                inPosition = true;
+                procPath = false;
+                savedPath = null;
+
+            }
+            if (unitAllegiance == 2)
             {
                 //Count == 0
                 //In other words, we've reached our destination. Time to shoot.
@@ -903,7 +931,7 @@ public class Unit : MonoBehaviour
                 int xToTarget = Mathf.Abs(position[0] - target.position[0]);
                 int yToTarget = Mathf.Abs(position[1] - target.position[1]);
                 int distToTarget = xToTarget + yToTarget;
-                if (distToTarget <= currEquip.range && !target.isDead)
+                if (distToTarget <= currEquip.range && !target.isDead && !hasMoved)
                 {
                     attack();
                 }
@@ -980,17 +1008,18 @@ public class Unit : MonoBehaviour
 
     public void showDamage(int dmgTaken)
     {
-        if (dmgTaken < 10)
+        int dmgShown = dmgTaken;
+        if (dmgShown < 10)
         {
-            if (dmgTaken < 1)
+            if (dmgShown < 1)
             {
-                dmgTaken = 0;
+                dmgShown = 0;
             }
             //Single digit only.
             holder2.gameObject.transform.localPosition = Vector3.zero;
             holder2.gameObject.SetActive(true);
             modifierB.sprite = Controller.c.damageNumbers[10];
-            ones.sprite = Controller.c.damageNumbers[dmgTaken];
+            ones.sprite = Controller.c.damageNumbers[dmgShown];
         }
         else
         {
@@ -1003,12 +1032,15 @@ public class Unit : MonoBehaviour
             tenOnes.sprite = Controller.c.damageNumbers[onesValue];
             tens.sprite = Controller.c.damageNumbers[tensValue];
         }
+        missed.gameObject.SetActive(false);
         showDamageTimer = 45;
         Controller.c.dmgDelayTimer = 45;
     }
 
     public void showMiss()
     {
+        holder2.gameObject.SetActive(false);
+        holder.gameObject.SetActive(false);
         missed.gameObject.transform.localPosition = new Vector3(0, .48f, -1f);
         missed.gameObject.SetActive(true);
         showDamageTimer = 45;
@@ -1082,7 +1114,7 @@ public class Unit : MonoBehaviour
                                 if (Vector2.Distance(tempA, tempB) < backupPathDist)
                                 {
                                     backupPath = pathMap[i, j];
-                                    backupPathDist = Vector2.Distance(tempA, tempB);
+                                    backupPathDist = distToTarget;
                                 }
                             }
                         }
@@ -1103,7 +1135,6 @@ public class Unit : MonoBehaviour
         }
         if (chosenPath != null)
         {
-            Debug.Log(backupPath.toString());
             //Now that we have a path, let's cull it a bit.
             //They're out of range, so let's shave the list down a bit.
             if (negStatus[2] > 0)
@@ -1119,6 +1150,7 @@ public class Unit : MonoBehaviour
         }
         else
         {
+            Debug.Log(backupPath.toString());
             if (negStatus[2] > 0)
             {
                 List<int> tempList = backupPath.path.GetRange(0, mvt + currEquip.tempMvt - 1);
@@ -1133,7 +1165,7 @@ public class Unit : MonoBehaviour
                 }
                 else
                 {
-                    savedPath = backupPath.path;
+                    savedPath = cullList(backupPath.path);
                 }
             }
         }
@@ -1276,17 +1308,12 @@ public class Unit : MonoBehaviour
                     currX--;
                     break;
             }
-            Debug.Log(Controller.c.unitMap[currX, currY]);
-            if (Controller.c.unitMap[currX, currY] == 0)
+            if (Controller.c.unitMap[currX, currY] == 0 && i < mvt + currEquip.tempMvt)
             {
                 finalGoodIndex = i;
             }
         }
         output = l.GetRange(0, finalGoodIndex + 1);
-        for (int i = 0; i < output.Count; i++)
-        {
-            Debug.Log(output[i]);
-        }
         return output;
     }
 }

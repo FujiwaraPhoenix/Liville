@@ -47,7 +47,10 @@ public class MapPointer : MonoBehaviour
         {
             if (Controller.c.playerTurn)
             {
-                moveCursor();
+                if (targetUnit == null || (targetUnit != null && !targetUnit.procPath))
+                {
+                    moveCursor();
+                }
                 if (boundX == 0 || boundY == 0)
                 {
                     updateBounds();
@@ -124,12 +127,12 @@ public class MapPointer : MonoBehaviour
                 if (currentMenuChoice == 0)
                 {
                     currentMenuChoice = menuBound;
-                    Controller.c.playSound(Controller.c.sfx[0]);
+                    Controller.c.playSound(Controller.c.sfx[0], .25f);
                 }
                 else
                 {
                     currentMenuChoice--;
-                    Controller.c.playSound(Controller.c.sfx[0]);
+                    Controller.c.playSound(Controller.c.sfx[0], .25f);
                 }
             }
             if (Input.GetKeyDown(KeyCode.DownArrow))
@@ -137,12 +140,12 @@ public class MapPointer : MonoBehaviour
                 if (currentMenuChoice == menuBound)
                 {
                     currentMenuChoice = 0;
-                    Controller.c.playSound(Controller.c.sfx[0]);
+                    Controller.c.playSound(Controller.c.sfx[0], .25f);
                 }
                 else
                 {
                     currentMenuChoice++;
-                    Controller.c.playSound(Controller.c.sfx[0]);
+                    Controller.c.playSound(Controller.c.sfx[0], .25f);
                 }
             }
         }
@@ -158,7 +161,7 @@ public class MapPointer : MonoBehaviour
                 {
                     currentTargetIndex--;
                 }
-                Controller.c.playSound(Controller.c.sfx[0]);
+                Controller.c.playSound(Controller.c.sfx[0], .25f);
             }
             if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.RightArrow))
             {
@@ -170,7 +173,7 @@ public class MapPointer : MonoBehaviour
                 {
                     currentTargetIndex++;
                 }
-                Controller.c.playSound(Controller.c.sfx[0]);
+                Controller.c.playSound(Controller.c.sfx[0], .25f);
             }
             currX = targetUnitTargetList[currentTargetIndex].position[0];
             currY = targetUnitTargetList[currentTargetIndex].position[1];
@@ -188,7 +191,7 @@ public class MapPointer : MonoBehaviour
                 {
                     currentInvChoice--;
                 }
-                Controller.c.playSound(Controller.c.sfx[0]);
+                Controller.c.playSound(Controller.c.sfx[0], .25f);
             }
             if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.RightArrow))
             {
@@ -200,7 +203,7 @@ public class MapPointer : MonoBehaviour
                 {
                     currentInvChoice++;
                 }
-                Controller.c.playSound(Controller.c.sfx[0]);
+                Controller.c.playSound(Controller.c.sfx[0], .25f);
             }
         }
     }
@@ -226,12 +229,12 @@ public class MapPointer : MonoBehaviour
                     if (eCheck.displayActive)
                     {
                         eCheck.hideMovement();
-                        Controller.c.playSound(Controller.c.sfx[2]);
+                        Controller.c.playSound(Controller.c.sfx[2], .25f);
                     }
                     else
                     {
                         eCheck.showMovement();
-                        Controller.c.playSound(Controller.c.sfx[1]);
+                        Controller.c.playSound(Controller.c.sfx[1], .25f);
                     }
                     eCheck.displayActive = !eCheck.displayActive;
                 }
@@ -254,7 +257,7 @@ public class MapPointer : MonoBehaviour
                         targetUnit = tempCheck;
                         targetUnit.startFinding();
                         targetUnit.showMovement();
-                        Controller.c.playSound(Controller.c.sfx[1]);
+                        Controller.c.playSound(Controller.c.sfx[1], .25f);
                     }
                 }
             }
@@ -265,9 +268,14 @@ public class MapPointer : MonoBehaviour
                 //For the sake of this current version, just jump straight to location.
                 //Afterwards, re-enable all blacked out tiles and set unit to have moved. 
                 //After that, make currUnit and targetUnit false/null, then check via Controller if we move to next turn.
-                if (targetUnit.pathMap[currX,currY].set == true)
+                if (targetUnit.pathMap[currX,currY].set == true && !targetUnit.inPosition)
                 {
-                    //Fix unit map
+                    targetUnit.nextIndex = 0;
+                    targetUnit.savedPath = targetUnit.pathMap[currX, currY].path;
+                    targetUnit.procPath = true;
+                    targetUnit.lastPosition[0] = targetUnit.position[0];
+                    targetUnit.lastPosition[1] = targetUnit.position[1];
+                    /*//Fix unit map
                     Controller.c.unitMap[targetUnit.position[0], targetUnit.position[1]] = 0;
                     //Move unit to position
                     //Later: replace this with a function that moves through each tile in order.
@@ -278,10 +286,9 @@ public class MapPointer : MonoBehaviour
                     targetUnit.position[1] = currY;
                     //Update unit map again
                     Controller.c.unitMap[targetUnit.position[0], targetUnit.position[1]] = targetUnit.unitAllegiance;
-                    //Temporarily keep unit here until battle stuff is complete.
+                    //Temporarily keep unit here until battle stuff is complete.*/
                     targetUnit.hideMovement();
-                    menuActive = true;
-                    Controller.c.playSound(Controller.c.sfx[1]);
+                    Controller.c.playSound(Controller.c.sfx[1], .25f);
                 }
             }
             else if (menuActive && !choosingTarget && !selectingItem)
@@ -312,13 +319,14 @@ public class MapPointer : MonoBehaviour
                     }
                 }
                 targetUnit.hideAtkRange();
+                targetUnit.inPosition = false;
                 targetUnit = null;
                 choosingTarget = false;
                 menuActive = false;
                 currentMenuChoice = 0;
                 timer = 45;
                 waitForNext = true;
-                Controller.c.playSound(Controller.c.sfx[1]);
+                Controller.c.playSound(Controller.c.sfx[1], .25f);
             }
             else if (selectingItem)
             {
@@ -341,6 +349,7 @@ public class MapPointer : MonoBehaviour
                             Controller.c.currMap.grid[i, j].gameObject.SetActive(true);
                         }
                     }
+                    targetUnit.inPosition = false;
                     targetUnit = null;
                     menuActive = false;
                     currentMenuChoice = 0;
@@ -356,6 +365,7 @@ public class MapPointer : MonoBehaviour
                 if (menuActive && !choosingTarget)
                 {
                     menuActive = !menuActive;
+                    targetUnit.inPosition = false;
                     currentMenuChoice = 0;
                     targetUnit.showMovement();
                     Controller.c.unitMap[targetUnit.position[0], targetUnit.position[1]] = 0;
@@ -384,19 +394,26 @@ public class MapPointer : MonoBehaviour
                     targetUnit.currUnit = false;
                     targetUnit = null;
                 }
-                Controller.c.playSound(Controller.c.sfx[2]);
+                Controller.c.playSound(Controller.c.sfx[2], .25f);
             }
             if (selectingItem)
             {
                 selectingItem = false;
-                Controller.c.playSound(Controller.c.sfx[2]);
+                Controller.c.playSound(Controller.c.sfx[2], .25f);
                 currentInvChoice = 0;
             }
         }
         else if (Input.GetKeyDown(KeyCode.Tab))
         {
             cycleNext();
-            Controller.c.playSound(Controller.c.sfx[0]);
+            Controller.c.playSound(Controller.c.sfx[0], .25f);
+        }
+        if (targetUnit != null)
+        {
+            if (targetUnit.inPosition)
+            {
+                menuActive = true;
+            }
         }
     }
 
@@ -433,12 +450,12 @@ public class MapPointer : MonoBehaviour
                                 targetUnitTargetList[i] = targetUnit.possibleTargets[i];
                             }
                             choosingTarget = true;
-                            Controller.c.playSound(Controller.c.sfx[1]);
+                            Controller.c.playSound(Controller.c.sfx[1], .25f);
                         }
                     }
                     else
                     {
-                        Controller.c.playSound(Controller.c.sfx[10]);
+                        Controller.c.playSound(Controller.c.sfx[10], .25f);
                     }
                     break;
                 case 1:
@@ -465,14 +482,14 @@ public class MapPointer : MonoBehaviour
                         BattleMenuUI.bmui.updatePlayerValues(BattleMenuUI.bmui.currentPlayer);
                         targetUnit = null;
                         menuActive = false;
-                        Controller.c.playSound(Controller.c.sfx[11]);
+                        Controller.c.playSound(Controller.c.sfx[11], .25f);
                         currentMenuChoice = 0;
                         Controller.c.checkTurn();
                     }
                     else
                     {
                         Debug.Log("Ammo full; no reloading needed!");
-                        Controller.c.playSound(Controller.c.sfx[10]);
+                        Controller.c.playSound(Controller.c.sfx[10], .25f);
                     }
                     break;
                 case 2:
@@ -490,12 +507,12 @@ public class MapPointer : MonoBehaviour
                             tempStr += i.itemName + "\t\t\t+ " + i.healAmt + " HP\n";
                         }
                         InvManager.im.currInvShown.text = tempStr;
-                        Controller.c.playSound(Controller.c.sfx[1]);
+                        Controller.c.playSound(Controller.c.sfx[1], .25f);
                     }
                     else
                     {
                         Debug.Log("Inventory empty!");
-                        Controller.c.playSound(Controller.c.sfx[10]);
+                        Controller.c.playSound(Controller.c.sfx[10], .25f);
                     }
                     break;
                 case 3:
@@ -517,7 +534,7 @@ public class MapPointer : MonoBehaviour
                     menuActive = false;
                     currentMenuChoice = 0;
                     Controller.c.checkTurn();
-                    Controller.c.playSound(Controller.c.sfx[1]);
+                    Controller.c.playSound(Controller.c.sfx[1], .25f);
                     break;
             }
         }
